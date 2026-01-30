@@ -44,6 +44,7 @@ export async function POST(request: Request) {
         accuracy,
         avg_time: avgTime,
         level_at_time: level,
+        exercises_count: exercises.length,
       })
       .select("id")
       .single();

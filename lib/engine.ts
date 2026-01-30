@@ -203,3 +203,39 @@ export function generateExercise(
 
   return generateForAdvanced(operator);
 }
+
+/**
+ * Generates `count` exercises for the given level, optionally biased towards
+ * weak operations.
+ */
+export function generateExercises(
+  count: number,
+  level: number,
+  weakOperations?: Operator[]
+): Exercise[] {
+  const exercises: Exercise[] = [];
+  for (let i = 0; i < count; i++) {
+    exercises.push(generateExercise(level, weakOperations));
+  }
+  return exercises;
+}
+
+/**
+ * Identifies weak operations from a list of error logs.
+ * Returns operators sorted by error frequency (most errors first).
+ */
+export function identifyWeakOperations(
+  errorLogs: { operator: string }[]
+): Operator[] {
+  if (!errorLogs || errorLogs.length === 0) return [];
+
+  const errorCounts: Record<string, number> = {};
+  for (const log of errorLogs) {
+    const op = log.operator;
+    errorCounts[op] = (errorCounts[op] || 0) + 1;
+  }
+
+  return Object.entries(errorCounts)
+    .sort(([, a], [, b]) => b - a)
+    .map(([op]) => op as Operator);
+}

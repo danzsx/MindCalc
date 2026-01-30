@@ -3,8 +3,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { createClient } from "@/lib/supabase/client";
-import { calculateLevel } from "@/lib/engine";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -189,12 +187,6 @@ export default function OnboardingPage() {
       setPhase("saving");
 
       try {
-        const totalCorrect = allResults.filter((r) => r.isCorrect).length;
-        const accuracy = (totalCorrect / allResults.length) * 100;
-        const avgTime =
-          allResults.reduce((sum, r) => sum + r.timeSpent, 0) /
-          allResults.length;
-
         // Determine a base level from progressive difficulty performance.
         // Each pair of exercises represents a harder tier.
         // Getting at least 1 right per pair bumps the base level.
@@ -211,17 +203,28 @@ export default function OnboardingPage() {
           }
         }
 
-        // Apply the engine's calculateLevel for final adjustment
-        const level = calculateLevel(accuracy, avgTime, baseLevel);
+        // Transform results to the format expected by the API
+        const answers = allResults.map((r) => r.userAnswer);
+        const times = allResults.map((r) => r.timeSpent);
 
-        // Persist to Supabase
-        const supabase = createClient();
-        const { error: updateError } = await supabase
-          .from("profiles")
-          .update({ level, updated_at: new Date().toISOString() })
-          .eq("id", user!.id);
+        // Persist via the server-side API (handles session, exercise logs,
+        // level calculation, streak, and profile update)
+        const res = await fetch("/api/sessions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user!.id,
+            exercises,
+            answers,
+            times,
+            level: baseLevel,
+          }),
+        });
 
-        if (updateError) throw updateError;
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Erro ao salvar resultado.");
+        }
 
         router.push("/dashboard");
       } catch (err) {
@@ -231,7 +234,7 @@ export default function OnboardingPage() {
         setPhase("test");
       }
     },
-    [user, router]
+    [user, exercises, router]
   );
 
   const submitAnswer = useCallback(() => {

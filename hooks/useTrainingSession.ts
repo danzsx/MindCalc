@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import type { Exercise } from "@/types";
+import type { Exercise, Operator } from "@/types";
+import { generateExercises } from "@/lib/engine";
 
-interface TrainingSession {
+export interface TrainingSession {
   exercises: Exercise[];
   currentIndex: number;
   answers: (number | null)[];
   times: number[];
   startTime: number | null;
-  isLoading: boolean;
   isFinished: boolean;
 }
 
@@ -20,41 +20,21 @@ export function useTrainingSession() {
     answers: [],
     times: [],
     startTime: null,
-    isLoading: false,
     isFinished: false,
   });
 
   const startSession = useCallback(
-    async (userId: string, level: number) => {
-      setSession((prev) => ({ ...prev, isLoading: true }));
+    (level: number, weakOperations?: Operator[]) => {
+      const exercises = generateExercises(10, level, weakOperations);
 
-      try {
-        const res = await fetch("/api/generate-exercises", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId, level }),
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to generate exercises");
-        }
-
-        const exercises: Exercise[] = await res.json();
-
-        setSession({
-          exercises,
-          currentIndex: 0,
-          answers: [],
-          times: [],
-          startTime: Date.now(),
-          isLoading: false,
-          isFinished: false,
-        });
-      } catch (error) {
-        console.error("startSession error:", error);
-        setSession((prev) => ({ ...prev, isLoading: false }));
-        throw error;
-      }
+      setSession({
+        exercises,
+        currentIndex: 0,
+        answers: [],
+        times: [],
+        startTime: Date.now(),
+        isFinished: false,
+      });
     },
     []
   );
@@ -109,7 +89,6 @@ export function useTrainingSession() {
     answers: session.answers,
     times: session.times,
     startTime: session.startTime,
-    isLoading: session.isLoading,
     isFinished: session.isFinished,
     startSession,
     submitAnswer,

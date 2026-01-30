@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useTrainingSession } from "@/hooks/useTrainingSession";
 import { createClient } from "@/lib/supabase/client";
+import { identifyWeakOperations } from "@/lib/engine";
+import type { Operator } from "@/types";
 import { ExerciseCard } from "@/components/training/ExerciseCard";
 import { Timer } from "@/components/training/Timer";
 import { ProgressBar } from "@/components/training/ProgressBar";
@@ -27,7 +29,6 @@ export default function TrainPage() {
   const {
     exercises,
     currentIndex,
-    isLoading,
     isFinished,
     startSession,
     submitAnswer,
@@ -35,45 +36,56 @@ export default function TrainPage() {
   } = useTrainingSession();
 
   const [level, setLevel] = useState<number>(1);
+  const [weakOperations, setWeakOperations] = useState<Operator[]>([]);
   const [answer, setAnswer] = useState("");
   const [exerciseStartTime, setExerciseStartTime] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [started, setStarted] = useState(false);
 
-  // Fetch user level on mount
+  // Fetch user level and weak operations on mount
   useEffect(() => {
     if (!user) return;
 
-    const fetchLevel = async () => {
+    const fetchUserData = async () => {
       const supabase = createClient();
-      const { data } = await supabase
-        .from("profiles")
-        .select("level")
-        .eq("id", user.id)
-        .single();
 
-      if (data) {
-        setLevel(data.level);
+      const [{ data: profileData }, { data: errorLogs }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("level")
+          .eq("id", user.id)
+          .single(),
+        supabase
+          .from("exercise_logs")
+          .select("operator")
+          .eq("user_id", user.id)
+          .eq("is_correct", false)
+          .order("created_at", { ascending: false })
+          .limit(50),
+      ]);
+
+      if (profileData) {
+        setLevel(profileData.level);
+      }
+
+      if (errorLogs) {
+        setWeakOperations(identifyWeakOperations(errorLogs));
       }
     };
 
-    fetchLevel();
+    fetchUserData();
   }, [user]);
 
   // Start training session
-  const handleStart = useCallback(async () => {
+  const handleStart = useCallback(() => {
     if (!user) return;
 
     setError(null);
-    try {
-      await startSession(user.id, level);
-      setStarted(true);
-      setExerciseStartTime(Date.now());
-    } catch {
-      setError("Erro ao gerar exercícios. Tente novamente.");
-    }
-  }, [user, level, startSession]);
+    startSession(level, weakOperations);
+    setStarted(true);
+    setExerciseStartTime(Date.now());
+  }, [user, level, weakOperations, startSession]);
 
   // Auto-focus input when exercise changes
   useEffect(() => {
@@ -132,9 +144,9 @@ export default function TrainPage() {
     );
   }
 
-  // ---------- Pre-start / Loading exercises ----------
+  // ---------- Pre-start ----------
 
-  if (!started || isLoading) {
+  if (!started) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-lg">
@@ -142,31 +154,20 @@ export default function TrainPage() {
             <CardTitle className="text-2xl">Treino Mental</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {isLoading ? (
-              <div className="flex flex-col items-center gap-4 py-8">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                <p className="text-muted-foreground">
-                  Gerando exercícios personalizados...
-                </p>
-              </div>
-            ) : (
-              <>
-                <p className="text-muted-foreground">
-                  Você receberá {TOTAL_EXERCISES} exercícios adaptados ao seu
-                  nível atual ({level}). Responda o mais rápido e corretamente
-                  que puder.
-                </p>
-                <Button
-                  onClick={handleStart}
-                  className="w-full"
-                  size="lg"
-                >
-                  Iniciar treino
-                </Button>
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
-              </>
+            <p className="text-muted-foreground">
+              Você receberá {TOTAL_EXERCISES} exercícios adaptados ao seu
+              nível atual ({level}). Responda o mais rápido e corretamente
+              que puder.
+            </p>
+            <Button
+              onClick={handleStart}
+              className="w-full"
+              size="lg"
+            >
+              Iniciar treino
+            </Button>
+            {error && (
+              <p className="text-sm text-destructive">{error}</p>
             )}
           </CardContent>
         </Card>

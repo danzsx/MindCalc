@@ -2,7 +2,6 @@ export type Operator = "+" | "-" | "*" | "/";
 
 export interface Profile {
   id: string;
-  user_id: string;
   level: number;
   streak: number;
   created_at: string;
