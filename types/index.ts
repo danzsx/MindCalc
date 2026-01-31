@@ -45,3 +45,35 @@ export interface TrainingState {
   isLoading: boolean;
   isFinished: boolean;
 }
+
+// ---------------------------------------------------------------------------
+// Lessons (Aula Interativa)
+// ---------------------------------------------------------------------------
+
+export interface Lesson {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  technique: string;
+  operator: Operator;
+  sort_order: number;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  created_at: string;
+}
+
+export interface LessonProgress {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  completed_at: string;
+  times_completed: number;
+}
+
+export interface LearnedTechnique {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  operator: Operator;
+  learned_at: string;
+}

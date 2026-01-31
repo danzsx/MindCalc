@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-  }, []);
-
-  return <>{children}</>;
+  return (
+    <NextThemesProvider attribute="class" defaultTheme="light" enableSystem>
+      {children}
+    </NextThemesProvider>
+  );
 }

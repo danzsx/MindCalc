@@ -6,6 +6,7 @@ import { EvolutionChart } from "@/components/dashboard/EvolutionChart";
 import { WeakPointsList } from "@/components/dashboard/WeakPointsList";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LessonsOverviewCard } from "@/components/dashboard/LessonsOverviewCard";
 import type { Session, ExerciseLog } from "@/types";
 
 export default async function DashboardPage() {
@@ -37,6 +38,16 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(10);
+
+  // Fetch lesson counts for LessonsOverviewCard
+  const [{ count: totalLessons }, { count: completedLessons }] =
+    await Promise.all([
+      supabase.from("lessons").select("*", { count: "exact", head: true }),
+      supabase
+        .from("lesson_progress")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id),
+    ]);
 
   const orderedSessions: Session[] = (sessions ?? []).reverse();
   const totalSessions = orderedSessions.length;
@@ -101,6 +112,11 @@ export default async function DashboardPage() {
         streak={profile.streak}
         avgAccuracy={avgAccuracy}
         totalSessions={totalSessions}
+      />
+
+      <LessonsOverviewCard
+        completedCount={completedLessons ?? 0}
+        totalCount={totalLessons ?? 0}
       />
 
       <Card>

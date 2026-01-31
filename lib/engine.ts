@@ -1,4 +1,5 @@
 import type { Exercise, Operator } from "@/types";
+import { allLessons } from "./lessons";
 
 /**
  * Returns the maximum acceptable response time (in seconds) for a given level.
@@ -165,11 +166,30 @@ function generateForAdvanced(operator: Operator): Exercise {
  *
  * If `weakOperations` is provided, there is a 70% chance the exercise will
  * use one of those operations (when compatible with the level range).
+ *
+ * If `learnedTechniques` is provided (slugs from completed lessons), there
+ * is a 30% chance the exercise will be generated using one of those
+ * technique's practice generators, reinforcing what the user learned.
  */
 export function generateExercise(
   level: number,
-  weakOperations?: Operator[]
+  weakOperations?: Operator[],
+  learnedTechniques?: string[]
 ): Exercise {
+  // 30% chance to reinforce a learned technique
+  if (learnedTechniques && learnedTechniques.length > 0 && Math.random() < 0.3) {
+    const slug = pickRandom(learnedTechniques);
+    const lesson = allLessons.find((l) => l.slug === slug);
+    if (lesson) {
+      const [ex] = lesson.practiceGenerator(1);
+      return {
+        operand1: ex.operand1,
+        operand2: ex.operand2,
+        operator: ex.operator,
+        correctAnswer: ex.correctAnswer,
+      };
+    }
+  }
   // Determine valid operators for the level range
   let availableOperators: Operator[];
 
@@ -206,16 +226,17 @@ export function generateExercise(
 
 /**
  * Generates `count` exercises for the given level, optionally biased towards
- * weak operations.
+ * weak operations and/or learned techniques.
  */
 export function generateExercises(
   count: number,
   level: number,
-  weakOperations?: Operator[]
+  weakOperations?: Operator[],
+  learnedTechniques?: string[]
 ): Exercise[] {
   const exercises: Exercise[] = [];
   for (let i = 0; i < count; i++) {
-    exercises.push(generateExercise(level, weakOperations));
+    exercises.push(generateExercise(level, weakOperations, learnedTechniques));
   }
   return exercises;
 }

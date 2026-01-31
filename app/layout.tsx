@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Fredoka, Inter } from "next/font/google";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const fredoka = Fredoka({
   subsets: ["latin"],
+  variable: "--font-family-display",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-family-body",
 });
 
 export const metadata: Metadata = {
@@ -20,10 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body
-        className={`${inter.variable} font-sans bg-slate-950 text-slate-100 antialiased`}
-      >
+    <html lang="pt-BR" className={`${fredoka.variable} ${inter.variable}`} suppressHydrationWarning>
+      <body className="antialiased">
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>

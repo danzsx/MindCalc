@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserMenu } from "./UserMenu";
-import { LayoutDashboard, Dumbbell, CreditCard } from "lucide-react";
+import { LayoutDashboard, BookOpen, Dumbbell, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/lessons", label: "Aulas", icon: BookOpen },
   { href: "/train", label: "Treinar", icon: Dumbbell },
   { href: "/billing", label: "Billing", icon: CreditCard },
 ];
