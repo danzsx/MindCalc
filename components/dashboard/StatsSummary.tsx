@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Target, Flame, TrendingUp, BarChart3 } from "lucide-react";
 
 interface StatsSummaryProps {
@@ -13,35 +12,48 @@ const stats = (props: StatsSummaryProps) => [
     icon: TrendingUp,
     value: props.level,
     label: "Nível",
+    iconColor: "text-primary",
+    iconBg: "bg-primary/10",
   },
   {
     icon: Flame,
     value: `${props.streak} dias`,
     label: "Sequência",
+    iconColor: "text-secondary",
+    iconBg: "bg-secondary/10",
   },
   {
     icon: Target,
     value: `${Math.round(props.avgAccuracy)}%`,
     label: "Precisão Média",
+    iconColor: "text-success",
+    iconBg: "bg-success/10",
   },
   {
     icon: BarChart3,
     value: props.totalSessions,
     label: "Sessões",
+    iconColor: "text-primary",
+    iconBg: "bg-primary/10",
   },
 ];
 
 export function StatsSummary(props: StatsSummaryProps) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
       {stats(props).map((stat) => (
-        <Card key={stat.label}>
-          <CardContent className="flex flex-col items-center gap-2 pt-6">
-            <stat.icon className="h-6 w-6 text-primary" />
-            <span className="text-2xl font-bold">{stat.value}</span>
-            <span className="text-sm text-muted-foreground">{stat.label}</span>
-          </CardContent>
-        </Card>
+        <div
+          key={stat.label}
+          className="bg-card rounded-[20px] p-6 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] transition-all duration-300"
+        >
+          <div className="flex flex-col items-center gap-3">
+            <div className={`${stat.iconBg} p-3 rounded-full`}>
+              <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
+            </div>
+            <span className="text-foreground text-2xl font-bold">{stat.value}</span>
+            <span className="text-muted-foreground text-sm">{stat.label}</span>
+          </div>
+        </div>
       ))}
     </div>
   );

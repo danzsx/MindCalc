@@ -15,7 +15,11 @@
       "Bash(ls:*)",
       "Bash(tree:*)",
       "Bash(git remote add:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push)",
+      "Bash(npx vitest:*)",
+      "Bash(npm run build:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

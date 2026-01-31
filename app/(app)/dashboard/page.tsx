@@ -4,8 +4,6 @@ import { createClient } from "@/lib/supabase/server";
 import { StatsSummary } from "@/components/dashboard/StatsSummary";
 import { EvolutionChart } from "@/components/dashboard/EvolutionChart";
 import { WeakPointsList } from "@/components/dashboard/WeakPointsList";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LessonsOverviewCard } from "@/components/dashboard/LessonsOverviewCard";
 import type { Session, ExerciseLog } from "@/types";
 
@@ -99,12 +97,17 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="container mx-auto max-w-4xl px-4 py-8 space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <Button asChild>
-          <Link href="/train">Iniciar Treino</Link>
-        </Button>
+    <main className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h1 className="text-foreground">Dashboard</h1>
+        <Link
+          href="/train"
+          className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground
+            px-6 py-3 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg
+            transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium"
+        >
+          Iniciar Treino
+        </Link>
       </div>
 
       <StatsSummary
@@ -119,23 +122,9 @@ export default async function DashboardPage() {
         totalCount={totalLessons ?? 0}
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Evolução</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <EvolutionChart sessions={orderedSessions} />
-        </CardContent>
-      </Card>
+      <EvolutionChart sessions={orderedSessions} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Pontos Fracos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <WeakPointsList weakPoints={weakPoints} />
-        </CardContent>
-      </Card>
+      <WeakPointsList weakPoints={weakPoints} />
     </main>
   );
 }

@@ -9,15 +9,7 @@ import { identifyWeakOperations } from "@/lib/engine";
 import type { Operator } from "@/types";
 import { ExerciseCard } from "@/components/training/ExerciseCard";
 import { Timer } from "@/components/training/Timer";
-import { ProgressBar } from "@/components/training/ProgressBar";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { X } from "lucide-react";
 
 const TOTAL_EXERCISES = 10;
 
@@ -42,6 +34,7 @@ export default function TrainPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [started, setStarted] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
 
   // Fetch user level and weak operations on mount
   useEffect(() => {
@@ -119,10 +112,26 @@ export default function TrainPage() {
     const timeSpent = (Date.now() - exerciseStartTime) / 1000;
     const userAnswer = parseFloat(answer);
 
+    // Shake animation on wrong answer
+    const ex = exercises[currentIndex];
+    if (ex) {
+      let correctAnswer = 0;
+      switch (ex.operator) {
+        case "+": correctAnswer = ex.operand1 + ex.operand2; break;
+        case "-": correctAnswer = ex.operand1 - ex.operand2; break;
+        case "*": correctAnswer = ex.operand1 * ex.operand2; break;
+        case "/": correctAnswer = ex.operand1 / ex.operand2; break;
+      }
+      if (userAnswer !== correctAnswer) {
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+      }
+    }
+
     submitAnswer(userAnswer, timeSpent);
     setAnswer("");
     setExerciseStartTime(Date.now());
-  }, [answer, exerciseStartTime, submitAnswer]);
+  }, [answer, exerciseStartTime, submitAnswer, exercises, currentIndex]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -134,11 +143,18 @@ export default function TrainPage() {
     [handleSubmit]
   );
 
+  // End training early
+  const handleEndTraining = useCallback(() => {
+    if (window.confirm("Deseja realmente encerrar o treino?")) {
+      router.push("/dashboard");
+    }
+  }, [router]);
+
   // ---------- Loading states ----------
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex items-center justify-center min-h-[70vh]">
         <p className="text-muted-foreground">Carregando...</p>
       </div>
     );
@@ -148,29 +164,24 @@ export default function TrainPage() {
 
   if (!started) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <Card className="w-full max-w-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl">Treino Mental</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground">
-              Você receberá {TOTAL_EXERCISES} exercícios adaptados ao seu
-              nível atual ({level}). Responda o mais rápido e corretamente
-              que puder.
-            </p>
-            <Button
-              onClick={handleStart}
-              className="w-full"
-              size="lg"
-            >
-              Iniciar treino
-            </Button>
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
-          </CardContent>
-        </Card>
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full">
+          <h2 className="text-foreground mb-4">Treino Mental</h2>
+          <p className="text-muted-foreground mb-2 leading-relaxed">
+            Você receberá {TOTAL_EXERCISES} exercícios adaptados ao seu
+            nível atual ({level}). Responda o mais rápido e corretamente
+            que puder.
+          </p>
+          {error && (
+            <p className="text-sm text-destructive mb-4">{error}</p>
+          )}
+          <button
+            onClick={handleStart}
+            className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium mt-6"
+          >
+            Iniciar treino
+          </button>
+        </div>
       </div>
     );
   }
@@ -179,9 +190,9 @@ export default function TrainPage() {
 
   if (isFinished || isSaving) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <Card className="w-full max-w-lg">
-          <CardContent className="flex flex-col items-center gap-4 pt-8 pb-8">
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full">
+          <div className="flex flex-col items-center gap-4 py-4">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
             <p className="text-muted-foreground">
               Salvando resultados...
@@ -189,8 +200,8 @@ export default function TrainPage() {
             {error && (
               <p className="text-sm text-destructive">{error}</p>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
@@ -201,48 +212,58 @@ export default function TrainPage() {
   if (!exercise) return null;
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-lg">
-        <CardHeader className="space-y-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Treino</CardTitle>
+    <div className="flex items-center justify-center min-h-[70vh]">
+      <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-foreground">Treino</h3>
+          <div className="flex items-center gap-4">
             <Timer running={started && !isFinished} />
-          </div>
-          <ProgressBar current={currentIndex} total={TOTAL_EXERCISES} />
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          <ExerciseCard
-            operand1={exercise.operand1}
-            operand2={exercise.operand2}
-            operator={exercise.operator}
-            current={currentIndex + 1}
-            total={TOTAL_EXERCISES}
-          />
-
-          <div className="flex gap-3">
-            <Input
-              ref={inputRef}
-              type="number"
-              inputMode="decimal"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Sua resposta"
-              className="text-center text-lg"
-              autoFocus
-            />
-            <Button
-              onClick={handleSubmit}
-              disabled={answer.trim() === ""}
+            <button
+              onClick={handleEndTraining}
+              className="text-muted-foreground hover:text-foreground transition-colors p-1 hover:bg-muted rounded-lg"
+              title="Encerrar treino"
             >
-              Confirmar
-            </Button>
+              <X size={20} />
+            </button>
           </div>
+        </div>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
-        </CardContent>
-      </Card>
+        {/* Exercise with progress */}
+        <ExerciseCard
+          operand1={exercise.operand1}
+          operand2={exercise.operand2}
+          operator={exercise.operator}
+          current={currentIndex + 1}
+          total={TOTAL_EXERCISES}
+        />
+
+        {/* Answer Input */}
+        <div className={`mb-6 mt-8 ${isShaking ? "shake" : ""}`}>
+          <input
+            ref={inputRef}
+            type="number"
+            inputMode="decimal"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Sua resposta"
+            autoFocus
+            className="w-full px-6 py-4 bg-muted text-foreground rounded-xl border-2 border-primary/30 focus:border-primary focus:outline-none transition-colors text-lg text-center font-medium"
+          />
+        </div>
+
+        {/* Confirm Button */}
+        <button
+          onClick={handleSubmit}
+          disabled={answer.trim() === ""}
+          className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transition-all duration-300 min-h-[56px] font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:hover:shadow-md"
+        >
+          Confirmar
+        </button>
+
+        {error && <p className="text-sm text-destructive mt-4">{error}</p>}
+      </div>
     </div>
   );
 }
