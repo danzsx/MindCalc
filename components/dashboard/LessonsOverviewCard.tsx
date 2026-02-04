@@ -13,7 +13,7 @@ export function LessonsOverviewCard({
   const progressPct = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   return (
-    <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] transition-all duration-300">
+    <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 fade-in" style={{ animationDelay: "400ms" }}>
       <div className="flex items-center gap-3 mb-4">
         <div className="bg-primary/10 p-2 rounded-lg">
           <BookOpen className="h-5 w-5 text-primary" />
@@ -22,7 +22,7 @@ export function LessonsOverviewCard({
       </div>
 
       <p className="text-sm text-muted-foreground mb-5">
-        Aprenda técnicas para calcular mais rápido
+        Truques pra pensar mais rápido com números
       </p>
 
       <div className="space-y-2 mb-5">
@@ -44,7 +44,7 @@ export function LessonsOverviewCard({
         href="/lessons"
         className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-[#14B8A6] transition-colors"
       >
-        Ver Aulas
+        Explorar aulas
         <ArrowRight className="h-4 w-4" />
       </Link>
     </div>

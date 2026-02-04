@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { LessonProgressIndicator } from "./LessonProgressIndicator";
 import { LessonIntro } from "./LessonIntro";
@@ -37,6 +38,7 @@ export function LessonShell({ lesson, onComplete }: LessonShellProps) {
       setPhase(nextPhase);
       if (nextPhase === "completion") {
         onComplete();
+        toast.success("Aula concluída! Esse truque já é seu.");
       }
     }
   }, [phase, onComplete]);
@@ -79,9 +81,9 @@ export function LessonShell({ lesson, onComplete }: LessonShellProps) {
         <Card>
           <CardContent className="pt-6 space-y-6">
             <div className="space-y-1">
-              <h2 className="text-lg font-semibold">Treino Extra</h2>
+              <h2 className="text-lg font-semibold">Mais um pouco</h2>
               <p className="text-sm text-muted-foreground">
-                5 exercícios sem dica — pratique a técnica!
+                5 exercícios sem dica — pra deixar o truque automático.
               </p>
             </div>
             <LessonPractice
@@ -120,16 +122,16 @@ export function LessonShell({ lesson, onComplete }: LessonShellProps) {
               <div className="space-y-4">
                 <div className="space-y-1">
                   <h2 className="text-lg font-semibold">
-                    {phase === "guided" && "Exercício Guiado"}
-                    {phase === "semi-guided" && "Exercício Semi-Guiado"}
-                    {phase === "free" && "Exercício Livre"}
+                    {phase === "guided" && "Com dica completa"}
+                    {phase === "semi-guided" && "Com uma pista"}
+                    {phase === "free" && "Agora é com você"}
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    {phase === "guided" && "Use a dica abaixo para resolver."}
+                    {phase === "guided" && "Use a dica abaixo pra pensar junto."}
                     {phase === "semi-guided" &&
-                      "A dica mostra apenas o começo — tente completar sozinho."}
+                      "A dica mostra só o começo — tente chegar no resultado."}
                     {phase === "free" &&
-                      "Agora é com você! Resolva sem dicas."}
+                      "Sem dicas dessa vez. Confia no que você aprendeu."}
                   </p>
                 </div>
                 <LessonExercise

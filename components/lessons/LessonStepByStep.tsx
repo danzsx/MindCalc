@@ -12,7 +12,7 @@ export function LessonStepByStep({ steps, onRetry }: LessonStepByStepProps) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Não foi dessa vez, vamos ver juntos:
+        Quase. Vamos pensar juntos por outro caminho:
       </p>
 
       <ol className="space-y-2 pl-1">
@@ -28,7 +28,7 @@ export function LessonStepByStep({ steps, onRetry }: LessonStepByStepProps) {
 
       <Button onClick={onRetry} variant="outline" className="w-full">
         <RotateCcw className="size-4" />
-        Tentar novamente
+        Quero tentar de novo
       </Button>
     </div>
   );

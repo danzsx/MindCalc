@@ -21,20 +21,20 @@ export function LessonCompletion({
       </div>
 
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold">Parabéns!</h2>
+        <h2 className="text-2xl font-bold">Esse truque já é seu!</h2>
         <p className="text-muted-foreground leading-relaxed">
-          Você aprendeu a técnica <span className="font-medium text-foreground">&ldquo;{technique}&rdquo;</span>!
+          Você pegou a técnica <span className="font-medium text-foreground">&ldquo;{technique}&rdquo;</span>. Agora é só deixar ficar automático.
         </p>
       </div>
 
       <div className="flex flex-col gap-3 w-full">
         <Button onClick={onPracticeMore} size="lg" className="w-full">
           <Dumbbell className="size-4" />
-          Praticar mais
+          Quero praticar mais
         </Button>
         <Button onClick={onDashboard} variant="outline" size="lg" className="w-full">
           <LayoutDashboard className="size-4" />
-          Voltar ao Dashboard
+          Voltar ao painel
         </Button>
       </div>
     </div>

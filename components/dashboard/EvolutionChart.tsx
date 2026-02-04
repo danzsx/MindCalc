@@ -29,27 +29,27 @@ export function EvolutionChart({ sessions }: EvolutionChartProps) {
 
   if (data.length === 0) {
     return (
-      <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
+      <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] fade-in" style={{ animationDelay: "500ms" }}>
         <div className="flex items-center gap-3 mb-6">
           <div className="bg-primary/10 p-2 rounded-lg">
             <TrendingUp className="h-5 w-5 text-primary" />
           </div>
-          <h2 className="text-lg font-semibold text-foreground">Evolução</h2>
+          <h2 className="text-lg font-semibold text-foreground">Sua evolução</h2>
         </div>
         <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-          Nenhuma sessão registrada ainda.
+          Ainda sem treinos por aqui. Que tal começar o primeiro?
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] transition-all duration-300">
+    <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] transition-all duration-300 fade-in" style={{ animationDelay: "500ms" }}>
       <div className="flex items-center gap-3 mb-6">
         <div className="bg-primary/10 p-2 rounded-lg">
           <TrendingUp className="h-5 w-5 text-primary" />
         </div>
-        <h2 className="text-lg font-semibold text-foreground">Evolução</h2>
+        <h2 className="text-lg font-semibold text-foreground">Sua evolução</h2>
       </div>
 
       <div className="h-[300px] lg:h-[350px]">

@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Brain } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -88,19 +89,22 @@ export default function LoginPage() {
   }
 
   return (
-    <Card className="w-full max-w-md border-slate-800 bg-slate-900/80 backdrop-blur">
+    <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold text-slate-100">
+        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-primary/10">
+          <Brain className="size-6 text-primary" />
+        </div>
+        <CardTitle className="text-2xl font-bold text-foreground">
           MindCalc
         </CardTitle>
-        <CardDescription className="text-slate-400">
-          Treine calculo mental como um profissional
+        <CardDescription className="text-muted-foreground">
+          Seu treino de mente para os números
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-slate-300">
+            <Label htmlFor="email" className="text-foreground">
               Email
             </Label>
             <Input
@@ -111,12 +115,11 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={loading}
-              className="border-slate-700 bg-slate-800 text-slate-100 placeholder:text-slate-500"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-slate-300">
+            <Label htmlFor="password" className="text-foreground">
               Senha
             </Label>
             <Input
@@ -127,19 +130,19 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={loading}
-              className="border-slate-700 bg-slate-800 text-slate-100 placeholder:text-slate-500"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-red-400">{error}</p>
+            <p className="text-sm text-destructive">{error}</p>
           )}
 
           <div className="flex flex-col gap-2 pt-2">
             <Button
               onClick={handleSignIn}
               disabled={loading || !email || !password}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full min-h-[48px]"
+              size="lg"
             >
               {loading ? "Carregando..." : "Entrar"}
             </Button>
@@ -147,7 +150,8 @@ export default function LoginPage() {
               onClick={handleSignUp}
               disabled={loading || !email || !password}
               variant="outline"
-              className="w-full border-slate-700 text-slate-300 hover:bg-slate-800"
+              className="w-full"
+              size="lg"
             >
               Criar conta
             </Button>

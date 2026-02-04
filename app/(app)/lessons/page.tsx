@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { createClient } from "@/lib/supabase/client";
 import { LessonCard, type LessonStatus } from "@/components/lessons/LessonCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Lesson } from "@/types";
 
 interface LessonWithStatus extends Lesson {
@@ -72,31 +73,50 @@ export default function LessonsPage() {
 
   if (authLoading || loading) {
     return (
-      <main className="container mx-auto max-w-4xl px-4 py-8">
-        <div className="flex justify-center py-12">
-          <p className="text-muted-foreground">Carregando...</p>
+      <main className="container mx-auto max-w-4xl px-4 py-8 space-y-6 fade-in">
+        <div>
+          <Skeleton className="h-9 w-48 mb-2" />
+          <Skeleton className="h-5 w-72" />
+        </div>
+        <div className="grid gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-card rounded-[20px] p-6 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]"
+            >
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
+                <div className="flex-1 min-w-0 space-y-2">
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-4 w-56" />
+                </div>
+                <Skeleton className="h-4 w-20 shrink-0" />
+              </div>
+            </div>
+          ))}
         </div>
       </main>
     );
   }
 
   return (
-    <main className="container mx-auto max-w-4xl px-4 py-8 space-y-6">
+    <main className="container mx-auto max-w-4xl px-4 py-8 space-y-6 fade-in">
       <div>
         <h1 className="text-3xl font-bold">Aulas Interativas</h1>
         <p className="mt-1 text-muted-foreground">
-          Cada aula ensina uma técnica prática de cálculo mental
+          Cada aula traz um truque pra facilitar as contas de cabeça
         </p>
       </div>
 
       <div className="grid gap-3">
-        {lessons.map((lesson) => (
-          <LessonCard
-            key={lesson.slug}
-            lesson={lesson}
-            status={lesson.status}
-            onClick={() => handleCardClick(lesson.slug)}
-          />
+        {lessons.map((lesson, index) => (
+          <div key={lesson.slug} className="fade-in" style={{ animationDelay: `${index * 80}ms` }}>
+            <LessonCard
+              lesson={lesson}
+              status={lesson.status}
+              onClick={() => handleCardClick(lesson.slug)}
+            />
+          </div>
         ))}
       </div>
 

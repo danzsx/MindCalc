@@ -5,7 +5,8 @@ import { StatsSummary } from "@/components/dashboard/StatsSummary";
 import { EvolutionChart } from "@/components/dashboard/EvolutionChart";
 import { WeakPointsList } from "@/components/dashboard/WeakPointsList";
 import { LessonsOverviewCard } from "@/components/dashboard/LessonsOverviewCard";
-import type { Session, ExerciseLog } from "@/types";
+import { TablesCard } from "@/components/tables/TablesCard";
+import type { Session, ExerciseLog, TablesProgress } from "@/types";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -47,6 +48,24 @@ export default async function DashboardPage() {
         .eq("user_id", user.id),
     ]);
 
+  // Fetch tables progress
+  const { data: tablesProgressRaw } = await supabase
+    .from("tables_progress")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("updated_at", { ascending: false });
+
+  const tablesProgress: TablesProgress[] = (tablesProgressRaw ?? []).map(
+    (p: { id: string; operation: string; range_min: number; range_max: number; mastered_percentage: number; last_practiced_at: string | null }) => ({
+      id: p.id,
+      operation: p.operation as TablesProgress["operation"],
+      rangeMin: p.range_min,
+      rangeMax: p.range_max,
+      masteredPercentage: Number(p.mastered_percentage),
+      lastPracticedAt: p.last_practiced_at,
+    })
+  );
+
   const orderedSessions: Session[] = (sessions ?? []).reverse();
   const totalSessions = orderedSessions.length;
 
@@ -58,7 +77,7 @@ export default async function DashboardPage() {
 
   // Fetch exercise logs for weak points analysis (last 10 sessions)
   const sessionIds = orderedSessions.map((s) => s.id);
-  let weakPoints: { operation: string; errorRate: number }[] = [];
+  const operatorMap: Record<string, { weightedErrors: number; weightedTotal: number }> = {};
 
   if (sessionIds.length > 0) {
     const { data: logs } = await supabase
@@ -67,46 +86,63 @@ export default async function DashboardPage() {
       .in("session_id", sessionIds);
 
     if (logs && logs.length > 0) {
-      const operatorMap: Record<string, { total: number; errors: number }> = {};
-
       for (const log of logs as Pick<ExerciseLog, "operator" | "is_correct">[]) {
         const op = log.operator;
         if (!operatorMap[op]) {
-          operatorMap[op] = { total: 0, errors: 0 };
+          operatorMap[op] = { weightedErrors: 0, weightedTotal: 0 };
         }
-        operatorMap[op].total++;
+        operatorMap[op].weightedTotal += 1.0;
         if (!log.is_correct) {
-          operatorMap[op].errors++;
+          operatorMap[op].weightedErrors += 1.0;
         }
       }
-
-      const operatorLabels: Record<string, string> = {
-        "+": "Adição (+)",
-        "-": "Subtração (−)",
-        "*": "Multiplicação (×)",
-        "/": "Divisão (÷)",
-      };
-
-      weakPoints = Object.entries(operatorMap)
-        .filter(([, data]) => data.errors > 0)
-        .map(([op, data]) => ({
-          operation: operatorLabels[op] ?? op,
-          errorRate: data.errors / data.total,
-        }));
     }
   }
 
+  // Include tabuada logs with 0.7 weight
+  const { data: tablesLogs } = await supabase
+    .from("tables_question_logs")
+    .select("operator, is_correct")
+    .eq("user_id", user.id);
+
+  if (tablesLogs && tablesLogs.length > 0) {
+    for (const log of tablesLogs as { operator: string; is_correct: boolean }[]) {
+      const op = log.operator;
+      if (!operatorMap[op]) {
+        operatorMap[op] = { weightedErrors: 0, weightedTotal: 0 };
+      }
+      operatorMap[op].weightedTotal += 0.7;
+      if (!log.is_correct) {
+        operatorMap[op].weightedErrors += 0.7;
+      }
+    }
+  }
+
+  const operatorLabels: Record<string, string> = {
+    "+": "Adição (+)",
+    "-": "Subtração (−)",
+    "*": "Multiplicação (×)",
+    "/": "Divisão (÷)",
+  };
+
+  const weakPoints = Object.entries(operatorMap)
+    .filter(([, data]) => data.weightedErrors > 0)
+    .map(([op, data]) => ({
+      operation: operatorLabels[op] ?? op,
+      errorRate: data.weightedErrors / data.weightedTotal,
+    }));
+
   return (
-    <main className="space-y-8">
+    <main className="space-y-8 fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <h1 className="text-foreground">Dashboard</h1>
+        <h1 className="text-foreground">Seu painel</h1>
         <Link
           href="/train"
           className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground
             px-6 py-3 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg
             transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium"
         >
-          Iniciar Treino
+          Bora treinar
         </Link>
       </div>
 
@@ -121,6 +157,8 @@ export default async function DashboardPage() {
         completedCount={completedLessons ?? 0}
         totalCount={totalLessons ?? 0}
       />
+
+      <TablesCard progress={tablesProgress} />
 
       <EvolutionChart sessions={orderedSessions} />
 

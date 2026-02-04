@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { useAuth } from "@/hooks/useAuth";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Sun, Moon } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export function UserMenu() {
   const { user, signOut } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +43,17 @@ export function UserMenu() {
             </p>
           </div>
           <div className="p-1">
+            <div className="flex items-center justify-between rounded-sm px-3 py-2">
+              <div className="flex items-center gap-2 text-sm text-foreground">
+                <Sun className="size-4 hidden dark:block" />
+                <Moon className="size-4 block dark:hidden" />
+                <span>Tema Escuro</span>
+              </div>
+              <Switch
+                checked={theme === "dark"}
+                onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+              />
+            </div>
             <button
               onClick={() => {
                 setIsOpen(false);

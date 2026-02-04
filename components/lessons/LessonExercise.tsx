@@ -18,11 +18,11 @@ const OPERATOR_SYMBOLS: Record<string, string> = {
 };
 
 const SUCCESS_MESSAGES = [
-  "Isso mesmo!",
-  "Muito bem!",
-  "Perfeito!",
-  "Excelente!",
-  "Mandou bem!",
+  "Boa. Esse truque já tá ficando natural.",
+  "Isso! Pensou rápido.",
+  "Aí sim. O caminho tava certo.",
+  "Já tá fluindo. Boa.",
+  "Acertou. Esse raciocínio economiza tempo.",
 ];
 
 interface LessonExerciseProps {
@@ -109,7 +109,7 @@ export function LessonExercise({
             className="text-center text-lg"
           />
           <Button onClick={handleSubmit} disabled={userInput.trim() === ""}>
-            Responder
+            Essa é minha resposta
           </Button>
         </div>
       )}

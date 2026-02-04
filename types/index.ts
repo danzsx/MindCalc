@@ -77,3 +77,83 @@ export interface LearnedTechnique {
   operator: Operator;
   learned_at: string;
 }
+
+// ---------------------------------------------------------------------------
+// Tabuada
+// ---------------------------------------------------------------------------
+
+export type TablesOperation = "+" | "-" | "*" | "/";
+export type TablesMode = "guided" | "free";
+export type TablesRange = { min: number; max: number };
+
+export interface TablesConfig {
+  operation: TablesOperation;
+  range: TablesRange;
+  mode: TablesMode;
+}
+
+export interface TablesQuestion {
+  id: string;
+  operand1: number;
+  operand2: number;
+  operator: TablesOperation;
+  correctAnswer: number;
+  explanation: string;
+}
+
+export interface TablesAnswer {
+  questionId: string;
+  userAnswer: number | null;
+  isCorrect: boolean;
+  attempts: number;
+}
+
+export interface TablesBlock {
+  questions: TablesQuestion[];
+  answers: TablesAnswer[];
+  accuracy: number;
+}
+
+export interface TablesSessionState {
+  config: TablesConfig;
+  blocks: TablesBlock[];
+  currentBlockIndex: number;
+  currentQuestionIndex: number;
+  retryQueue: TablesQuestion[];
+  retryCount: Map<string, number>;
+  phase: "answering" | "feedback" | "block-summary" | "finished";
+  isFinished: boolean;
+}
+
+export interface TablesSessionResult {
+  sessionId: string;
+  config: TablesConfig;
+  totalQuestions: number;
+  correctAnswers: number;
+  accuracy: number;
+  blocksCompleted: number;
+  difficultCombinations: TablesQuestion[];
+}
+
+export interface TablesProgress {
+  id: string;
+  operation: TablesOperation;
+  rangeMin: number;
+  rangeMax: number;
+  masteredPercentage: number;
+  lastPracticedAt: string | null;
+}
+
+export interface TablesQuestionLog {
+  id: string;
+  session_id: string;
+  user_id: string;
+  operand1: number;
+  operand2: number;
+  operator: TablesOperation;
+  correct_answer: number;
+  user_answer: number | null;
+  is_correct: boolean;
+  attempts: number;
+  created_at: string;
+}

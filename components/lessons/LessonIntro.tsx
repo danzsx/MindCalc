@@ -50,7 +50,7 @@ export function LessonIntro({
       </div>
 
       <Button onClick={onContinue} className="w-full" size="lg">
-        Entendi, vamos praticar
+        Peguei o truque, bora praticar
         <ArrowRight className="size-4" />
       </Button>
     </div>

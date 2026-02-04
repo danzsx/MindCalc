@@ -6,11 +6,11 @@ import type { LessonPhase } from "@/lib/lessons/types";
 const PHASES: LessonPhase[] = ["intro", "guided", "semi-guided", "free", "completion"];
 
 const PHASE_LABELS: Record<LessonPhase, string> = {
-  intro: "Intro",
-  guided: "Guiado",
-  "semi-guided": "Semi-guiado",
-  free: "Livre",
-  completion: "Conclusão",
+  intro: "Truque",
+  guided: "Com dica",
+  "semi-guided": "Uma pista",
+  free: "Sozinho",
+  completion: "Peguei!",
 };
 
 interface LessonProgressIndicatorProps {

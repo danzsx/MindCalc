@@ -4,14 +4,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Brain } from "lucide-react";
 import type { Exercise, Operator } from "@/types";
 
 // ---------------------------------------------------------------------------
@@ -285,8 +279,8 @@ export default function OnboardingPage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Carregando...</p>
+      <div className="flex min-h-[70vh] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
   }
@@ -294,32 +288,43 @@ export default function OnboardingPage() {
   // ---------- Intro ----------
   if (phase === "intro") {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <Card className="w-full max-w-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl">Teste Diagn&oacute;stico</CardTitle>
-            <CardDescription>
-              Vamos avaliar seu n&iacute;vel de c&aacute;lculo mental com{" "}
-              {TOTAL_EXERCISES} exerc&iacute;cios r&aacute;pidos. Responda o
-              mais r&aacute;pido e corretamente que puder.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>2 exerc&iacute;cios de soma</li>
-              <li>2 exerc&iacute;cios de subtra&ccedil;&atilde;o</li>
-              <li>2 exerc&iacute;cios de multiplica&ccedil;&atilde;o</li>
-              <li>2 exerc&iacute;cios de divis&atilde;o</li>
-            </ul>
-            <p className="text-sm text-muted-foreground">
-              O resultado definir&aacute; seu n&iacute;vel inicial (1&ndash;10)
-              para treinos personalizados.
-            </p>
-            <Button onClick={startTest} className="w-full" size="lg">
-              Come&ccedil;ar teste
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="flex min-h-[70vh] items-center justify-center p-4">
+        <div className="w-full max-w-md rounded-[20px] bg-card p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] text-center">
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-primary/10">
+            <Brain className="size-7 text-primary" />
+          </div>
+          <h1 className="text-foreground">Vamos nos conhecer</h1>
+          <p className="mt-2 text-muted-foreground">
+            Antes de tudo, quero entender como você pensa com números.
+            São {TOTAL_EXERCISES} contas rápidas, sem pressão.
+          </p>
+
+          <div className="mt-6 space-y-2 text-left">
+            {[
+              "2 de somar",
+              "2 de diminuir",
+              "2 de multiplicar",
+              "2 de dividir",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="size-1.5 rounded-full bg-primary" />
+                {item}
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-4 text-sm text-muted-foreground">
+            Com isso, vou montar um treino que faz sentido pra você.
+          </p>
+
+          <Button
+            onClick={startTest}
+            className="mt-6 w-full min-h-[56px]"
+            size="xl"
+          >
+            Bora começar
+          </Button>
+        </div>
       </div>
     );
   }
@@ -327,15 +332,13 @@ export default function OnboardingPage() {
   // ---------- Saving ----------
   if (phase === "saving") {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <Card className="w-full max-w-lg">
-          <CardContent className="flex flex-col items-center gap-4 pt-8 pb-8">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="text-muted-foreground">
-              Calculando seu n&iacute;vel...
-            </p>
-          </CardContent>
-        </Card>
+      <div className="flex min-h-[70vh] items-center justify-center p-4">
+        <div className="w-full max-w-md rounded-[20px] bg-card p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] text-center">
+          <div className="h-8 w-8 mx-auto animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="mt-4 text-muted-foreground">
+            Preparando seu treino...
+          </p>
+        </div>
       </div>
     );
   }
@@ -347,63 +350,62 @@ export default function OnboardingPage() {
   const progress = (currentIndex / TOTAL_EXERCISES) * 100;
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-lg">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">
-              Exerc&iacute;cio {currentIndex + 1} de {TOTAL_EXERCISES}
-            </CardTitle>
-            <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-              {operationLabel(currentIndex)}
-            </span>
-          </div>
+    <div className="flex min-h-[70vh] items-center justify-center p-4">
+      <div className="w-full max-w-md rounded-[20px] bg-card p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-foreground">
+            {currentIndex + 1} / {TOTAL_EXERCISES}
+          </p>
+          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            {operationLabel(currentIndex)}
+          </span>
+        </div>
 
-          {/* Progress bar */}
-          <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-primary transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </CardHeader>
+        {/* Progress bar */}
+        <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-primary/20">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-primary to-success transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
 
-        <CardContent className="space-y-6">
-          {/* Exercise display */}
-          <div className="flex items-center justify-center gap-4 py-8 text-5xl font-bold tracking-wide">
-            <span>{exercise.operand1}</span>
-            <span className="text-primary">
-              {operatorSymbol[exercise.operator]}
-            </span>
-            <span>{exercise.operand2}</span>
-            <span className="text-muted-foreground">=</span>
-            <span className="text-muted-foreground">?</span>
-          </div>
+        {/* Exercise display */}
+        <div className="flex items-center justify-center gap-4 py-10 text-4xl font-bold tracking-wide lg:text-5xl">
+          <span className="text-foreground">{exercise.operand1}</span>
+          <span className="text-primary">
+            {operatorSymbol[exercise.operator]}
+          </span>
+          <span className="text-foreground">{exercise.operand2}</span>
+          <span className="text-muted-foreground">=</span>
+          <span className="text-muted-foreground">?</span>
+        </div>
 
-          {/* Answer input + confirm */}
-          <div className="flex gap-3">
-            <Input
-              ref={inputRef}
-              type="number"
-              inputMode="decimal"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Sua resposta"
-              className="text-center text-lg"
-              autoFocus
-            />
-            <Button
-              onClick={submitAnswer}
-              disabled={answer.trim() === ""}
-            >
-              Confirmar
-            </Button>
-          </div>
+        {/* Answer input + confirm */}
+        <div className="space-y-3">
+          <Input
+            ref={inputRef}
+            type="number"
+            inputMode="decimal"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Sua resposta"
+            className="w-full rounded-xl border-2 border-primary/30 bg-muted text-center text-lg focus:border-primary"
+            autoFocus
+          />
+          <Button
+            onClick={submitAnswer}
+            disabled={answer.trim() === ""}
+            className="w-full min-h-[56px]"
+            size="xl"
+          >
+            Essa é minha resposta
+          </Button>
+        </div>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
-        </CardContent>
-      </Card>
+        {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
+      </div>
     </div>
   );
 }

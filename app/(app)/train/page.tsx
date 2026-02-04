@@ -10,6 +10,7 @@ import type { Operator } from "@/types";
 import { ExerciseCard } from "@/components/training/ExerciseCard";
 import { Timer } from "@/components/training/Timer";
 import { X } from "lucide-react";
+import { toast } from "sonner";
 
 const TOTAL_EXERCISES = 10;
 
@@ -95,8 +96,10 @@ export default function TrainPage() {
       setIsSaving(true);
       try {
         const sessionId = await finishSession(user.id, level);
+        toast.success("Sessao salva com sucesso!");
         router.push(`/results/${sessionId}`);
       } catch {
+        toast.error("Erro ao salvar sessao. Tente novamente.");
         setError("Erro ao salvar sessão. Tente novamente.");
         setIsSaving(false);
       }
@@ -165,12 +168,11 @@ export default function TrainPage() {
   if (!started) {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full">
+        <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full zoom-in-95">
           <h2 className="text-foreground mb-4">Treino Mental</h2>
           <p className="text-muted-foreground mb-2 leading-relaxed">
-            Você receberá {TOTAL_EXERCISES} exercícios adaptados ao seu
-            nível atual ({level}). Responda o mais rápido e corretamente
-            que puder.
+            São {TOTAL_EXERCISES} exercícios pensados pro seu nível
+            atual ({level}). Vai no seu ritmo, sem pressa.
           </p>
           {error && (
             <p className="text-sm text-destructive mb-4">{error}</p>
@@ -179,7 +181,7 @@ export default function TrainPage() {
             onClick={handleStart}
             className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium mt-6"
           >
-            Iniciar treino
+            Bora treinar
           </button>
         </div>
       </div>
@@ -259,7 +261,7 @@ export default function TrainPage() {
           disabled={answer.trim() === ""}
           className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transition-all duration-300 min-h-[56px] font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:hover:shadow-md"
         >
-          Confirmar
+          Essa é minha resposta
         </button>
 
         {error && <p className="text-sm text-destructive mt-4">{error}</p>}

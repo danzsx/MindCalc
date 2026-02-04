@@ -56,9 +56,9 @@ export function LessonCard({ lesson, status, onClick }: LessonCardProps) {
   return (
     <Card
       className={cn(
-        "transition-all",
+        "transition-all duration-300",
         isClickable
-          ? "cursor-pointer hover:shadow-md hover:border-primary/30"
+          ? "cursor-pointer hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] hover:border-primary/30 hover:-translate-y-1"
           : "opacity-60 cursor-not-allowed"
       )}
       onClick={isClickable ? onClick : undefined}

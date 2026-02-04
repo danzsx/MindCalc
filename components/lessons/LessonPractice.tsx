@@ -78,7 +78,7 @@ export function LessonPractice({
       <div className="flex flex-col items-center text-center space-y-6 py-4">
         <CheckCircle2 className="size-12 text-primary" />
         <div className="space-y-2">
-          <h3 className="text-xl font-bold">Treino concluído!</h3>
+          <h3 className="text-xl font-bold">Treino feito!</h3>
           <p className="text-muted-foreground">
             Você acertou{" "}
             <span className="font-semibold text-foreground">
@@ -127,8 +127,8 @@ export function LessonPractice({
           }
         >
           {lastCorrect
-            ? "Correto!"
-            : `Resposta: ${exercise.correctAnswer}`}
+            ? "Boa, acertou!"
+            : `A resposta era ${exercise.correctAnswer}`}
         </div>
       )}
 
@@ -146,7 +146,7 @@ export function LessonPractice({
             className="text-center text-lg"
           />
           <Button onClick={handleSubmit} disabled={userInput.trim() === ""}>
-            Responder
+            Essa é minha resposta
           </Button>
         </div>
       )}
