@@ -69,6 +69,12 @@ const somarArredondando: LessonContent = {
     }
     return exercises;
   },
+
+  interactive: {
+    type: "round-to-ten",
+    introOperand1: 34,
+    introOperand2: 28,
+  },
 };
 
 export default somarArredondando;

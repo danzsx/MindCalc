@@ -1,4 +1,4 @@
-import type { LessonContent, LessonExerciseData } from "../types";
+import type { LessonContent, LessonExerciseData, IntroScreen, StrategyStep } from "../types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -57,6 +57,31 @@ const dividirPensandoNaMultiplicacao: LessonContent = {
       exercises.push(generate(answer, divisor));
     }
     return exercises;
+  },
+
+  interactive: {
+    type: "step-discovery",
+    introOperand1: 72,
+    introOperand2: 8,
+    introScreens: (() => {
+      const a = 72, b = 8, answer = 9;
+      return [
+        { kind: "observe", message: "72 dividido por 8... e se a gente pensasse ao contrario?" } as IntroScreen,
+        { kind: "action", message: "Toda divisao tem uma multiplicacao escondida! Em vez de dividir, pergunte: qual numero vezes 8 da 72?", buttonText: "Inverter!", resultMessage: `? x ${b} = ${a}`, resultHighlight: "Agora e so lembrar a tabuada!" } as IntroScreen,
+        { kind: "solve", message: `Qual numero vezes ${b} da ${a}?`, equationDisplay: `? x ${b} = ${a}`, answer: answer, winMsg: `Isso! ${answer} x ${b} = ${a}!` } as IntroScreen,
+        { kind: "summary", recapSteps: [
+          { text: `Transforme a divisao em multiplicacao`, color: "cyan" as const },
+          { text: `Pergunte: ? x ${b} = ${a}`, color: "amber" as const },
+          { text: `${answer} x ${b} = ${a}, entao ${a} / ${b} = ${answer}!`, color: "emerald" as const },
+        ], closingMsg: "Pensar na multiplicacao torna a divisao muito mais natural!" } as IntroScreen,
+      ];
+    })(),
+    buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
+      const { operand1, operand2, correctAnswer } = exercise;
+      return [
+        { prompt: `Pense: ? x ${operand2} = ${operand1}. Qual e o numero?`, answer: correctAnswer },
+      ];
+    },
   },
 };
 

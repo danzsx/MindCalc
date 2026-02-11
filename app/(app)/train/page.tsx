@@ -169,8 +169,8 @@ export default function TrainPage() {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
         <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full zoom-in-95">
-          <h2 className="text-foreground mb-4">Treino Mental</h2>
-          <p className="text-muted-foreground mb-2 leading-relaxed">
+          <h2 className="text-section-title text-foreground" style={{ marginBottom: 'var(--card-section-gap)' }}>Treino Mental</h2>
+          <p className="text-body-primary text-muted-foreground" style={{ marginBottom: 'var(--space-sm)', lineHeight: 'var(--leading-relaxed)' }}>
             São {TOTAL_EXERCISES} exercícios pensados pro seu nível
             atual ({level}). Vai no seu ritmo, sem pressa.
           </p>

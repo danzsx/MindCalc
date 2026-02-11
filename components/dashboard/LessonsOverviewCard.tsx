@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { BookOpen, ArrowRight } from "lucide-react";
 
@@ -6,47 +8,104 @@ interface LessonsOverviewCardProps {
   totalCount: number;
 }
 
-export function LessonsOverviewCard({
-  completedCount,
-  totalCount,
-}: LessonsOverviewCardProps) {
-  const progressPct = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+function ProgressRing({ completed, total }: { completed: number; total: number }) {
+  const size = 80;
+  const strokeWidth = 7;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const pct = total > 0 ? completed / total : 0;
+  const offset = circumference * (1 - pct);
 
   return (
-    <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 fade-in" style={{ animationDelay: "400ms" }}>
-      <div className="flex items-center gap-3 mb-4">
-        <div className="bg-primary/10 p-2 rounded-lg">
-          <BookOpen className="h-5 w-5 text-primary" />
-        </div>
-        <h2 className="text-lg font-semibold text-foreground">Aulas Interativas</h2>
-      </div>
+    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="var(--muted)"
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="url(#lessonGrad)"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          className="dash-ring-fill"
+          style={{ "--ring-circumference": circumference } as React.CSSProperties}
+        />
+        <defs>
+          <linearGradient id="lessonGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#2DD4BF" />
+            <stop offset="100%" stopColor="#10B981" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <span className="absolute text-body-emphasis text-foreground">
+        {Math.round(pct * 100)}%
+      </span>
+    </div>
+  );
+}
 
-      <p className="text-sm text-muted-foreground mb-5">
-        Truques pra pensar mais rápido com números
-      </p>
-
-      <div className="space-y-2 mb-5">
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Progresso</span>
-          <span className="font-medium text-foreground">
-            {completedCount} de {totalCount} aulas
-          </span>
-        </div>
-        <div className="h-3 w-full overflow-hidden rounded-full bg-primary/20">
+export function LessonsOverviewCard({ completedCount, totalCount }: LessonsOverviewCardProps) {
+  return (
+    <div
+      className="dash-card flex flex-col"
+      style={{
+        padding: "var(--card-padding)",
+        animationDelay: "80ms",
+        "--card-accent": "linear-gradient(135deg, #2DD4BF, #14B8A6)",
+        "--card-accent-glow": "rgba(45, 212, 191, 0.05)",
+      } as React.CSSProperties}
+    >
+      <div className="relative z-10 flex flex-col h-full">
+        <div
+          className="flex items-center"
+          style={{ gap: "var(--card-header-gap)", marginBottom: "var(--card-section-gap)" }}
+        >
           <div
-            className="h-full rounded-full bg-gradient-to-r from-primary to-success transition-all duration-300"
-            style={{ width: `${progressPct}%` }}
-          />
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #2DD4BF, #14B8A6)" }}
+          >
+            <BookOpen className="h-5 w-5 text-white" />
+          </div>
+          <h2 className="text-card-title text-foreground">Aulas Interativas</h2>
+        </div>
+
+        <div className="flex items-center" style={{ gap: "var(--space-xl)", marginBottom: "var(--card-section-gap)" }}>
+          <ProgressRing completed={completedCount} total={totalCount} />
+          <div>
+            <p className="text-metric text-foreground">
+              {completedCount}
+              <span className="text-muted-foreground text-body-primary">/{totalCount}</span>
+            </p>
+            <p className="text-caption text-muted-foreground" style={{ marginTop: "var(--space-xs)" }}>
+              aulas concluídas
+            </p>
+          </div>
+        </div>
+
+        <p className="text-body-primary text-muted-foreground" style={{ marginBottom: "var(--card-section-gap)" }}>
+          Truques pra pensar mais rápido com números
+        </p>
+
+        <div className="mt-auto">
+          <Link
+            href="/lessons"
+            className="inline-flex items-center gap-2 text-body-emphasis text-primary hover:text-[#14B8A6] transition-colors group"
+          >
+            Explorar aulas
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
-
-      <Link
-        href="/lessons"
-        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-[#14B8A6] transition-colors"
-      >
-        Explorar aulas
-        <ArrowRight className="h-4 w-4" />
-      </Link>
     </div>
   );
 }

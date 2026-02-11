@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Grid3X3, ArrowRight } from "lucide-react";
+import { Grid3X3, ArrowRight, Trophy } from "lucide-react";
 import type { TablesProgress } from "@/types";
 
 const operationLabels: Record<string, string> = {
@@ -16,76 +16,101 @@ interface TablesCardProps {
 }
 
 export function TablesCard({ progress }: TablesCardProps) {
-  // Find the operation with the highest mastered percentage
   const best = progress.length > 0
     ? progress.reduce((a, b) => (a.masteredPercentage > b.masteredPercentage ? a : b))
     : null;
 
   return (
     <div
-      className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 fade-in"
-      style={{ animationDelay: "500ms" }}
+      className="dash-card flex flex-col"
+      style={{
+        padding: "var(--card-padding)",
+        animationDelay: "160ms",
+        "--card-accent": "linear-gradient(135deg, #FDE047, #FACC15)",
+        "--card-accent-glow": "rgba(253, 224, 71, 0.05)",
+      } as React.CSSProperties}
     >
-      <div className="flex items-center gap-3 mb-4">
-        <div className="bg-primary/10 p-2 rounded-lg">
-          <Grid3X3 className="h-5 w-5 text-primary" />
-        </div>
-        <h2 className="text-lg font-semibold text-foreground">Tabuada</h2>
-      </div>
-
-      {progress.length === 0 ? (
-        <p className="text-sm text-muted-foreground mb-5">
-          Que tal começar?
-        </p>
-      ) : (
-        <div className="space-y-4 mb-5">
-          {best && (
-            <p className="text-sm text-muted-foreground">
-              {operationLabels[best.operation] ?? best.operation}{" "}
-              <span className="font-medium text-foreground">
-                {Math.round(best.masteredPercentage)}%
-              </span>
-            </p>
-          )}
-
-          <div className="space-y-3">
-            {progress.map((p, index) => {
-              const pct = Math.round(p.masteredPercentage);
-              const isHigh = pct >= 60;
-              const barColor = isHigh ? "bg-[#10B981]" : "bg-[#FB923C]";
-
-              return (
-                <div
-                  key={p.id}
-                  className="space-y-1"
-                  style={{ animationDelay: `${index * 80}ms` }}
-                >
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">
-                      {operationLabels[p.operation] ?? p.operation} ({p.rangeMin}–{p.rangeMax})
-                    </span>
-                    <span className="font-medium text-foreground">{pct}%</span>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-muted">
-                    <div
-                      className={`h-full rounded-full ${barColor} transition-all duration-300`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+      <div className="relative z-10 flex flex-col h-full">
+        <div
+          className="flex items-center"
+          style={{ gap: "var(--card-header-gap)", marginBottom: "var(--card-header-gap)" }}
+        >
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg, #FDE047, #FACC15)" }}
+          >
+            <Grid3X3 className="h-5 w-5 text-amber-900" />
           </div>
+          <h2 className="text-card-title text-foreground">Tabuada</h2>
         </div>
-      )}
 
-      <Link
-        href="/tabuada"
-        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-[#14B8A6] transition-colors"
-      >
-        Treinar Tabuada
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+        {progress.length === 0 ? (
+          <p
+            className="text-body-primary text-muted-foreground"
+            style={{ marginBottom: "var(--card-section-gap)" }}
+          >
+            Que tal começar?
+          </p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)", marginBottom: "var(--card-section-gap)" }}>
+            {best && (
+              <div
+                className="flex items-center rounded-lg"
+                style={{
+                  gap: "var(--space-sm)",
+                  padding: "var(--space-sm) var(--space-md)",
+                  background: "rgba(253, 224, 71, 0.08)",
+                }}
+              >
+                <Trophy className="h-3.5 w-3.5 text-amber-500" />
+                <span className="text-caption text-muted-foreground">
+                  Melhor:{" "}
+                  <span className="text-caption-medium text-foreground">
+                    {operationLabels[best.operation] ?? best.operation} — {Math.round(best.masteredPercentage)}%
+                  </span>
+                </span>
+              </div>
+            )}
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
+              {progress.map((p) => {
+                const pct = Math.round(p.masteredPercentage);
+                const barGradient =
+                  pct >= 60
+                    ? "linear-gradient(90deg, #10B981, #059669)"
+                    : "linear-gradient(90deg, #FB923C, #F97316)";
+
+                return (
+                  <div key={p.id}>
+                    <div className="flex items-center justify-between text-caption-medium" style={{ marginBottom: 4 }}>
+                      <span className="text-muted-foreground">
+                        {operationLabels[p.operation] ?? p.operation} ({p.rangeMin}–{p.rangeMax})
+                      </span>
+                      <span className="text-foreground">{pct}%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                      <div
+                        className="h-full rounded-full dash-progress-fill"
+                        style={{ width: `${pct}%`, background: barGradient }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-auto">
+          <Link
+            href="/tabuada"
+            className="inline-flex items-center gap-2 text-body-emphasis text-primary hover:text-[#14B8A6] transition-colors group"
+          >
+            Treinar Tabuada
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

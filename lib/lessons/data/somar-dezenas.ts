@@ -1,4 +1,4 @@
-import type { LessonContent, LessonExerciseData } from "../types";
+import type { LessonContent, LessonExerciseData, IntroScreen, StrategyStep } from "../types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -63,6 +63,43 @@ const somarDezenas: LessonContent = {
       exercises.push(generate(a, b));
     }
     return exercises;
+  },
+
+  interactive: {
+    type: "step-discovery",
+    introOperand1: 37,
+    introOperand2: 48,
+    introScreens: (() => {
+      const a = 37, b = 48;
+      const dezA = 30, uniA = 7, dezB = 40, uniB = 8;
+      const somaDez = 70, somaUni = 15;
+      return [
+        { kind: "observe", message: "Olha esses dois numeros. Parece dificil somar de cabeca? Tem um jeito esperto!" } as IntroScreen,
+        { kind: "action", message: "E se a gente separasse as dezenas das unidades?", buttonText: "Separar!", resultMessage: `${a} = ${dezA} + ${uniA}  e  ${b} = ${dezB} + ${uniB}`, resultHighlight: "Agora cada parte fica facil!" } as IntroScreen,
+        { kind: "fill", question: `Quanto e ${dezA} + ${dezB}?`, answer: somaDez, winMsg: `Isso! ${dezA} + ${dezB} = ${somaDez}!`, equationHint: `${dezA} + ${dezB} = ?` } as IntroScreen,
+        { kind: "fill", question: `Agora as unidades: ${uniA} + ${uniB}?`, answer: somaUni, winMsg: `Boa! ${uniA} + ${uniB} = ${somaUni}!`, equationHint: `${uniA} + ${uniB} = ?` } as IntroScreen,
+        { kind: "solve", message: "Agora junta tudo:", equationDisplay: `${somaDez} + ${somaUni} = ?`, answer: 85, winMsg: "Voce resolveu separando em partes!" } as IntroScreen,
+        { kind: "summary", recapSteps: [
+          { text: `Separamos as dezenas: ${dezA} + ${dezB} = ${somaDez}`, color: "cyan" as const },
+          { text: `Separamos as unidades: ${uniA} + ${uniB} = ${somaUni}`, color: "amber" as const },
+          { text: `Juntamos: ${somaDez} + ${somaUni} = 85 — facil!`, color: "emerald" as const },
+        ], closingMsg: "Esse truque funciona com qualquer soma de dois numeros!" } as IntroScreen,
+      ];
+    })(),
+    buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
+      const { operand1, operand2, correctAnswer } = exercise;
+      const dezA = Math.floor(operand1 / 10) * 10;
+      const uniA = operand1 % 10;
+      const dezB = Math.floor(operand2 / 10) * 10;
+      const uniB = operand2 % 10;
+      const somaDez = dezA + dezB;
+      const somaUni = uniA + uniB;
+      return [
+        { prompt: `Dezenas: ${dezA} + ${dezB} = ?`, answer: somaDez },
+        { prompt: `Unidades: ${uniA} + ${uniB} = ?`, answer: somaUni },
+        { prompt: `Juntando: ${somaDez} + ${somaUni} = ?`, answer: correctAnswer },
+      ];
+    },
   },
 };
 

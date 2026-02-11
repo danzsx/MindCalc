@@ -133,14 +133,14 @@ export default async function DashboardPage() {
     }));
 
   return (
-    <main className="space-y-8 fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <h1 className="text-foreground">Seu painel</h1>
+    <main className="flex flex-col fade-in" style={{ gap: 'var(--section-gap)' }}>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ gap: 'var(--space-lg)' }}>
+        <h1 className="text-page-title text-foreground">Seu painel</h1>
         <Link
           href="/train"
           className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground
             px-6 py-3 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg
-            transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium"
+            transform hover:-translate-y-0.5 transition-all duration-300 min-h-[48px] text-body-emphasis"
         >
           Bora treinar
         </Link>
@@ -153,16 +153,24 @@ export default async function DashboardPage() {
         totalSessions={totalSessions}
       />
 
-      <LessonsOverviewCard
-        completedCount={completedLessons ?? 0}
-        totalCount={totalLessons ?? 0}
-      />
+      {/* Learning row: Lessons + Tables side-by-side */}
+      <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--grid-gap)' }}>
+        <LessonsOverviewCard
+          completedCount={completedLessons ?? 0}
+          totalCount={totalLessons ?? 0}
+        />
+        <TablesCard progress={tablesProgress} />
+      </div>
 
-      <TablesCard progress={tablesProgress} />
-
-      <EvolutionChart sessions={orderedSessions} />
-
-      <WeakPointsList weakPoints={weakPoints} />
+      {/* Analytics row: Chart (2/3) + Weak Points (1/3) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3" style={{ gap: 'var(--grid-gap)' }}>
+        <div className="lg:col-span-2">
+          <EvolutionChart sessions={orderedSessions} />
+        </div>
+        <div className="lg:col-span-1">
+          <WeakPointsList weakPoints={weakPoints} />
+        </div>
+      </div>
     </main>
   );
 }

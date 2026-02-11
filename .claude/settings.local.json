@@ -19,7 +19,12 @@
       "Bash(git push)",
       "Bash(npx vitest:*)",
       "Bash(npm run build:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npx next build --no-lint)",
+      "Bash(python -c:*)",
+      "Bash(python create_poster.py:*)",
+      "Bash(del \"C:\\\\Users\\\\nathu\\\\OneDrive\\\\Área de Trabalho\\\\newprojet\\\\Calc\\\\create_poster.py\")",
+      "Bash(npx next dev:*)"
     ]
   }
 }

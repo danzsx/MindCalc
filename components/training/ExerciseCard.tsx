@@ -25,12 +25,12 @@ export function ExerciseCard({
   total,
 }: ExerciseCardProps) {
   return (
-    <div className="flex flex-col items-center gap-4">
-      <span className="text-sm font-medium text-muted-foreground">
+    <div className="flex flex-col items-center" style={{ gap: 'var(--space-lg)' }}>
+      <span className="text-body-emphasis text-muted-foreground">
         {current} / {total}
       </span>
 
-      <div className="flex items-center justify-center gap-4 py-6 text-5xl font-bold tracking-wide">
+      <div className="flex items-center justify-center text-metric-lg" style={{ gap: 'var(--space-lg)', paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
         <span>{operand1}</span>
         <span className="text-primary">{operatorSymbol[operator]}</span>
         <span>{operand2}</span>

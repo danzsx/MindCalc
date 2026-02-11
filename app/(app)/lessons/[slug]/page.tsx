@@ -10,13 +10,19 @@ import { LessonShell } from "@/components/lessons/LessonShell";
 export default function LessonPage() {
   const params = useParams<{ slug: string }>();
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isAdmin } = useAuth();
   const slug = params.slug;
 
   const [loading, setLoading] = useState(true);
   const [allowed, setAllowed] = useState(false);
 
   const lesson = getLessonBySlug(slug);
+
+  // Determine next lesson slug for navigation
+  const lessonIdx = allLessons.findIndex((l) => l.slug === slug);
+  const nextLessonSlug = lessonIdx >= 0 && lessonIdx < allLessons.length - 1
+    ? allLessons[lessonIdx + 1].slug
+    : undefined;
 
   useEffect(() => {
     if (authLoading) return;
@@ -32,6 +38,13 @@ export default function LessonPage() {
     }
 
     async function checkAccess() {
+      // Admin bypasses all lesson locks
+      if (isAdmin) {
+        setAllowed(true);
+        setLoading(false);
+        return;
+      }
+
       const lessonIdx = allLessons.findIndex((l) => l.slug === slug);
 
       // First lesson is always accessible
@@ -72,7 +85,7 @@ export default function LessonPage() {
     }
 
     checkAccess();
-  }, [slug, lesson, user, authLoading, router]);
+  }, [slug, lesson, user, authLoading, isAdmin, router]);
 
   const handleComplete = useCallback(async () => {
     if (!user) return;
@@ -96,7 +109,7 @@ export default function LessonPage() {
 
   return (
     <main className="container mx-auto max-w-4xl px-4 py-8">
-      <LessonShell lesson={lesson} onComplete={handleComplete} />
+      <LessonShell lesson={lesson} onComplete={handleComplete} nextLessonSlug={nextLessonSlug} />
     </main>
   );
 }

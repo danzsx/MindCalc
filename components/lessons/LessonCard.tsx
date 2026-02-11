@@ -1,8 +1,9 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, PlayCircle, Lock, Plus, Minus, X, Divide } from "lucide-react";
+import { getOperatorSymbol } from "@/lib/lessons/utils";
+import { CheckCircle2, Lock, Plus, Minus, X, Divide } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export type LessonStatus = "completed" | "available" | "locked";
 
@@ -11,27 +12,6 @@ const OPERATOR_ICONS: Record<string, typeof Plus> = {
   "-": Minus,
   "*": X,
   "/": Divide,
-};
-
-const STATUS_CONFIG: Record<
-  LessonStatus,
-  { icon: typeof CheckCircle2; label: string; color: string }
-> = {
-  completed: {
-    icon: CheckCircle2,
-    label: "Concluída",
-    color: "text-green-600 dark:text-green-400",
-  },
-  available: {
-    icon: PlayCircle,
-    label: "Disponível",
-    color: "text-primary",
-  },
-  locked: {
-    icon: Lock,
-    label: "Bloqueada",
-    color: "text-muted-foreground",
-  },
 };
 
 interface LessonCardProps {
@@ -44,57 +24,75 @@ interface LessonCardProps {
     difficulty: string;
   };
   status: LessonStatus;
+  index: number;
+  total: number;
   onClick: () => void;
 }
 
-export function LessonCard({ lesson, status, onClick }: LessonCardProps) {
-  const config = STATUS_CONFIG[status];
-  const StatusIcon = config.icon;
+export function LessonCard({ lesson, status, index, total, onClick }: LessonCardProps) {
   const OperatorIcon = OPERATOR_ICONS[lesson.operator] ?? Plus;
   const isClickable = status !== "locked";
+  const symbol = getOperatorSymbol(lesson.operator);
 
   return (
-    <Card
-      className={cn(
-        "transition-all duration-300",
-        isClickable
-          ? "cursor-pointer hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] hover:border-primary/30 hover:-translate-y-1"
-          : "opacity-60 cursor-not-allowed"
-      )}
-      onClick={isClickable ? onClick : undefined}
-    >
-      <CardContent className="flex items-center gap-4 pt-6">
-        {/* Operator icon */}
+    <div className="flex gap-4 items-start">
+      {/* Trail node */}
+      <div className="flex flex-col items-center shrink-0">
         <div
           className={cn(
-            "flex size-10 shrink-0 items-center justify-center rounded-lg",
-            status === "locked" ? "bg-muted" : "bg-primary/10"
+            "flex items-center justify-center rounded-full border-2 transition-all duration-300",
+            "w-12 h-12",
+            status === "completed" && "bg-success border-success text-success-foreground",
+            status === "available" && "border-primary bg-primary/10 text-primary lesson-pulse",
+            status === "locked" && "border-muted bg-muted/50 text-muted-foreground opacity-50"
           )}
         >
-          <OperatorIcon
-            className={cn(
-              "size-5",
-              status === "locked" ? "text-muted-foreground" : "text-primary"
-            )}
-          />
+          {status === "completed" ? (
+            <CheckCircle2 className="size-5" />
+          ) : status === "locked" ? (
+            <Lock className="size-4" />
+          ) : (
+            <OperatorIcon className="size-5" />
+          )}
         </div>
+      </div>
 
-        {/* Title and description */}
-        <div className="flex-1 min-w-0">
-          <p className="font-medium truncate">{lesson.title}</p>
-          <p className="text-sm text-muted-foreground truncate">
-            {lesson.description}
-          </p>
-        </div>
+      {/* Card content */}
+      <div
+        className={cn(
+          "flex-1 rounded-xl border p-4 transition-all duration-300",
+          isClickable
+            ? "cursor-pointer bg-card hover:shadow-lg hover:border-primary/30 hover:-translate-y-0.5"
+            : "opacity-50 cursor-not-allowed bg-muted/30",
+          status === "completed" && "border-success/20 bg-success/5"
+        )}
+        onClick={isClickable ? onClick : undefined}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-caption text-muted-foreground">
+                Aula {index + 1} de {total}
+              </span>
+              {status === "completed" && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption-medium bg-success/10 text-success border border-success/20">
+                  Concluida
+                </span>
+              )}
+            </div>
+            <p className="text-body-emphasis truncate">{lesson.title}</p>
+            <p className="text-body-primary text-muted-foreground truncate">
+              {lesson.description}
+            </p>
+          </div>
 
-        {/* Status badge */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          <StatusIcon className={cn("size-4", config.color)} />
-          <span className={cn("text-xs font-medium hidden sm:inline", config.color)}>
-            {config.label}
-          </span>
+          {status === "available" && (
+            <Button size="sm" className="shrink-0">
+              Comecar
+            </Button>
+          )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

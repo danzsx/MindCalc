@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Brain } from "lucide-react";
+import { isAdmin } from "@/lib/admin";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -22,7 +23,12 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function redirectAfterAuth(userId: string) {
+  async function redirectAfterAuth(userId: string, userEmail?: string) {
+    if (isAdmin(userEmail)) {
+      router.push("/dashboard");
+      return;
+    }
+
     const supabase = createClient();
     const { data: profile } = await supabase
       .from("profiles")
@@ -54,7 +60,7 @@ export default function LoginPage() {
     }
 
     if (data.user) {
-      await redirectAfterAuth(data.user.id);
+      await redirectAfterAuth(data.user.id, data.user.email);
     }
     setLoading(false);
   }

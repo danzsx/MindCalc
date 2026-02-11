@@ -1,4 +1,4 @@
-import type { LessonContent, LessonExerciseData } from "../types";
+import type { LessonContent, LessonExerciseData, IntroScreen, StrategyStep } from "../types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -84,6 +84,55 @@ const subtrairCompletando: LessonContent = {
       exercises.push(generate(a, b));
     }
     return exercises;
+  },
+
+  interactive: {
+    type: "step-discovery",
+    introOperand1: 53,
+    introOperand2: 17,
+    introScreens: (() => {
+      const a = 53, b = 17;
+      const dezAbaixo = 50, unidadesA = 3;
+      const resto = b - unidadesA; // 14
+      const answer = dezAbaixo - resto; // 36
+      return [
+        { kind: "observe", message: "Subtrair de cabeca pode ser chato. Mas tem um atalho usando as dezenas!" } as IntroScreen,
+        { kind: "choice", question: "Qual dezena exata esta logo abaixo de 53?", options: [
+          { label: "40", value: "40", sublabel: "4 dezenas" },
+          { label: "50", value: "50", sublabel: "5 dezenas" },
+          { label: "60", value: "60", sublabel: "6 dezenas" },
+        ], correct: "50", wrongMsg: "Quase! Pense no numero redondo logo abaixo de 53...", winMsg: "Isso! 50 e a dezena logo abaixo de 53!" } as IntroScreen,
+        { kind: "fill", question: `Quanto falta do 53 pro 50? (53 - ? = 50)`, answer: unidadesA, winMsg: `Isso! Tiramos ${unidadesA} pra chegar em ${dezAbaixo}!`, equationHint: `53 - ? = 50` } as IntroScreen,
+        { kind: "fill", question: `Ja tiramos ${unidadesA}. Quanto falta pra completar ${b}?`, answer: resto, winMsg: `Boa! Faltam ${resto} pra completar os ${b}!`, equationHint: `${b} - ${unidadesA} = ?` } as IntroScreen,
+        { kind: "solve", message: "Agora faca a conta facil:", equationDisplay: `${dezAbaixo} - ${resto} = ?`, answer: answer, winMsg: "Voce resolveu usando a dezena como apoio!" } as IntroScreen,
+        { kind: "summary", recapSteps: [
+          { text: `Tiramos ${unidadesA} para chegar na dezena: 53 - ${unidadesA} = ${dezAbaixo}`, color: "cyan" as const },
+          { text: `Faltam ${resto} para completar ${b}: ${b} - ${unidadesA} = ${resto}`, color: "amber" as const },
+          { text: `Subtraimos o resto: ${dezAbaixo} - ${resto} = ${answer} — pronto!`, color: "emerald" as const },
+        ], closingMsg: "Usar a dezena como apoio deixa a subtracao muito mais facil!" } as IntroScreen,
+      ];
+    })(),
+    buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
+      const { operand1, operand2, correctAnswer } = exercise;
+      const dezAbaixo = Math.floor(operand1 / 10) * 10;
+      const unidadesA = operand1 - dezAbaixo;
+      if (unidadesA > 0 && operand2 > unidadesA) {
+        const resto = operand2 - unidadesA;
+        return [
+          { prompt: `Tire ${unidadesA} pra chegar em ${dezAbaixo}: ${operand1} - ${unidadesA} = ?`, answer: dezAbaixo },
+          { prompt: `Falta: ${operand2} - ${unidadesA} = ?`, answer: resto },
+          { prompt: `Termine: ${dezAbaixo} - ${resto} = ?`, answer: correctAnswer },
+        ];
+      }
+      // Fallback
+      const dezB = Math.floor(operand2 / 10) * 10;
+      const uniB = operand2 % 10;
+      const parcial = operand1 - dezB;
+      return [
+        { prompt: `Tire as dezenas: ${operand1} - ${dezB} = ?`, answer: parcial },
+        { prompt: `Tire as unidades: ${parcial} - ${uniB} = ?`, answer: correctAnswer },
+      ];
+    },
   },
 };
 

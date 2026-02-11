@@ -16,6 +16,7 @@ import {
   Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 export const navLinks = [
   { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
@@ -28,6 +29,7 @@ export const navLinks = [
 export function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const { isAdmin } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-card shadow-sm border-b border-border">
@@ -44,6 +46,11 @@ export function Navbar() {
           style={{ fontFamily: "var(--font-family-display)" }}
         >
           MindCalc
+          {isAdmin && (
+            <span className="ml-2 rounded-md bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
+              Admin
+            </span>
+          )}
         </Link>
 
         {/* Desktop nav links */}
@@ -53,7 +60,7 @@ export function Navbar() {
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
+                "flex items-center gap-2 rounded-lg px-3 py-2 text-body-primary transition-colors",
                 pathname === href
                   ? "bg-muted text-foreground font-medium"
                   : "text-muted-foreground hover:text-primary hover:bg-muted"
@@ -77,7 +84,7 @@ export function Navbar() {
           </button>
           <Link
             href="/billing"
-            className="hidden lg:inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#14B8A6] transition-colors shadow-sm"
+            className="hidden lg:inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-body-emphasis hover:bg-[#14B8A6] transition-colors shadow-sm"
           >
             <Sparkles size={16} />
             Assinar Pro

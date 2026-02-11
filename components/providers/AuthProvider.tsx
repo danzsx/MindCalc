@@ -9,11 +9,13 @@ import {
 } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
+import { isAdmin } from "@/lib/admin";
 
 export interface AuthContextValue {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isAdmin: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -21,6 +23,7 @@ export const AuthContext = createContext<AuthContextValue>({
   user: null,
   session: null,
   loading: true,
+  isAdmin: false,
   signOut: async () => {},
 });
 
@@ -59,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin: isAdmin(user?.email), signOut }}>
       {children}
     </AuthContext.Provider>
   );

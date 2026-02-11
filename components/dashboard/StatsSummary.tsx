@@ -1,4 +1,4 @@
-import { Target, Flame, TrendingUp, BarChart3 } from "lucide-react";
+import { Target, Flame, TrendingUp, BarChart3, type LucideIcon } from "lucide-react";
 
 interface StatsSummaryProps {
   level: number;
@@ -7,52 +7,78 @@ interface StatsSummaryProps {
   totalSessions: number;
 }
 
-const stats = (props: StatsSummaryProps) => [
+interface StatConfig {
+  icon: LucideIcon;
+  value: string | number;
+  label: string;
+  accent: string;
+  accentGlow: string;
+}
+
+const getStats = (props: StatsSummaryProps): StatConfig[] => [
   {
     icon: TrendingUp,
     value: props.level,
     label: "Nível",
-    iconColor: "text-primary",
-    iconBg: "bg-primary/10",
+    accent: "linear-gradient(135deg, #2DD4BF, #14B8A6)",
+    accentGlow: "rgba(45, 212, 191, 0.06)",
   },
   {
     icon: Flame,
-    value: `${props.streak} dias`,
-    label: "Sequência",
-    iconColor: "text-secondary",
-    iconBg: "bg-secondary/10",
+    value: `${props.streak}`,
+    label: "Dias seguidos",
+    accent: "linear-gradient(135deg, #FDE047, #FACC15)",
+    accentGlow: "rgba(253, 224, 71, 0.06)",
   },
   {
     icon: Target,
     value: `${Math.round(props.avgAccuracy)}%`,
-    label: "Acertos",
-    iconColor: "text-success",
-    iconBg: "bg-success/10",
+    label: "Precisão",
+    accent: "linear-gradient(135deg, #10B981, #059669)",
+    accentGlow: "rgba(16, 185, 129, 0.06)",
   },
   {
     icon: BarChart3,
     value: props.totalSessions,
     label: "Treinos",
-    iconColor: "text-primary",
-    iconBg: "bg-primary/10",
+    accent: "linear-gradient(135deg, #FB923C, #F97316)",
+    accentGlow: "rgba(251, 146, 60, 0.06)",
   },
 ];
 
 export function StatsSummary(props: StatsSummaryProps) {
+  const stats = getStats(props);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-      {stats(props).map((stat, index) => (
+    <div className="grid grid-cols-2 md:grid-cols-4 dash-stagger" style={{ gap: "var(--stats-gap)" }}>
+      {stats.map((stat) => (
         <div
           key={stat.label}
-          className="bg-card rounded-[20px] p-6 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 fade-in"
-          style={{ animationDelay: `${index * 100}ms` }}
+          className="dash-card"
+          style={{
+            padding: "var(--card-padding)",
+            "--card-accent": stat.accent,
+            "--card-accent-glow": stat.accentGlow,
+          } as React.CSSProperties}
         >
-          <div className="flex flex-col items-center gap-3">
-            <div className={`${stat.iconBg} p-3 rounded-full`}>
-              <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
+          <div className="relative z-10 flex flex-col" style={{ gap: "var(--space-md)" }}>
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ background: stat.accent }}
+            >
+              <stat.icon className="h-5 w-5 text-white" />
             </div>
-            <span className="text-foreground text-2xl font-bold">{stat.value}</span>
-            <span className="text-muted-foreground text-sm">{stat.label}</span>
+            <div>
+              <span className="block text-metric text-foreground dash-number-in">
+                {stat.value}
+              </span>
+              <span
+                className="block text-caption text-muted-foreground"
+                style={{ marginTop: "var(--space-xs)" }}
+              >
+                {stat.label}
+              </span>
+            </div>
           </div>
         </div>
       ))}

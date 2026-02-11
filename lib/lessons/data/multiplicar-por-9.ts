@@ -1,4 +1,4 @@
-import type { LessonContent, LessonExerciseData } from "../types";
+import type { LessonContent, LessonExerciseData, IntroScreen, StrategyStep } from "../types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -56,6 +56,41 @@ const multiplicarPor9: LessonContent = {
       exercises.push(generate(randomInt(3, 25)));
     }
     return exercises;
+  },
+
+  interactive: {
+    type: "step-discovery",
+    introOperand1: 7,
+    introOperand2: 9,
+    introScreens: (() => {
+      const a = 7;
+      const vezes10 = 70;
+      const answer = 63;
+      return [
+        { kind: "observe", message: "7 vezes 9... existe um truque genial! O 9 e quase 10." } as IntroScreen,
+        { kind: "choice", question: "9 e quase quanto?", options: [
+          { label: "8", value: "8" },
+          { label: "10", value: "10" },
+          { label: "11", value: "11" },
+        ], correct: "10", wrongMsg: "Pense: 9 e so 1 a menos que...", winMsg: "Isso! 9 = 10 - 1!" } as IntroScreen,
+        { kind: "fill", question: `Multiplique por 10: ${a} x 10 = ?`, answer: vezes10, winMsg: `Boa! ${a} x 10 = ${vezes10}!`, equationHint: `${a} x 10 = ?` } as IntroScreen,
+        { kind: "solve", message: "Agora tire o numero original:", equationDisplay: `${vezes10} - ${a} = ?`, answer: answer, winMsg: "Multiplicou por 9 sem decorar tabuada!" } as IntroScreen,
+        { kind: "summary", recapSteps: [
+          { text: `9 = 10 - 1 — entao x9 = x10 - x1`, color: "cyan" as const },
+          { text: `Multiplicamos por 10: ${a} x 10 = ${vezes10}`, color: "amber" as const },
+          { text: `Subtraimos: ${vezes10} - ${a} = ${answer} — genial!`, color: "emerald" as const },
+        ], closingMsg: "Funciona com qualquer numero vezes 9!" } as IntroScreen,
+      ];
+    })(),
+    buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
+      const { operand1 } = exercise;
+      const vezes10 = operand1 * 10;
+      const answer = operand1 * 9;
+      return [
+        { prompt: `x 10: ${operand1} x 10 = ?`, answer: vezes10 },
+        { prompt: `Subtraia: ${vezes10} - ${operand1} = ?`, answer: answer },
+      ];
+    },
   },
 };
 

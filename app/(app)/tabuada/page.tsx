@@ -25,12 +25,12 @@ export default function TabuadaPage() {
     <div className="flex items-center justify-center min-h-[70vh]">
       <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full zoom-in-95">
         <h1
-          className="text-2xl font-semibold text-foreground mb-1"
-          style={{ fontFamily: "var(--font-family-display)" }}
+          className="text-page-title text-foreground"
+          style={{ marginBottom: 'var(--space-xs)' }}
         >
           Tabuada
         </h1>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-body-primary text-muted-foreground" style={{ marginBottom: 'var(--grid-gap)' }}>
           Pratique as operações no seu ritmo, sem pressa.
         </p>
 

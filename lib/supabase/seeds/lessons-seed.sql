@@ -76,5 +76,59 @@ values
     '/',
     8,
     'intermediate'
+  ),
+  (
+    'porcentagem-10',
+    'Porcentagem: o jeito facil de calcular 10%',
+    'Aprenda a calcular 10% de qualquer valor dividindo por 10.',
+    'Porcentagem 10%',
+    '/',
+    101,
+    'beginner'
+  ),
+  (
+    'porcentagem-quanto-e',
+    'Porcentagem: encontrar quanto % e um valor',
+    'Descubra que porcentagem um valor representa de outro usando parte x 100.',
+    'Porcentagem - encontrar percentual',
+    '/',
+    102,
+    'beginner'
+  ),
+  (
+    'fracao-metade-terco-quarto',
+    'Fracao: entendendo metade, um terco e um quarto',
+    'Fracoes do jeito simples: dividir em partes iguais.',
+    'Fracoes basicas',
+    '/',
+    103,
+    'beginner'
+  ),
+  (
+    'fracao-somar-subtrair',
+    'Fracao: somar e subtrair fracoes simples',
+    'Aprenda a somar fracoes encontrando cada parte e depois somando.',
+    'Fracoes - somar e subtrair',
+    '+',
+    104,
+    'beginner'
+  ),
+  (
+    'regra-de-3-proporcao',
+    'Regra de 3: resolver problemas de proporcao',
+    'Use valor unitario e multiplique pela nova quantidade.',
+    'Regra de 3 direta',
+    '*',
+    105,
+    'intermediate'
+  ),
+  (
+    'regra-de-3-inversa',
+    'Regra de 3: problemas inversos',
+    'Quando um valor aumenta, o outro diminui. Pense no trabalho total.',
+    'Regra de 3 inversa',
+    '/',
+    106,
+    'intermediate'
   )
 on conflict (slug) do nothing;
