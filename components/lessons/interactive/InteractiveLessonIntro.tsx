@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NumberBar } from "./NumberBar";
+import { isApproximatelyEqual, parseNumericInput } from "@/lib/lessons/utils";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -165,9 +166,9 @@ export function InteractiveLessonIntro({
   );
 
   const handleGapSubmit = useCallback(() => {
-    const num = Number(gapInput.trim());
-    if (isNaN(num)) return;
-    if (num === gap) {
+    const num = parseNumericInput(gapInput);
+    if (num === null) return;
+    if (isApproximatelyEqual(gap, num)) {
       setGapCorrect(true);
       setTimeout(() => goNext(), 1200);
     } else {
@@ -188,9 +189,9 @@ export function InteractiveLessonIntro({
   }, []);
 
   const handleSolveSubmit = useCallback(() => {
-    const num = Number(solveInput.trim());
-    if (isNaN(num)) return;
-    if (num === result) {
+    const num = parseNumericInput(solveInput);
+    if (num === null) return;
+    if (isApproximatelyEqual(result, num)) {
       setSolveCorrect(true);
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 2500);

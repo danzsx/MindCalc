@@ -13,12 +13,12 @@ function generate(part: number, total: number): LessonExerciseData {
     operand2: total,
     operator: "/",
     correctAnswer: percent,
-    fullHint: `Multiplique a parte por 100: ${part} Ã— 100 = ${scaled}. Depois divida pelo total: ${scaled} Ã· ${total} = ${percent}.`,
-    partialHint: `Primeiro faÃ§a ${part} Ã— 100 = ${scaled}...`,
+    fullHint: `Multiplique a parte por 100: ${part} x 100 = ${scaled}. Depois divida pelo total: ${scaled} / ${total} = ${percent}.`,
+    partialHint: `Primeiro faca ${part} x 100 = ${scaled}...`,
     stepByStep: [
-      `Parte Ã— 100: ${part} Ã— 100 = ${scaled}`,
-      `Divida pelo total: ${scaled} Ã· ${total} = ${percent}`,
-      `Logo, ${part} Ã© ${percent}% de ${total}`,
+      `Parte x 100: ${part} x 100 = ${scaled}`,
+      `Divida pelo total: ${scaled} / ${total} = ${percent}`,
+      `Logo, ${part} e ${percent}% de ${total}`,
     ],
   };
 }
@@ -40,20 +40,20 @@ function generatePair(): { part: number; total: number } {
 
 const porcentagemQuantoE: LessonContent = {
   slug: "porcentagem-quanto-e",
-  title: "Porcentagem: encontrar quanto % Ã© um valor",
-  technique: "Encontrar porcentagem (parte Ã— 100 ÷ total)",
+  title: "Porcentagem: encontrar quanto % e um valor",
+  technique: "Encontrar porcentagem (parte x 100 / total)",
   operator: "/",
   difficulty: "beginner",
 
   intro: {
     explanation:
-      "Para descobrir que porcentagem um valor representa, multiplique a parte por 100 e divida pelo total. Ã‰ a forma direta de achar o percentual.",
+      "Para descobrir que porcentagem um valor representa, multiplique a parte por 100 e divida pelo total. E a forma direta de achar o percentual.",
     example: {
-      expression: "3000 Ã· 120",
+      expression: "3000 / 120",
       steps: [
-        "Multiplique a parte por 100: 30 Ã— 100 = 3000",
-        "Divida pelo total: 3000 Ã· 120 = 25",
-        "Logo, 30 Ã© 25% de 120",
+        "Multiplique a parte por 100: 30 x 100 = 3000",
+        "Divida pelo total: 3000 / 120 = 25",
+        "Logo, 30 e 25% de 120",
       ],
       answer: 25,
     },
@@ -88,15 +88,14 @@ const porcentagemQuantoE: LessonContent = {
         { kind: "fill", question: `Primeiro: ${part} x 100 = ?`, answer: scaled, winMsg: `Boa! ${part} x 100 = ${scaled}!`, equationHint: `${part} x 100 = ?` } as IntroScreen,
         { kind: "solve", message: "Agora divida pelo total:", equationDisplay: `${scaled} / ${total} = ?`, answer: answer, winMsg: `${part} e ${answer}% de ${total}!` } as IntroScreen,
         { kind: "summary", recapSteps: [
-          { text: `Formula: parte x 100 / total`, color: "cyan" as const },
+          { text: "Formula: parte x 100 / total", color: "cyan" as const },
           { text: `${part} x 100 = ${scaled}`, color: "amber" as const },
-          { text: `${scaled} / ${total} = ${answer}%  — descobriu!`, color: "emerald" as const },
-        ], closingMsg: "Essa formula funciona pra encontrar qualquer porcentagem!" } as IntroScreen,
+          { text: `${scaled} / ${total} = ${answer}% - descobriu!`, color: "emerald" as const },
+        ], closingMsg: "Essa formula funciona para encontrar qualquer porcentagem!" } as IntroScreen,
       ];
     })(),
     buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
       const { operand1, operand2, correctAnswer } = exercise;
-      // operand1 is already part * 100
       return [
         { prompt: `Parte x 100 ja esta: ${operand1}. Divida: ${operand1} / ${operand2} = ?`, answer: correctAnswer },
       ];

@@ -14,11 +14,18 @@ import fracaoMetadeTercoQuarto from "./data/fracao-metade-terco-quarto";
 import fracaoSomarSubtrair from "./data/fracao-somar-subtrair";
 import regraDe3Proporcao from "./data/regra-de-3-proporcao";
 import regraDe3Inversa from "./data/regra-de-3-inversa";
+import multiplicarPor11 from "./data/multiplicar-por-11";
+import quadradoTerminadosEm5 from "./data/quadrado-terminados-em-5";
+import multiplicarProximos100 from "./data/multiplicar-proximos-100";
+import divisibilidadeRapida from "./data/divisibilidade-rapida";
+import estimativaRaizQuadrada from "./data/estimativa-raiz-quadrada";
+import potenciasDe2E3 from "./data/potencias-de-2-e-3";
 
 /**
  * All available lessons ordered by `sort_order` (same as the seed data).
  */
 export const allLessons: LessonContent[] = [
+  // Basicas (sort_order 1-99)
   somarDezenas,
   somarArredondando,
   subtrairCompletando,
@@ -27,12 +34,20 @@ export const allLessons: LessonContent[] = [
   multiplicarPor9,
   dividirPor2E4,
   dividirPensandoNaMultiplicacao,
+  // Dia a Dia (sort_order 100-199)
   porcentagem10,
   porcentagemQuantoE,
   fracaoMetadeTercoQuarto,
   fracaoSomarSubtrair,
   regraDe3Proporcao,
   regraDe3Inversa,
+  // Vestibulares (sort_order 200-299)
+  multiplicarPor11,
+  quadradoTerminadosEm5,
+  multiplicarProximos100,
+  divisibilidadeRapida,
+  estimativaRaizQuadrada,
+  potenciasDe2E3,
 ];
 
 /**

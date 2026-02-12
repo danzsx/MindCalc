@@ -1,4 +1,4 @@
-import type { LessonContent, LessonExerciseData, IntroScreen, StrategyStep } from "../types";
+import type { LessonContent, LessonExerciseData, StrategyStep } from "../types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -6,18 +6,21 @@ function randomInt(min: number, max: number): number {
 
 function generate(divisor: number, base: number): LessonExerciseData {
   const answer = base / divisor;
+  const fractionName =
+    divisor === 2 ? "a metade" : divisor === 3 ? "um terço" : "um quarto";
 
   return {
     operand1: base,
     operand2: divisor,
     operator: "/",
     correctAnswer: answer,
-    fullHint: `Para achar a fraÃ§Ã£o, divida pelo denominador: ${base} Ã· ${divisor} = ${answer}.`,
-    partialHint: `Divida ${base} por ${divisor}...`,
+    fullHint: `Para achar a fração, divida pelo denominador: ${base} ÷ ${divisor} = ${answer}.`,
+    partialHint: `${fractionName} de ${base}... Divida ${base} por ${divisor}.`,
     stepByStep: [
-      `FraÃ§Ã£o significa dividir em partes iguais`,
-      `${base} Ã· ${divisor} = ${answer}`,
-      `EntÃ£o 1/${divisor} de ${base} Ã© ${answer}`,
+      `Fração significa dividir em partes iguais`,
+      `${fractionName} = dividir por ${divisor}`,
+      `${base} ÷ ${divisor} = ${answer}`,
+      `Então 1/${divisor} de ${base} = ${answer}`,
     ],
   };
 }
@@ -31,20 +34,20 @@ function generateExercise(): LessonExerciseData {
 
 const fracaoMetadeTercoQuarto: LessonContent = {
   slug: "fracao-metade-terco-quarto",
-  title: "FraÃ§Ã£o: entendendo metade, um terÃ§o e um quarto",
-  technique: "FraÃ§Ãµes como divisÃ£o",
+  title: "Frações: metade, terço e quarto",
+  technique: "Frações como divisão",
   operator: "/",
   difficulty: "beginner",
 
   intro: {
     explanation:
-      "FraÃ§Ã£o Ã© sÃ³ dividir em partes iguais. Metade = dividir por 2, um terÃ§o = dividir por 3, um quarto = dividir por 4.",
+      "Fração é dividir em partes iguais. Metade = dividir por 2, um terço = dividir por 3, um quarto = dividir por 4.",
     example: {
-      expression: "60 Ã· 3",
+      expression: "1/3 de 60",
       steps: [
-        "Um terÃ§o Ã© dividir por 3",
-        "60 Ã· 3 = 20",
-        "Logo, 1/3 de 60 Ã© 20",
+        "Um terço significa dividir por 3",
+        "60 ÷ 3 = 20",
+        "Então 1/3 de 60 = 20",
       ],
       answer: 20,
     },
@@ -65,30 +68,24 @@ const fracaoMetadeTercoQuarto: LessonContent = {
   },
 
   interactive: {
-    type: "step-discovery",
+    type: "fraction-pizza",
     introOperand1: 60,
     introOperand2: 3,
-    introScreens: (() => {
-      const base = 60, divisor = 3, answer = 20;
-      return [
-        { kind: "observe", message: "1/3 de 60... fracao parece complicado? Na verdade e so uma divisao!", expressionLabel: "1/3 de 60" } as IntroScreen,
-        { kind: "choice", question: "Um terco significa dividir por quanto?", options: [
-          { label: "2", value: "2", sublabel: "metade" },
-          { label: "3", value: "3", sublabel: "terco" },
-          { label: "4", value: "4", sublabel: "quarto" },
-        ], correct: "3", wrongMsg: "Terco vem de tres partes iguais...", winMsg: "Isso! Terco = dividir por 3!" } as IntroScreen,
-        { kind: "solve", message: "Entao divida:", equationDisplay: `${base} / ${divisor} = ?`, answer: answer, winMsg: `1/${divisor} de ${base} = ${answer}!` } as IntroScreen,
-        { kind: "summary", recapSteps: [
-          { text: "Fracao = dividir em partes iguais", color: "cyan" as const },
-          { text: `Terco = dividir por 3`, color: "amber" as const },
-          { text: `${base} / ${divisor} = ${answer} — so isso!`, color: "emerald" as const },
-        ], closingMsg: "Metade = /2, terco = /3, quarto = /4. Simples!" } as IntroScreen,
-      ];
-    })(),
     buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
       const { operand1, operand2, correctAnswer } = exercise;
+      const fractionName =
+        operand2 === 2 ? "Metade" : operand2 === 3 ? "Um terço" : "Um quarto";
       return [
-        { prompt: `Divida: ${operand1} / ${operand2} = ?`, answer: correctAnswer },
+        {
+          prompt: `${fractionName} = dividir por ?`,
+          answer: operand2,
+          hint: `${fractionName} significa dividir em ${operand2} partes iguais.`,
+        },
+        {
+          prompt: `${operand1} ÷ ${operand2} = ?`,
+          answer: correctAnswer,
+          hint: `Divida ${operand1} por ${operand2}.`,
+        },
       ];
     },
   },

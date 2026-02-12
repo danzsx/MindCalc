@@ -15,7 +15,11 @@ import {
 import { cn } from "@/lib/utils";
 import { NumberBar } from "./NumberBar";
 import { checkAnswer } from "@/lib/lessons/engine";
-import { getOperatorSymbol } from "@/lib/lessons/utils";
+import {
+  getOperatorSymbol,
+  isApproximatelyEqual,
+  parseNumericInput,
+} from "@/lib/lessons/utils";
 import type { LessonExerciseData, HintLevel } from "@/lib/lessons/types";
 
 // ---------------------------------------------------------------------------
@@ -148,9 +152,9 @@ function ScaffoldedExercise({
   );
 
   const handleGapSubmit = useCallback(() => {
-    const num = Number(gapInput.trim());
-    if (isNaN(num)) return;
-    if (num === gap) {
+    const num = parseNumericInput(gapInput);
+    if (num === null) return;
+    if (isApproximatelyEqual(gap, num)) {
       setGapDone(true);
       setTimeout(() => setCurrentStep("transfer"), 800);
     } else {
@@ -165,9 +169,9 @@ function ScaffoldedExercise({
   }, []);
 
   const handleAnswerSubmit = useCallback(() => {
-    const num = Number(answerInput.trim());
-    if (isNaN(num)) return;
-    if (num === correctAnswer) {
+    const num = parseNumericInput(answerInput);
+    if (num === null) return;
+    if (isApproximatelyEqual(correctAnswer, num)) {
       const messages = SUCCESS_MESSAGES[hintLevel];
       setSuccessMessage(messages[Math.floor(Math.random() * messages.length)]);
       setAnswerCorrect(true);
@@ -450,8 +454,8 @@ function FreeExercise({
   }, []);
 
   const handleSubmit = useCallback(() => {
-    const num = Number(input.trim());
-    if (isNaN(num) || input.trim() === "") return;
+    const num = parseNumericInput(input);
+    if (num === null) return;
 
     if (checkAnswer(exercise, num)) {
       const messages = SUCCESS_MESSAGES.none;

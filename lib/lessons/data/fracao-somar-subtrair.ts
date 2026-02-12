@@ -14,36 +14,35 @@ function generate(base: number): LessonExerciseData {
     operand2: quarter,
     operator: "+",
     correctAnswer: answer,
-    fullHint: `Encontre cada fraÃ§Ã£o e some: ${base} Ã· 2 = ${half} e ${base} Ã· 4 = ${quarter}. Depois ${half} + ${quarter} = ${answer}.`,
+    fullHint: `Encontre cada fracao e some: ${base} / 2 = ${half} e ${base} / 4 = ${quarter}. Depois ${half} + ${quarter} = ${answer}.`,
     partialHint: `Calcule 1/2 e 1/4 de ${base}...`,
     stepByStep: [
-      `Metade de ${base}: ${base} Ã· 2 = ${half}`,
-      `Um quarto de ${base}: ${base} Ã· 4 = ${quarter}`,
+      `Metade de ${base}: ${base} / 2 = ${half}`,
+      `Um quarto de ${base}: ${base} / 4 = ${quarter}`,
       `Somando: ${half} + ${quarter} = ${answer}`,
     ],
   };
 }
 
-/** Generates a number divisible by 4. */
 function generateDivisibleBy4(): number {
   return randomInt(8, 30) * 4;
 }
 
 const fracaoSomarSubtrair: LessonContent = {
   slug: "fracao-somar-subtrair",
-  title: "FraÃ§Ã£o: somar e subtrair fraÃ§Ãµes simples",
-  technique: "Somar fraÃ§Ãµes encontrando as partes",
+  title: "Fracao: somar e subtrair fracoes simples",
+  technique: "Somar fracoes encontrando as partes",
   operator: "+",
   difficulty: "beginner",
 
   intro: {
     explanation:
-      "Para somar fraÃ§Ãµes simples, encontre cada parte separadamente e depois some. Exemplo: 1/2 + 1/4 Ã© a soma de metade e um quarto do mesmo valor.",
+      "Para somar fracoes simples, encontre cada parte separadamente e depois some. Exemplo: 1/2 + 1/4 e a soma de metade e um quarto do mesmo valor.",
     example: {
       expression: "40 + 20",
       steps: [
-        "Metade de 80: 80 Ã· 2 = 40",
-        "Um quarto de 80: 80 Ã· 4 = 20",
+        "Metade de 80: 80 / 2 = 40",
+        "Um quarto de 80: 80 / 4 = 20",
         "Somando: 40 + 20 = 60",
       ],
       answer: 60,
@@ -72,21 +71,19 @@ const fracaoSomarSubtrair: LessonContent = {
       const base = 80;
       const half = 40, quarter = 20, answer = 60;
       return [
-        { kind: "observe", message: "1/2 + 1/4 de 80... vamos encontrar cada parte e somar!", expressionLabel: "1/2 + 1/4 de 80" } as IntroScreen,
+        { kind: "observe", message: "1/2 + 1/4 de 80: vamos encontrar cada parte e somar!", expressionLabel: "1/2 + 1/4 de 80" } as IntroScreen,
         { kind: "fill", question: `Metade de ${base}: ${base} / 2 = ?`, answer: half, winMsg: `Boa! Metade de ${base} = ${half}!`, equationHint: `${base} / 2 = ?` } as IntroScreen,
         { kind: "fill", question: `Um quarto de ${base}: ${base} / 4 = ?`, answer: quarter, winMsg: `Isso! Um quarto de ${base} = ${quarter}!`, equationHint: `${base} / 4 = ?` } as IntroScreen,
         { kind: "solve", message: "Agora some as partes:", equationDisplay: `${half} + ${quarter} = ?`, answer: answer, winMsg: "Somou as fracoes!" } as IntroScreen,
         { kind: "summary", recapSteps: [
           { text: `Metade de ${base}: ${base} / 2 = ${half}`, color: "cyan" as const },
           { text: `Um quarto de ${base}: ${base} / 4 = ${quarter}`, color: "amber" as const },
-          { text: `Soma: ${half} + ${quarter} = ${answer} — pronto!`, color: "emerald" as const },
+          { text: `Soma: ${half} + ${quarter} = ${answer} - pronto!`, color: "emerald" as const },
         ], closingMsg: "Encontre cada fracao separadamente e depois some!" } as IntroScreen,
       ];
     })(),
     buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
       const { operand1, operand2, correctAnswer } = exercise;
-      // operand1 = half, operand2 = quarter (from the generate function)
-      // We need to derive the base: operand1 = base/2, so base = operand1 * 2
       const base = operand1 * 2;
       return [
         { prompt: `Metade de ${base}: ${base} / 2 = ?`, answer: operand1 },

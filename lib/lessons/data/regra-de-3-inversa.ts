@@ -12,12 +12,12 @@ function generate(totalWork: number, newAmount: number): LessonExerciseData {
     operand2: newAmount,
     operator: "/",
     correctAnswer: answer,
-    fullHint: `Em regra de 3 inversa, mantenha o trabalho constante: ${totalWork} Ã· ${newAmount} = ${answer}.`,
+    fullHint: `Em regra de 3 inversa, mantenha o trabalho constante: ${totalWork} / ${newAmount} = ${answer}.`,
     partialHint: `Divida ${totalWork} por ${newAmount}...`,
     stepByStep: [
-      `Trabalho total fixo`,
-      `${totalWork} Ã· ${newAmount} = ${answer}`,
-      `Mais gente, menos tempo`,
+      "Trabalho total fixo",
+      `${totalWork} / ${newAmount} = ${answer}`,
+      "Mais gente, menos tempo",
     ],
   };
 }
@@ -46,12 +46,12 @@ const regraDe3Inversa: LessonContent = {
 
   intro: {
     explanation:
-      "Na regra de 3 inversa, quando um valor aumenta, o outro diminui. Pense no trabalho total: pessoas Ã— tempo.",
+      "Na regra de 3 inversa, quando um valor aumenta, o outro diminui. Pense no trabalho total: pessoas x tempo.",
     example: {
-      expression: "18 Ã· 6",
+      expression: "18 / 6",
       steps: [
-        "Trabalho total: 3 pessoas Ã— 6 horas = 18",
-        "Com 6 pessoas: 18 Ã· 6 = 3",
+        "Trabalho total: 3 pessoas x 6 horas = 18",
+        "Com 6 pessoas: 18 / 6 = 3",
         "Logo, 6 pessoas fazem em 3 horas",
       ],
       answer: 3,
@@ -77,16 +77,15 @@ const regraDe3Inversa: LessonContent = {
     introOperand1: 18,
     introOperand2: 6,
     introScreens: (() => {
-      // 3 people x 6 hours = 18. With 6 people: 18 / 6 = 3 hours
       const totalWork = 18, newPeople = 6, answer = 3;
       return [
-        { kind: "observe", message: "3 pessoas fazem em 6 horas. Com 6 pessoas, quanto tempo? Na inversa: mais gente = menos tempo!", expressionLabel: "3 pes x 6h → 6 pes x ?h" } as IntroScreen,
+        { kind: "observe", message: "3 pessoas fazem em 6 horas. Com 6 pessoas, quanto tempo? Na inversa: mais gente = menos tempo!", expressionLabel: "3 pes x 6h -> 6 pes x ?h" } as IntroScreen,
         { kind: "fill", question: "Primeiro ache o trabalho total: 3 x 6 = ?", answer: totalWork, winMsg: `Isso! O trabalho total e ${totalWork}!`, equationHint: "3 x 6 = ?" } as IntroScreen,
-        { kind: "solve", message: "Agora divida pelas novas pessoas:", equationDisplay: `${totalWork} / ${newPeople} = ?`, answer: answer, winMsg: `Com ${newPeople} pessoas, so ${answer} horas!` } as IntroScreen,
+        { kind: "solve", message: "Agora divida pelas novas pessoas:", equationDisplay: `${totalWork} / ${newPeople} = ?`, answer: answer, winMsg: `Com ${newPeople} pessoas, sao ${answer} horas!` } as IntroScreen,
         { kind: "summary", recapSteps: [
           { text: "Na regra de 3 inversa, o trabalho total e constante", color: "cyan" as const },
           { text: `Trabalho total: 3 x 6 = ${totalWork}`, color: "amber" as const },
-          { text: `${totalWork} / ${newPeople} = ${answer} horas — mais gente, menos tempo!`, color: "emerald" as const },
+          { text: `${totalWork} / ${newPeople} = ${answer} horas - mais gente, menos tempo!`, color: "emerald" as const },
         ], closingMsg: "Ache o trabalho total e divida pela nova quantidade!" } as IntroScreen,
       ];
     })(),

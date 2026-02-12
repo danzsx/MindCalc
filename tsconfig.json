@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "NovoFrontEnd", "LandingPageNovo", "NovaLanding"]
+  "exclude": ["node_modules", "NovoFrontEnd", "LandingPageNovo", "NovaLanding", "PastaFront", "Instrucoes"]
 }

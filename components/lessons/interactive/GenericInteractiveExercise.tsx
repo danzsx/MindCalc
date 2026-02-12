@@ -13,7 +13,11 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { checkAnswer } from "@/lib/lessons/engine";
-import { getOperatorSymbol } from "@/lib/lessons/utils";
+import {
+  getOperatorSymbol,
+  isApproximatelyEqual,
+  parseNumericInput,
+} from "@/lib/lessons/utils";
 import {
   ScreenProgress,
   MicroWin,
@@ -96,6 +100,12 @@ function ScaffoldedExercise({
   const [answerCorrect, setAnswerCorrect] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [stepFeedback, setStepFeedback] = useState<string | null>(null);
+  const [stepAttempts, setStepAttempts] = useState<number[]>(
+    new Array(visibleSteps.length).fill(0)
+  );
+  const [finalAttempts, setFinalAttempts] = useState(0);
+  const [finalFeedback, setFinalFeedback] = useState<string | null>(null);
 
   const stepInputRef = useRef<HTMLInputElement>(null);
   const finalInputRef = useRef<HTMLInputElement>(null);
@@ -125,9 +135,10 @@ function ScaffoldedExercise({
   }, [allStepsDone]);
 
   const handleStepSubmit = useCallback(() => {
-    const val = Number(inputs[currentStepIdx]?.trim());
-    if (isNaN(val)) return;
-    if (val === currentStep.answer) {
+    const val = parseNumericInput(inputs[currentStepIdx] ?? "");
+    if (val === null) return;
+    if (isApproximatelyEqual(currentStep.answer, val)) {
+      setStepFeedback(null);
       setStepDone((prev) => {
         const next = [...prev];
         next[currentStepIdx] = true;
@@ -138,34 +149,50 @@ function ScaffoldedExercise({
         setTimeout(() => setCurrentStepIdx((i) => i + 1), 800);
       }
     } else {
+      const nextAttempts = [...stepAttempts];
+      nextAttempts[currentStepIdx] = (nextAttempts[currentStepIdx] ?? 0) + 1;
+      setStepAttempts(nextAttempts);
+      setStepFeedback(
+        nextAttempts[currentStepIdx] >= 2
+          ? currentStep.hint ?? "Dica: releia o enunciado deste passo."
+          : "Ainda não. Tente novamente."
+      );
       stepInputRef.current?.classList.add("shake");
       setTimeout(
         () => stepInputRef.current?.classList.remove("shake"),
         500
       );
     }
-  }, [inputs, currentStepIdx, currentStep, visibleSteps.length]);
+  }, [currentStep, currentStepIdx, inputs, stepAttempts, visibleSteps.length]);
 
   const handleFinalSubmit = useCallback(() => {
-    const num = Number(finalInput.trim());
-    if (isNaN(num)) return;
-    if (num === correctAnswer) {
+    const num = parseNumericInput(finalInput);
+    if (num === null) return;
+    if (isApproximatelyEqual(correctAnswer, num)) {
       const messages = SUCCESS_MESSAGES[hintLevel];
       setSuccessMessage(
         messages[Math.floor(Math.random() * messages.length)]
       );
       setAnswerCorrect(true);
+      setFinalFeedback(null);
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 2000);
       setTimeout(() => onAnswer(true), 1500);
     } else {
+      const nextAttempts = finalAttempts + 1;
+      setFinalAttempts(nextAttempts);
+      setFinalFeedback(
+        nextAttempts >= 2
+          ? "Confira os passos acima e refaça a conta final."
+          : "Quase. Tente de novo."
+      );
       finalInputRef.current?.classList.add("shake");
       setTimeout(
         () => finalInputRef.current?.classList.remove("shake"),
         500
       );
     }
-  }, [finalInput, correctAnswer, hintLevel, onAnswer]);
+  }, [correctAnswer, finalAttempts, finalInput, hintLevel, onAnswer]);
 
   return (
     <div className="space-y-5">
@@ -253,6 +280,11 @@ function ScaffoldedExercise({
                       OK
                     </Button>
                   </div>
+                  {stepFeedback && i === currentStepIdx && (
+                    <p className="text-xs text-center text-muted-foreground">
+                      {stepFeedback}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -291,6 +323,11 @@ function ScaffoldedExercise({
               Essa!
             </Button>
           </div>
+          {finalFeedback && (
+            <p className="text-xs text-center text-muted-foreground">
+              {finalFeedback}
+            </p>
+          )}
         </div>
       )}
 
@@ -351,8 +388,8 @@ function FreeExercise({
   }, []);
 
   const handleSubmit = useCallback(() => {
-    const num = Number(input.trim());
-    if (isNaN(num) || input.trim() === "") return;
+    const num = parseNumericInput(input);
+    if (num === null) return;
 
     if (checkAnswer(exercise, num)) {
       const messages = SUCCESS_MESSAGES.none;

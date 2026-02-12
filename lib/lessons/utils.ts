@@ -32,3 +32,25 @@ const OPERATOR_SYMBOLS: Record<string, string> = {
 export function getOperatorSymbol(op: string): string {
   return OPERATOR_SYMBOLS[op] ?? op;
 }
+
+/**
+ * Parses numeric input typed by users, accepting comma or dot as decimal separator.
+ * Returns null for empty or invalid values.
+ */
+export function parseNumericInput(raw: string): number | null {
+  const normalized = raw.trim().replace(",", ".");
+  if (normalized === "") return null;
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+/**
+ * Compares two numeric values with a small tolerance to avoid float precision issues.
+ */
+export function isApproximatelyEqual(
+  expected: number,
+  actual: number,
+  epsilon: number = 1e-6
+): boolean {
+  return Math.abs(expected - actual) <= epsilon;
+}

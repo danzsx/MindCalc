@@ -36,6 +36,16 @@ yarn-error.log*
 # vercel
 .vercel
 
+# orphaned / non-app directories
+/PastaFront
+/Instrucoes
+
+# misc docs
+plan.md
+atualizacao_front.md
+mindcalc-poster-philosophy.md
+mindcalc-poster.png
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

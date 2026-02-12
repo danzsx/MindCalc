@@ -1,4 +1,5 @@
 import type { LessonContent, LessonExerciseData } from "./types";
+import { isApproximatelyEqual } from "./utils";
 
 /**
  * Generates exercises specifically for a lesson, coherent with the technique
@@ -49,5 +50,5 @@ export function checkAnswer(
   exercise: LessonExerciseData,
   userAnswer: number
 ): boolean {
-  return userAnswer === exercise.correctAnswer;
+  return isApproximatelyEqual(exercise.correctAnswer, userAnswer);
 }

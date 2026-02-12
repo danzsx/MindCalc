@@ -11,7 +11,11 @@ import {
   Wand2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getOperatorSymbol } from "@/lib/lessons/utils";
+import {
+  getOperatorSymbol,
+  isApproximatelyEqual,
+  parseNumericInput,
+} from "@/lib/lessons/utils";
 import {
   ScreenProgress,
   MicroWin,
@@ -243,6 +247,8 @@ function FillScreen({
 }) {
   const [input, setInput] = useState("");
   const [done, setDone] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [wrongFeedback, setWrongFeedback] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -250,16 +256,24 @@ function FillScreen({
   }, []);
 
   const handleSubmit = useCallback(() => {
-    const num = Number(input.trim());
-    if (isNaN(num)) return;
-    if (num === screen.answer) {
+    const num = parseNumericInput(input);
+    if (num === null) return;
+    if (isApproximatelyEqual(screen.answer, num)) {
       setDone(true);
+      setWrongFeedback(null);
       setTimeout(() => onNext(), 1200);
     } else {
+      const nextAttempts = attempts + 1;
+      setAttempts(nextAttempts);
+      setWrongFeedback(
+        nextAttempts >= 2
+          ? screen.wrongMsg ?? "Quase. Releia a conta e tente novamente."
+          : "Ainda não. Tente mais uma vez."
+      );
       inputRef.current?.classList.add("shake");
       setTimeout(() => inputRef.current?.classList.remove("shake"), 500);
     }
-  }, [input, screen.answer, onNext]);
+  }, [attempts, input, onNext, screen.answer, screen.wrongMsg]);
 
   return (
     <div className="space-y-5 interactive-fade-up">
@@ -289,6 +303,12 @@ function FillScreen({
             Isso!
           </Button>
         </div>
+      )}
+
+      {wrongFeedback && !done && (
+        <p className="text-center text-sm text-muted-foreground">
+          {wrongFeedback}
+        </p>
       )}
 
       {done && <MicroWin message={screen.winMsg} />}
@@ -366,6 +386,8 @@ function SolveScreen({
 }) {
   const [input, setInput] = useState("");
   const [done, setDone] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [wrongFeedback, setWrongFeedback] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -373,17 +395,25 @@ function SolveScreen({
   }, []);
 
   const handleSubmit = useCallback(() => {
-    const num = Number(input.trim());
-    if (isNaN(num)) return;
-    if (num === screen.answer) {
+    const num = parseNumericInput(input);
+    if (num === null) return;
+    if (isApproximatelyEqual(screen.answer, num)) {
       setDone(true);
+      setWrongFeedback(null);
       onConfetti();
       setTimeout(() => onNext(), 1500);
     } else {
+      const nextAttempts = attempts + 1;
+      setAttempts(nextAttempts);
+      setWrongFeedback(
+        nextAttempts >= 2
+          ? screen.wrongMsg ?? "Quase. Use o passo anterior como pista."
+          : "Ainda não. Faça a conta com calma."
+      );
       inputRef.current?.classList.add("shake");
       setTimeout(() => inputRef.current?.classList.remove("shake"), 500);
     }
-  }, [input, screen.answer, onNext, onConfetti]);
+  }, [attempts, input, onConfetti, onNext, screen.answer, screen.wrongMsg]);
 
   return (
     <div className="space-y-5 interactive-fade-up">
@@ -411,6 +441,12 @@ function SolveScreen({
             Essa!
           </Button>
         </div>
+      )}
+
+      {wrongFeedback && !done && (
+        <p className="text-center text-sm text-muted-foreground">
+          {wrongFeedback}
+        </p>
       )}
 
       {done && (

@@ -12,37 +12,36 @@ function generate(a: number): LessonExerciseData {
     operand2: 10,
     operator: "/",
     correctAnswer: answer,
-    fullHint: `10% Ã© dividir por 10. EntÃ£o ${a} Ã· 10 = ${answer}.`,
-    partialHint: `Divida por 10: ${a} Ã· 10 = ...`,
+    fullHint: `10% e dividir por 10. Entao ${a} / 10 = ${answer}.`,
+    partialHint: `Divida por 10: ${a} / 10 = ...`,
     stepByStep: [
-      `10% Ã© o mesmo que dividir por 10`,
-      `FaÃ§a ${a} Ã· 10 = ${answer}`,
-      `Logo, 10% de ${a} Ã© ${answer}`,
+      "10% e o mesmo que dividir por 10",
+      `Faca ${a} / 10 = ${answer}`,
+      `Logo, 10% de ${a} = ${answer}`,
     ],
   };
 }
 
-/** Generates a number divisible by 10. */
 function generateDivisibleBy10(): number {
   return randomInt(5, 99) * 10;
 }
 
 const porcentagem10: LessonContent = {
   slug: "porcentagem-10",
-  title: "Porcentagem: o jeito fÃ¡cil de calcular 10%",
+  title: "Porcentagem: o jeito facil de calcular 10%",
   technique: "Calcular 10% dividindo por 10",
   operator: "/",
   difficulty: "beginner",
 
   intro: {
     explanation:
-      "Calcular 10% Ã© simples: basta dividir por 10 (ou tirar o Ãºltimo zero). A partir daÃ­, vocÃª calcula outras porcentagens com facilidade.",
+      "Calcular 10% e simples: basta dividir por 10 (ou tirar o ultimo zero). A partir dai, voce calcula outras porcentagens com facilidade.",
     example: {
-      expression: "250 Ã· 10",
+      expression: "250 / 10",
       steps: [
-        "10% Ã© dividir por 10",
-        "250 Ã· 10 = 25",
-        "Logo, 10% de 250 Ã© 25",
+        "10% e dividir por 10",
+        "250 / 10 = 25",
+        "Logo, 10% de 250 = 25",
       ],
       answer: 25,
     },
@@ -76,7 +75,7 @@ const porcentagem10: LessonContent = {
         { kind: "summary", recapSteps: [
           { text: "10% = dividir por 10 (tirar um zero)", color: "cyan" as const },
           { text: `${a} / 10 = ${answer}`, color: "amber" as const },
-          { text: `Logo, 10% de ${a} = ${answer} — simples!`, color: "emerald" as const },
+          { text: `Logo, 10% de ${a} = ${answer} - simples!`, color: "emerald" as const },
         ], closingMsg: "A partir de 10% voce calcula qualquer porcentagem!" } as IntroScreen,
       ];
     })(),

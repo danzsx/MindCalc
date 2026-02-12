@@ -12,12 +12,12 @@ function generate(unitValue: number, quantity: number): LessonExerciseData {
     operand2: quantity,
     operator: "*",
     correctAnswer: answer,
-    fullHint: `Primeiro encontre o valor unitÃ¡rio e depois multiplique. Aqui: ${unitValue} Ã— ${quantity} = ${answer}.`,
+    fullHint: `Primeiro encontre o valor unitario e depois multiplique. Aqui: ${unitValue} x ${quantity} = ${answer}.`,
     partialHint: `Multiplique ${unitValue} por ${quantity}...`,
     stepByStep: [
-      `Valor unitÃ¡rio definido`,
-      `${unitValue} Ã— ${quantity} = ${answer}`,
-      `Esse Ã© o total para a nova quantidade`,
+      "Valor unitario definido",
+      `${unitValue} x ${quantity} = ${answer}`,
+      "Esse e o total para a nova quantidade",
     ],
   };
 }
@@ -30,8 +30,8 @@ function generateExercise(): LessonExerciseData {
 
 const regraDe3Proporcao: LessonContent = {
   slug: "regra-de-3-proporcao",
-  title: "Regra de 3: resolver problemas de proporÃ§Ã£o",
-  technique: "Regra de 3 direta (valor unitÃ¡rio)",
+  title: "Regra de 3: resolver problemas de proporcao",
+  technique: "Regra de 3 direta (valor unitario)",
   operator: "*",
   difficulty: "intermediate",
 
@@ -39,10 +39,10 @@ const regraDe3Proporcao: LessonContent = {
     explanation:
       "Regra de 3 direta funciona assim: descubra o valor de 1 unidade e depois multiplique pela nova quantidade.",
     example: {
-      expression: "5 Ã— 5",
+      expression: "5 x 5",
       steps: [
-        "Se 2 unidades custam 10, cada unidade custa 10 Ã· 2 = 5",
-        "Para 5 unidades: 5 Ã— 5 = 25",
+        "Se 2 unidades custam 10, cada unidade custa 10 / 2 = 5",
+        "Para 5 unidades: 5 x 5 = 25",
         "Logo, 5 unidades custam 25",
       ],
       answer: 25,
@@ -68,10 +68,9 @@ const regraDe3Proporcao: LessonContent = {
     introOperand1: 5,
     introOperand2: 5,
     introScreens: (() => {
-      // Context: 2 unidades custam 10. Quanto custam 5?
       const unitValue = 5, quantity = 5, answer = 25;
       return [
-        { kind: "observe", message: "Se 2 unidades custam 10, quanto custam 5? A regra de 3 resolve!", expressionLabel: "2 und = 10 → 5 und = ?" } as IntroScreen,
+        { kind: "observe", message: "Se 2 unidades custam 10, quanto custam 5? A regra de 3 resolve!", expressionLabel: "2 und = 10 -> 5 und = ?" } as IntroScreen,
         { kind: "action", message: "O segredo: descubra o valor de 1 unidade primeiro!", buttonText: "Descobrir!", resultMessage: "10 / 2 = 5 por unidade", resultHighlight: "Com o valor unitario, tudo fica facil!" } as IntroScreen,
         { kind: "solve", message: "Agora multiplique pelo que voce quer:", equationDisplay: `${unitValue} x ${quantity} = ?`, answer: answer, winMsg: `5 unidades custam ${answer}!` } as IntroScreen,
         { kind: "summary", recapSteps: [

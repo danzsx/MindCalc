@@ -33,7 +33,7 @@ export interface LessonExerciseData {
 // Interactive lesson configuration
 // ---------------------------------------------------------------------------
 
-export type InteractiveLessonType = "round-to-ten" | "step-discovery";
+export type InteractiveLessonType = "round-to-ten" | "step-discovery" | "fraction-pizza";
 
 // ---------------------------------------------------------------------------
 // Generic step-discovery intro screen types
@@ -60,6 +60,7 @@ export interface IntroScreenFill {
   question: string;
   answer: number;
   winMsg: string;
+  wrongMsg?: string;
   /** Visual equation hint like "30 + 40 = ?" */
   equationHint?: string;
 }
@@ -78,6 +79,7 @@ export interface IntroScreenSolve {
   equationDisplay: string;
   answer: number;
   winMsg: string;
+  wrongMsg?: string;
 }
 
 export interface IntroScreenSummary {

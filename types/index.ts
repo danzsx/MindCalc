@@ -59,6 +59,7 @@ export interface Lesson {
   operator: Operator;
   sort_order: number;
   difficulty: "beginner" | "intermediate" | "advanced";
+  category?: string;
   created_at: string;
 }
 
