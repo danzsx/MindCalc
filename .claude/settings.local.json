@@ -26,7 +26,10 @@
       "Bash(del \"C:\\\\Users\\\\nathu\\\\OneDrive\\\\Área de Trabalho\\\\newprojet\\\\Calc\\\\create_poster.py\")",
       "Bash(npx next dev:*)",
       "Bash(taskkill:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git push:*)",
+      "Bash(git mv:*)",
+      "Bash(npm ls:*)"
     ]
   }
 }

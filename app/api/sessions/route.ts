@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { calculateLevel } from "@/lib/engine";
+import { canStartSession, getUserPlan, getMaxLevel } from "@/lib/subscription";
 import type { Exercise, Operator } from "@/types";
 
 export async function POST(request: Request) {
@@ -22,6 +23,17 @@ export async function POST(request: Request) {
       );
     }
 
+    const supabase = await createClient();
+
+    // Enforce daily session limit for free users
+    const { allowed, reason } = await canStartSession(supabase, userId);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Limite diário atingido", reason },
+        { status: 429 }
+      );
+    }
+
     // Calculate accuracy and average time
     let correctCount = 0;
     for (let i = 0; i < exercises.length; i++) {
@@ -33,8 +45,6 @@ export async function POST(request: Request) {
     const accuracy = (correctCount / exercises.length) * 100;
     const avgTime =
       times.reduce((sum, t) => sum + t, 0) / times.length;
-
-    const supabase = await createClient();
 
     // Insert session record
     const { data: session, error: sessionError } = await supabase
@@ -78,8 +88,10 @@ export async function POST(request: Request) {
       console.error("Exercise logs insert error:", logsError);
     }
 
-    // Calculate new level and update profile
-    const newLevel = calculateLevel(accuracy, avgTime, level);
+    // Calculate new level and cap based on plan
+    const plan = await getUserPlan(supabase, userId);
+    const rawLevel = calculateLevel(accuracy, avgTime, level);
+    const newLevel = Math.min(rawLevel, getMaxLevel(plan));
 
     // Fetch current profile for streak logic
     const { data: profile } = await supabase

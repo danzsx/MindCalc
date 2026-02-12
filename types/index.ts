@@ -1,9 +1,23 @@
 export type Operator = "+" | "-" | "*" | "/";
 
+export type UserPlan = "free" | "pro";
+
 export interface Profile {
   id: string;
   level: number;
   streak: number;
+  plan: UserPlan;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Subscription {
+  id: string;
+  user_id: string;
+  stripe_customer_id: string;
+  stripe_subscription_id: string;
+  status: string;
+  current_period_end: string;
   created_at: string;
   updated_at: string;
 }

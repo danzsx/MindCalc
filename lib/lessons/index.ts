@@ -1,6 +1,6 @@
 import type { LessonContent } from "./types";
 
-import somarDezenas from "./data/somar-dezenas";
+import somarDezenas from "./data/somar-dezenas-primeiro";
 import somarArredondando from "./data/somar-arredondando";
 import subtrairCompletando from "./data/subtrair-completando";
 import subtrairPorPartes from "./data/subtrair-por-partes";
@@ -8,12 +8,16 @@ import multiplicarPor5 from "./data/multiplicar-por-5";
 import multiplicarPor9 from "./data/multiplicar-por-9";
 import dividirPor2E4 from "./data/dividir-por-2-e-4";
 import dividirPensandoNaMultiplicacao from "./data/dividir-pensando-na-multiplicacao";
+import estimativasSimples from "./data/estimativas-simples";
 import porcentagem10 from "./data/porcentagem-10";
 import porcentagemQuantoE from "./data/porcentagem-quanto-e";
 import fracaoMetadeTercoQuarto from "./data/fracao-metade-terco-quarto";
 import fracaoSomarSubtrair from "./data/fracao-somar-subtrair";
 import regraDe3Proporcao from "./data/regra-de-3-proporcao";
 import regraDe3Inversa from "./data/regra-de-3-inversa";
+import comparacaoDePrecos from "./data/comparacao-de-precos";
+import jurosSimples from "./data/juros-simples";
+import parcelamento from "./data/parcelamento";
 import multiplicarPor11 from "./data/multiplicar-por-11";
 import quadradoTerminadosEm5 from "./data/quadrado-terminados-em-5";
 import multiplicarProximos100 from "./data/multiplicar-proximos-100";
@@ -34,6 +38,7 @@ export const allLessons: LessonContent[] = [
   multiplicarPor9,
   dividirPor2E4,
   dividirPensandoNaMultiplicacao,
+  estimativasSimples,
   // Dia a Dia (sort_order 100-199)
   porcentagem10,
   porcentagemQuantoE,
@@ -41,6 +46,9 @@ export const allLessons: LessonContent[] = [
   fracaoSomarSubtrair,
   regraDe3Proporcao,
   regraDe3Inversa,
+  comparacaoDePrecos,
+  jurosSimples,
+  parcelamento,
   // Vestibulares (sort_order 200-299)
   multiplicarPor11,
   quadradoTerminadosEm5,

@@ -24,8 +24,8 @@ export function useTrainingSession() {
   });
 
   const startSession = useCallback(
-    (level: number, weakOperations?: Operator[]) => {
-      const exercises = generateExercises(10, level, weakOperations);
+    (level: number, weakOperations?: Operator[], learnedTechniques?: string[]) => {
+      const exercises = generateExercises(10, level, weakOperations, learnedTechniques);
 
       setSession({
         exercises,

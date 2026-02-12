@@ -9,14 +9,14 @@ import { identifyWeakOperations } from "@/lib/engine";
 import type { Operator } from "@/types";
 import { ExerciseCard } from "@/components/training/ExerciseCard";
 import { Timer } from "@/components/training/Timer";
-import { X } from "lucide-react";
+import { X, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 const TOTAL_EXERCISES = 10;
 
 export default function TrainPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, plan } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -30,12 +30,15 @@ export default function TrainPage() {
 
   const [level, setLevel] = useState<number>(1);
   const [weakOperations, setWeakOperations] = useState<Operator[]>([]);
+  const [learnedTechniques, setLearnedTechniques] = useState<string[]>([]);
   const [answer, setAnswer] = useState("");
   const [exerciseStartTime, setExerciseStartTime] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [started, setStarted] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [checkingLimit, setCheckingLimit] = useState(true);
 
   // Fetch user level and weak operations on mount
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function TrainPage() {
     const fetchUserData = async () => {
       const supabase = createClient();
 
-      const [{ data: profileData }, { data: errorLogs }] = await Promise.all([
+      const [{ data: profileData }, { data: errorLogs }, { data: techniquesData }] = await Promise.all([
         supabase
           .from("profiles")
           .select("level")
@@ -57,6 +60,10 @@ export default function TrainPage() {
           .eq("is_correct", false)
           .order("created_at", { ascending: false })
           .limit(50),
+        supabase
+          .from("learned_techniques")
+          .select("lessons(slug)")
+          .eq("user_id", user.id),
       ]);
 
       if (profileData) {
@@ -65,6 +72,29 @@ export default function TrainPage() {
 
       if (errorLogs) {
         setWeakOperations(identifyWeakOperations(errorLogs));
+      }
+
+      if (techniquesData) {
+        const slugs = techniquesData
+          .map((t: Record<string, unknown>) => {
+            const lesson = t.lessons as { slug: string } | null;
+            return lesson?.slug;
+          })
+          .filter((s): s is string => Boolean(s));
+        setLearnedTechniques(slugs);
+      }
+
+      // Check daily session limit
+      try {
+        const res = await fetch("/api/sessions/check");
+        const data = await res.json();
+        if (!data.canTrain) {
+          setIsBlocked(true);
+        }
+      } catch {
+        // If check fails, allow training (fail open)
+      } finally {
+        setCheckingLimit(false);
       }
     };
 
@@ -76,10 +106,10 @@ export default function TrainPage() {
     if (!user) return;
 
     setError(null);
-    startSession(level, weakOperations);
+    startSession(level, weakOperations, learnedTechniques);
     setStarted(true);
     setExerciseStartTime(Date.now());
-  }, [user, level, weakOperations, startSession]);
+  }, [user, level, weakOperations, learnedTechniques, startSession]);
 
   // Auto-focus input when exercise changes
   useEffect(() => {
@@ -155,10 +185,43 @@ export default function TrainPage() {
 
   // ---------- Loading states ----------
 
-  if (authLoading) {
+  if (authLoading || checkingLimit) {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
         <p className="text-muted-foreground">Carregando...</p>
+      </div>
+    );
+  }
+
+  // ---------- Blocked by daily limit ----------
+
+  if (isBlocked && !started) {
+    return (
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full zoom-in-95 text-center">
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+            <Lock className="size-7 text-amber-600 dark:text-amber-400" />
+          </div>
+          <h2 className="text-section-title text-foreground" style={{ marginBottom: 'var(--space-sm)' }}>
+            Limite diário atingido
+          </h2>
+          <p className="text-body-primary text-muted-foreground" style={{ lineHeight: 'var(--leading-relaxed)' }}>
+            No plano Free, você pode treinar 1 vez por dia.
+            Assine o Pro para treinar sem limites!
+          </p>
+          <button
+            onClick={() => router.push("/billing")}
+            className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium mt-6"
+          >
+            Assinar Pro
+          </button>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="w-full text-muted-foreground hover:text-foreground px-6 py-3 rounded-xl transition-colors mt-3 text-sm"
+          >
+            Voltar ao painel
+          </button>
+        </div>
       </div>
     );
   }

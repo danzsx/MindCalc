@@ -10,12 +10,14 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 import { isAdmin } from "@/lib/admin";
+import type { UserPlan } from "@/types";
 
 export interface AuthContextValue {
   user: User | null;
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  plan: UserPlan;
   signOut: () => Promise<void>;
 }
 
@@ -24,6 +26,7 @@ export const AuthContext = createContext<AuthContextValue>({
   session: null,
   loading: true,
   isAdmin: false,
+  plan: "free",
   signOut: async () => {},
 });
 
@@ -31,6 +34,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [plan, setPlan] = useState<UserPlan>("free");
+
+  const fetchPlan = useCallback(async (userId: string) => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("profiles")
+      .select("plan")
+      .eq("id", userId)
+      .single();
+    if (data?.plan) {
+      setPlan(data.plan as UserPlan);
+    }
+  }, []);
 
   useEffect(() => {
     const supabase = createClient();
@@ -39,6 +55,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchPlan(session.user.id);
+      }
       setLoading(false);
     });
 
@@ -48,13 +67,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchPlan(session.user.id);
+      } else {
+        setPlan("free");
+      }
       setLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchPlan]);
 
   const signOut = useCallback(async () => {
     const supabase = createClient();
@@ -62,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin: isAdmin(user?.email), signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin: isAdmin(user?.email), plan, signOut }}>
       {children}
     </AuthContext.Provider>
   );
