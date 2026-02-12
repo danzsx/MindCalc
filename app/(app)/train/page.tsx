@@ -148,7 +148,7 @@ export default function TrainPage() {
 
   // End training early
   const handleEndTraining = useCallback(() => {
-    if (window.confirm("Deseja realmente encerrar o treino?")) {
+    if (typeof window !== "undefined" && window.confirm("Deseja realmente encerrar o treino?")) {
       router.push("/dashboard");
     }
   }, [router]);

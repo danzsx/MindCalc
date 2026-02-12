@@ -76,7 +76,7 @@ function TabuadaSessionContent() {
   }, [state, isSaving, user, finishSession, router]);
 
   const handleEndTraining = useCallback(() => {
-    if (window.confirm("Deseja realmente encerrar o treino?")) {
+    if (typeof window !== "undefined" && window.confirm("Deseja realmente encerrar o treino?")) {
       router.push("/tabuada");
     }
   }, [router]);
