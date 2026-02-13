@@ -9,6 +9,8 @@ import multiplicarPor9 from "./data/multiplicar-por-9";
 import dividirPor2E4 from "./data/dividir-por-2-e-4";
 import dividirPensandoNaMultiplicacao from "./data/dividir-pensando-na-multiplicacao";
 import estimativasSimples from "./data/estimativas-simples";
+import somarCruzandoDezena from "./data/somar-cruzando-dezena";
+import subtrairCruzandoDezena from "./data/subtrair-cruzando-dezena";
 import porcentagem10 from "./data/porcentagem-10";
 import porcentagemQuantoE from "./data/porcentagem-quanto-e";
 import fracaoMetadeTercoQuarto from "./data/fracao-metade-terco-quarto";
@@ -39,6 +41,8 @@ export const allLessons: LessonContent[] = [
   dividirPor2E4,
   dividirPensandoNaMultiplicacao,
   estimativasSimples,
+  somarCruzandoDezena,
+  subtrairCruzandoDezena,
   // Dia a Dia (sort_order 100-199)
   porcentagem10,
   porcentagemQuantoE,
