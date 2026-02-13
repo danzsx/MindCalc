@@ -1,4 +1,4 @@
-import type { LessonContent, LessonExerciseData, IntroScreen, StrategyStep } from "../types";
+import type { LessonContent, LessonExerciseData, StrategyStep } from "../types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -65,22 +65,9 @@ const parcelamento: LessonContent = {
   },
 
   interactive: {
-    type: "step-discovery",
+    type: "parcelamento",
     introOperand1: 150,
     introOperand2: 10,
-    introScreens: (() => {
-      const parcela = 150, numParcelas = 10, total = 1500, aVista = 1200, diferenca = 300;
-      return [
-        { kind: "observe", message: "Um celular custa R$1200 a vista ou 10x de R$150. Qual sai mais caro?", expressionLabel: "10x de R$150 vs R$1200 a vista" } as IntroScreen,
-        { kind: "action", message: "O truque: multiplique a parcela pelo numero de vezes para ver o total real!", buttonText: "Ver o truque!", resultMessage: "Total = parcela x numero de parcelas", resultHighlight: "Depois compare com o preco a vista!" } as IntroScreen,
-        { kind: "solve", message: `Quanto voce paga no total? ${parcela} x ${numParcelas} = ?`, equationDisplay: `${parcela} x ${numParcelas} = ?`, answer: total, winMsg: `Total parcelado: R$${total}!` } as IntroScreen,
-        { kind: "summary", recapSteps: [
-          { text: "Total parcelado = parcela x numero de vezes", color: "cyan" as const },
-          { text: `${parcela} x ${numParcelas} = R$${total}`, color: "amber" as const },
-          { text: `Diferenca: R$${total} - R$${aVista} = R$${diferenca} a mais!`, color: "emerald" as const },
-        ], closingMsg: "Sempre calcule o total antes de parcelar!" } as IntroScreen,
-      ];
-    })(),
     buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
       const { operand1, operand2, correctAnswer } = exercise;
       return [

@@ -16,6 +16,7 @@ import { GenericInteractiveIntro } from "./interactive/GenericInteractiveIntro";
 import { GenericInteractiveExercise } from "./interactive/GenericInteractiveExercise";
 import { FractionPizzaIntro } from "./interactive/FractionPizzaIntro";
 import { PriceComparisonIntro } from "./interactive/PriceComparisonIntro";
+import { ParcelamentoIntro } from "./interactive/ParcelamentoIntro";
 import { getExerciseForPhase, generatePracticeExercises } from "@/lib/lessons/engine";
 import type { LessonContent, LessonPhase, HintLevel, LessonExerciseData } from "@/lib/lessons/types";
 
@@ -181,7 +182,15 @@ export function LessonShell({ lesson, onComplete, nextLessonSlug }: LessonShellP
         <div className={isTransitioning ? "lesson-phase-exit" : "lesson-phase-enter"}>
           {/* Phase 1: Intro */}
           {phase === "intro" && (
-            lesson.interactive?.type === "round-to-ten" ? (
+            lesson.interactive?.type === "parcelamento" ? (
+              <ParcelamentoIntro
+                title={lesson.title}
+                cashPrice={1200}
+                installmentValue={lesson.interactive.introOperand1}
+                installmentCount={lesson.interactive.introOperand2}
+                onContinue={advancePhase}
+              />
+            ) : lesson.interactive?.type === "round-to-ten" ? (
               <InteractiveLessonIntro
                 title={lesson.title}
                 operand1={lesson.interactive.introOperand1}
@@ -248,7 +257,7 @@ export function LessonShell({ lesson, onComplete, nextLessonSlug }: LessonShellP
                     hintLevel={HINT_LEVEL_MAP[phase]}
                     onAnswer={handleExerciseAnswer}
                   />
-                ) : (lesson.interactive?.type === "step-discovery" || lesson.interactive?.type === "fraction-pizza" || lesson.interactive?.type === "price-comparison") && lesson.interactive.buildExerciseSteps ? (
+                ) : (lesson.interactive?.type === "step-discovery" || lesson.interactive?.type === "fraction-pizza" || lesson.interactive?.type === "price-comparison" || lesson.interactive?.type === "parcelamento") && lesson.interactive.buildExerciseSteps ? (
                   <GenericInteractiveExercise
                     key={phase}
                     exercise={currentExercise}

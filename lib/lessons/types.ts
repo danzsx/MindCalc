@@ -33,7 +33,7 @@ export interface LessonExerciseData {
 // Interactive lesson configuration
 // ---------------------------------------------------------------------------
 
-export type InteractiveLessonType = "round-to-ten" | "step-discovery" | "fraction-pizza" | "price-comparison";
+export type InteractiveLessonType = "round-to-ten" | "step-discovery" | "fraction-pizza" | "price-comparison" | "parcelamento";
 
 // ---------------------------------------------------------------------------
 // Generic step-discovery intro screen types
