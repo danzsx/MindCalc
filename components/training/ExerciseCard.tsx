@@ -26,11 +26,16 @@ export function ExerciseCard({
 }: ExerciseCardProps) {
   return (
     <div className="flex flex-col items-center" style={{ gap: 'var(--space-lg)' }}>
-      <span className="text-body-emphasis text-muted-foreground">
+      <span className="text-body-emphasis text-muted-foreground" role="status">
         {current} / {total}
       </span>
 
-      <div className="flex items-center justify-center text-metric-lg" style={{ gap: 'var(--space-lg)', paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
+      <div
+        className="flex items-center justify-center text-metric-lg"
+        style={{ gap: 'var(--space-lg)', paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}
+        aria-live="polite"
+        aria-label={`Exercício: ${operand1} ${operatorSymbol[operator]} ${operand2}`}
+      >
         <span>{operand1}</span>
         <span className="text-primary">{operatorSymbol[operator]}</span>
         <span>{operand2}</span>

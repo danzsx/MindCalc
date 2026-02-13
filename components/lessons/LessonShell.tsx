@@ -15,6 +15,7 @@ import { InteractiveExercise } from "./interactive/InteractiveExercise";
 import { GenericInteractiveIntro } from "./interactive/GenericInteractiveIntro";
 import { GenericInteractiveExercise } from "./interactive/GenericInteractiveExercise";
 import { FractionPizzaIntro } from "./interactive/FractionPizzaIntro";
+import { PriceComparisonIntro } from "./interactive/PriceComparisonIntro";
 import { getExerciseForPhase, generatePracticeExercises } from "@/lib/lessons/engine";
 import type { LessonContent, LessonPhase, HintLevel, LessonExerciseData } from "@/lib/lessons/types";
 
@@ -192,6 +193,11 @@ export function LessonShell({ lesson, onComplete, nextLessonSlug }: LessonShellP
                 title={lesson.title}
                 onContinue={advancePhase}
               />
+            ) : lesson.interactive?.type === "price-comparison" ? (
+              <PriceComparisonIntro
+                title={lesson.title}
+                onContinue={advancePhase}
+              />
             ) : lesson.interactive?.type === "step-discovery" && lesson.interactive.introScreens ? (
               <GenericInteractiveIntro
                 title={lesson.title}
@@ -242,7 +248,7 @@ export function LessonShell({ lesson, onComplete, nextLessonSlug }: LessonShellP
                     hintLevel={HINT_LEVEL_MAP[phase]}
                     onAnswer={handleExerciseAnswer}
                   />
-                ) : (lesson.interactive?.type === "step-discovery" || lesson.interactive?.type === "fraction-pizza") && lesson.interactive.buildExerciseSteps ? (
+                ) : (lesson.interactive?.type === "step-discovery" || lesson.interactive?.type === "fraction-pizza" || lesson.interactive?.type === "price-comparison") && lesson.interactive.buildExerciseSteps ? (
                   <GenericInteractiveExercise
                     key={phase}
                     exercise={currentExercise}

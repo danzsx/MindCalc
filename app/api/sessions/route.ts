@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { calculateLevel } from "@/lib/engine";
 import { canStartSession, getUserPlan, getMaxLevel } from "@/lib/subscription";
-import type { Exercise, Operator } from "@/types";
+import type { Exercise, Operator, TrainingMode } from "@/types";
 
 export async function POST(request: Request) {
   try {
@@ -11,10 +11,12 @@ export async function POST(request: Request) {
       exercises: Exercise[];
       answers: (number | null)[];
       times: number[];
+      timedOut?: boolean[];
       level: number;
+      mode?: TrainingMode;
     };
 
-    const { userId, exercises, answers, times, level } = body;
+    const { userId, exercises, answers, times, timedOut, level, mode = "normal" } = body;
 
     if (!userId || !exercises || !answers || !times || !level) {
       return NextResponse.json(
@@ -55,6 +57,7 @@ export async function POST(request: Request) {
         avg_time: avgTime,
         level_at_time: level,
         exercises_count: exercises.length,
+        mode,
       })
       .select("id")
       .single();
@@ -78,6 +81,8 @@ export async function POST(request: Request) {
       user_answer: answers[i],
       time_spent: times[i],
       is_correct: answers[i] === ex.correctAnswer,
+      timed_out: timedOut?.[i] ?? false,
+      technique_slug: ex.techniqueSlug ?? null,
     }));
 
     const { error: logsError } = await supabase

@@ -32,7 +32,12 @@ export function Timer({ running }: TimerProps) {
     .padStart(4, "0")}`;
 
   return (
-    <div className="text-center font-mono text-2xl font-semibold text-muted-foreground">
+    <div
+      role="timer"
+      aria-live="off"
+      aria-label={`Tempo decorrido: ${formatted}`}
+      className="text-center font-mono text-2xl font-semibold text-muted-foreground"
+    >
       {formatted}
     </div>
   );

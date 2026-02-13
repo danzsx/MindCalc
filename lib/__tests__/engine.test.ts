@@ -4,6 +4,7 @@ import {
   calculateLevel,
   generateExercise,
   generateExercises,
+  generateMixedExercises,
   identifyWeakOperations,
 } from "@/lib/engine";
 import type { Operator } from "@/types";
@@ -164,5 +165,52 @@ describe("identifyWeakOperations", () => {
   it("handles a single operator", () => {
     const logs = [{ operator: "-" }, { operator: "-" }];
     expect(identifyWeakOperations(logs)).toEqual(["-"]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// generateMixedExercises
+// ---------------------------------------------------------------------------
+
+describe("generateMixedExercises", () => {
+  const manyTechniques = [
+    "somar-dezenas-primeiro",
+    "somar-arredondando",
+    "subtrair-completando",
+    "multiplicar-por-5",
+    "multiplicar-por-9",
+  ];
+
+  it("falls back to generateExercises when < 3 techniques", () => {
+    const result = generateMixedExercises(5, 3, ["somar-dezenas-primeiro"]);
+    expect(result).toHaveLength(5);
+    // Should still produce valid exercises
+    for (const ex of result) {
+      expect(ex).toHaveProperty("operand1");
+      expect(ex).toHaveProperty("correctAnswer");
+    }
+  });
+
+  it("returns count exercises", () => {
+    const result = generateMixedExercises(8, 5, manyTechniques);
+    expect(result).toHaveLength(8);
+  });
+
+  it("includes at least 3 distinct technique slugs when enough techniques provided", () => {
+    const result = generateMixedExercises(10, 5, manyTechniques);
+    const slugs = new Set(
+      result.filter((e) => e.techniqueSlug).map((e) => e.techniqueSlug)
+    );
+    expect(slugs.size).toBeGreaterThanOrEqual(3);
+  });
+
+  it("each exercise has valid fields", () => {
+    const result = generateMixedExercises(6, 4, manyTechniques);
+    for (const ex of result) {
+      expect(typeof ex.operand1).toBe("number");
+      expect(typeof ex.operand2).toBe("number");
+      expect(["+", "-", "*", "/"]).toContain(ex.operator);
+      expect(typeof ex.correctAnswer).toBe("number");
+    }
   });
 });

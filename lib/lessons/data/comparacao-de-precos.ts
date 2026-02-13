@@ -1,4 +1,4 @@
-import type { LessonContent, LessonExerciseData, IntroScreen, StrategyStep } from "../types";
+import type { LessonContent, LessonExerciseData, StrategyStep } from "../types";
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -65,23 +65,9 @@ const comparacaoDePrecos: LessonContent = {
   },
 
   interactive: {
-    type: "step-discovery",
+    type: "price-comparison",
     introOperand1: 24,
     introOperand2: 6,
-    introScreens: (() => {
-      const totalPrice = 24, quantity = 6, unitPrice = 4;
-      return [
-        { kind: "observe", message: "No mercado: Pacote A custa R$24 com 6 unidades. Pacote B custa R$20 com 4 unidades. Qual e melhor?", expressionLabel: "R$24 por 6 und vs R$20 por 4 und" } as IntroScreen,
-        { kind: "action", message: "O truque: divida o preco pela quantidade para achar o preco por unidade!", buttonText: "Ver o truque!", resultMessage: "Preco unitario = preco / quantidade", resultHighlight: "Quem tem menor preco unitario vence!" } as IntroScreen,
-        { kind: "fill", question: "Pacote A: quanto custa cada unidade?", equationHint: `${totalPrice} / ${quantity} = ?`, answer: unitPrice, winMsg: `Cada unidade do Pacote A custa R$${unitPrice}!` } as IntroScreen,
-        { kind: "solve", message: "Pacote B: R$20 / 4 = R$5 cada. Qual pacote e mais barato por unidade?", equationDisplay: `${totalPrice} / ${quantity} = ?`, answer: unitPrice, winMsg: `Pacote A (R$${unitPrice}) ganha do Pacote B (R$5)!` } as IntroScreen,
-        { kind: "summary", recapSteps: [
-          { text: "Divida preco pela quantidade = preco unitario", color: "cyan" as const },
-          { text: `Pacote A: ${totalPrice} / ${quantity} = R$${unitPrice} cada`, color: "amber" as const },
-          { text: "Compare os precos unitarios e escolha o menor!", color: "emerald" as const },
-        ], closingMsg: "Agora voce nunca mais paga caro no mercado!" } as IntroScreen,
-      ];
-    })(),
     buildExerciseSteps(exercise: LessonExerciseData): StrategyStep[] {
       const { operand1, operand2, correctAnswer } = exercise;
       return [

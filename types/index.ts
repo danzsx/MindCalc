@@ -1,5 +1,7 @@
 export type Operator = "+" | "-" | "*" | "/";
 
+export type TrainingMode = "normal" | "timed";
+
 export type UserPlan = "free" | "pro";
 
 export interface Profile {
@@ -28,6 +30,7 @@ export interface Session {
   accuracy: number;
   avg_time: number;
   level_at_time: number;
+  mode: TrainingMode;
   created_at: string;
 }
 
@@ -42,6 +45,8 @@ export interface ExerciseLog {
   user_answer: number | null;
   time_spent: number;
   is_correct: boolean;
+  timed_out: boolean;
+  technique_slug?: string;
 }
 
 export interface Exercise {
@@ -49,6 +54,7 @@ export interface Exercise {
   operand2: number;
   operator: Operator;
   correctAnswer: number;
+  techniqueSlug?: string;
 }
 
 export interface TrainingState {

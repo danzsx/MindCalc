@@ -2,7 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle, Trophy, Target, Clock } from "lucide-react";
+import { CheckCircle2, XCircle, Trophy, Target, Clock, Timer } from "lucide-react";
+import { ConfidenceSurveyTrigger } from "@/components/training/ConfidenceSurveyTrigger";
+import { allLessons } from "@/lib/lessons";
 import type { Session, ExerciseLog } from "@/types";
 
 interface ResultsPageProps {
@@ -73,6 +75,14 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
     "/": "÷",
   };
 
+  // Build technique title map for hints
+  const techniqueTitleMap: Record<string, string> = {};
+  for (const lesson of allLessons) {
+    techniqueTitleMap[lesson.slug] = lesson.title;
+  }
+
+  const isTimed = currentSession.mode === "timed";
+
   const stats = [
     {
       icon: Trophy,
@@ -104,7 +114,15 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
     <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
       <div className="text-center">
         <h1 className="text-foreground">Como foi seu treino</h1>
-        <p className="mt-1 text-muted-foreground">Veja o que já está fluindo e onde focar</p>
+        <div className="mt-1 flex items-center justify-center gap-2">
+          <p className="text-muted-foreground">Veja o que já está fluindo e onde focar</p>
+          {isTimed && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 dark:bg-amber-900/30 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-300">
+              <Timer className="size-3" />
+              Cronometrado
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Summary Stats */}
@@ -131,25 +149,48 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
         <div className="rounded-[20px] bg-card p-6 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] lg:p-8">
           <h2 className="mb-4 font-semibold text-foreground">Pra revisar com calma</h2>
           <ul className="space-y-3">
-            {wrongLogs.map((log) => (
-              <li
-                key={log.id}
-                className="flex items-center justify-between rounded-xl border border-border p-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-destructive/10">
-                    <XCircle className="size-4 text-destructive" />
+            {wrongLogs.map((log) => {
+              const techniqueTitle = log.technique_slug
+                ? techniqueTitleMap[log.technique_slug]
+                : null;
+
+              return (
+                <li
+                  key={log.id}
+                  className="rounded-xl border border-border p-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-8 items-center justify-center rounded-full bg-destructive/10">
+                        <XCircle className="size-4 text-destructive" />
+                      </div>
+                      <span className="text-foreground">
+                        {log.operand1} {operatorSymbols[log.operator] ?? log.operator}{" "}
+                        {log.operand2} = {log.correct_answer}
+                      </span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {log.timed_out ? (
+                        <span className="text-amber-600 dark:text-amber-400 font-medium">Tempo esgotado</span>
+                      ) : (
+                        <>Sua resposta: {log.user_answer ?? "—"}</>
+                      )}
+                    </span>
                   </div>
-                  <span className="text-foreground">
-                    {log.operand1} {operatorSymbols[log.operator] ?? log.operator}{" "}
-                    {log.operand2} = {log.correct_answer}
-                  </span>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  Sua resposta: {log.user_answer ?? "—"}
-                </span>
-              </li>
-            ))}
+                  {techniqueTitle && (
+                    <p className="mt-2 ml-11 text-sm text-primary">
+                      Dica: use a tecnica{" "}
+                      <Link
+                        href={`/lessons/${log.technique_slug}`}
+                        className="underline underline-offset-2 hover:text-primary/80"
+                      >
+                        {techniqueTitle}
+                      </Link>
+                    </p>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -176,6 +217,9 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
           <Link href="/dashboard">Voltar ao painel</Link>
         </Button>
       </div>
+
+      {/* Confidence survey trigger */}
+      <ConfidenceSurveyTrigger userId={user.id} />
     </main>
   );
 }

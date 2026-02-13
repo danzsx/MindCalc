@@ -6,6 +6,7 @@ import { EvolutionChart } from "@/components/dashboard/EvolutionChart";
 import { WeakPointsList } from "@/components/dashboard/WeakPointsList";
 import { LessonsOverviewCard } from "@/components/dashboard/LessonsOverviewCard";
 import { TablesCard } from "@/components/tables/TablesCard";
+import { ConfidenceCard } from "@/components/dashboard/ConfidenceCard";
 import type { Session, ExerciseLog, TablesProgress } from "@/types";
 
 export default async function DashboardPage() {
@@ -65,6 +66,15 @@ export default async function DashboardPage() {
       lastPracticedAt: p.last_practiced_at,
     })
   );
+
+  // Fetch confidence surveys
+  const { data: confidenceSurveysRaw } = await supabase
+    .from("confidence_surveys")
+    .select("score, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: true });
+
+  const confidenceSurveys = (confidenceSurveysRaw ?? []) as { score: number; created_at: string }[];
 
   const orderedSessions: Session[] = (sessions ?? []).reverse();
   const totalSessions = orderedSessions.length;
@@ -170,6 +180,11 @@ export default async function DashboardPage() {
         <div className="lg:col-span-1">
           <WeakPointsList weakPoints={weakPoints} />
         </div>
+      </div>
+
+      {/* Confidence row */}
+      <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--grid-gap)' }}>
+        <ConfidenceCard surveys={confidenceSurveys} />
       </div>
     </main>
   );

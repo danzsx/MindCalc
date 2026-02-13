@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useTrainingSession } from "@/hooks/useTrainingSession";
 import { createClient } from "@/lib/supabase/client";
-import { identifyWeakOperations } from "@/lib/engine";
-import type { Operator } from "@/types";
+import { identifyWeakOperations, getStandardTime } from "@/lib/engine";
+import type { Operator, TrainingMode } from "@/types";
 import { ExerciseCard } from "@/components/training/ExerciseCard";
 import { Timer } from "@/components/training/Timer";
-import { X, Lock } from "lucide-react";
+import { CountdownTimer } from "@/components/training/CountdownTimer";
+import { X, Lock, Clock, Smile } from "lucide-react";
 import { toast } from "sonner";
 
 const TOTAL_EXERCISES = 10;
@@ -23,8 +24,10 @@ export default function TrainPage() {
     exercises,
     currentIndex,
     isFinished,
+    mode: sessionMode,
     startSession,
     submitAnswer,
+    forceFinish,
     finishSession,
   } = useTrainingSession();
 
@@ -39,6 +42,12 @@ export default function TrainPage() {
   const [isShaking, setIsShaking] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [checkingLimit, setCheckingLimit] = useState(true);
+  const [selectedMode, setSelectedMode] = useState<TrainingMode>("normal");
+
+  // Timed mode: session-level countdown
+  const questionTime = getStandardTime(level);
+  const sessionTotalTime = questionTime * TOTAL_EXERCISES;
+  const [sessionTimeLeft, setSessionTimeLeft] = useState(sessionTotalTime);
 
   // Fetch user level and weak operations on mount
   useEffect(() => {
@@ -101,15 +110,35 @@ export default function TrainPage() {
     fetchUserData();
   }, [user]);
 
+  // Session-level countdown for timed mode
+  useEffect(() => {
+    if (!started || isFinished || sessionMode !== "timed") return;
+
+    const interval = setInterval(() => {
+      setSessionTimeLeft((prev) => {
+        const next = Math.max(0, prev - 0.1);
+        if (next <= 0) {
+          clearInterval(interval);
+          forceFinish();
+        }
+        return next;
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [started, isFinished, sessionMode, forceFinish]);
+
   // Start training session
   const handleStart = useCallback(() => {
     if (!user) return;
 
     setError(null);
-    startSession(level, weakOperations, learnedTechniques);
+    const qTime = getStandardTime(level);
+    setSessionTimeLeft(qTime * TOTAL_EXERCISES);
+    startSession(level, weakOperations, learnedTechniques, selectedMode);
     setStarted(true);
     setExerciseStartTime(Date.now());
-  }, [user, level, weakOperations, learnedTechniques, startSession]);
+  }, [user, level, weakOperations, learnedTechniques, selectedMode, startSession]);
 
   // Auto-focus input when exercise changes
   useEffect(() => {
@@ -137,6 +166,14 @@ export default function TrainPage() {
 
     save();
   }, [isFinished, isSaving, user, level, finishSession, router]);
+
+  // Handle countdown expiration for a single question (timed mode)
+  const handleQuestionExpire = useCallback(() => {
+    const timeSpent = questionTime;
+    submitAnswer(null, timeSpent, true);
+    setAnswer("");
+    setExerciseStartTime(Date.now());
+  }, [questionTime, submitAnswer]);
 
   // Submit the current answer
   const handleSubmit = useCallback(() => {
@@ -235,10 +272,43 @@ export default function TrainPage() {
           <h2 className="text-section-title text-foreground" style={{ marginBottom: 'var(--card-section-gap)' }}>Treino Mental</h2>
           <p className="text-body-primary text-muted-foreground" style={{ marginBottom: 'var(--space-sm)', lineHeight: 'var(--leading-relaxed)' }}>
             São {TOTAL_EXERCISES} exercícios pensados pro seu nível
-            atual ({level}). Vai no seu ritmo, sem pressa.
+            atual ({level}). Escolha o modo:
           </p>
+
+          {/* Mode selector */}
+          <div className="flex gap-3 mt-4">
+            <button
+              onClick={() => setSelectedMode("normal")}
+              className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${
+                selectedMode === "normal"
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/40"
+              }`}
+            >
+              <Smile className={`size-6 ${selectedMode === "normal" ? "text-primary" : "text-muted-foreground"}`} />
+              <span className={`text-sm font-medium ${selectedMode === "normal" ? "text-primary" : "text-muted-foreground"}`}>
+                Tranquilo
+              </span>
+              <span className="text-xs text-muted-foreground">Sem limite de tempo</span>
+            </button>
+            <button
+              onClick={() => setSelectedMode("timed")}
+              className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${
+                selectedMode === "timed"
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/40"
+              }`}
+            >
+              <Clock className={`size-6 ${selectedMode === "timed" ? "text-primary" : "text-muted-foreground"}`} />
+              <span className={`text-sm font-medium ${selectedMode === "timed" ? "text-primary" : "text-muted-foreground"}`}>
+                Cronometrado
+              </span>
+              <span className="text-xs text-muted-foreground">{questionTime.toFixed(0)}s por questão</span>
+            </button>
+          </div>
+
           {error && (
-            <p className="text-sm text-destructive mb-4">{error}</p>
+            <p className="text-sm text-destructive mb-4 mt-4">{error}</p>
           )}
           <button
             onClick={handleStart}
@@ -283,7 +353,23 @@ export default function TrainPage() {
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-foreground">Treino</h3>
           <div className="flex items-center gap-4">
-            <Timer running={started && !isFinished} />
+            {sessionMode === "timed" ? (
+              <div className="flex items-center gap-3">
+                {/* Session time left */}
+                <span className="text-xs text-muted-foreground font-mono">
+                  {Math.floor(sessionTimeLeft / 60)}:{String(Math.floor(sessionTimeLeft % 60)).padStart(2, "0")}
+                </span>
+                {/* Per-question countdown */}
+                <CountdownTimer
+                  totalSeconds={questionTime}
+                  running={started && !isFinished}
+                  onExpire={handleQuestionExpire}
+                  resetKey={currentIndex}
+                />
+              </div>
+            ) : (
+              <Timer running={started && !isFinished} />
+            )}
             <button
               onClick={handleEndTraining}
               className="text-muted-foreground hover:text-foreground transition-colors p-1 hover:bg-muted rounded-lg"

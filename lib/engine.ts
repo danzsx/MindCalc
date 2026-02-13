@@ -187,6 +187,7 @@ export function generateExercise(
         operand2: ex.operand2,
         operator: ex.operator,
         correctAnswer: ex.correctAnswer,
+        techniqueSlug: slug,
       };
     }
   }
@@ -238,6 +239,80 @@ export function generateExercises(
   for (let i = 0; i < count; i++) {
     exercises.push(generateExercise(level, weakOperations, learnedTechniques));
   }
+  return exercises;
+}
+
+/**
+ * Generates a mixed set of exercises guaranteeing technique diversity.
+ * Requires 3+ learned techniques; falls back to generateExercises otherwise.
+ *
+ * Strategy:
+ * - Pick 3-5 random technique slugs
+ * - Generate 1 exercise per selected technique (guaranteed diversity)
+ * - Fill remaining 50/50 between technique-based and level-based
+ * - Shuffle final array
+ */
+export function generateMixedExercises(
+  count: number,
+  level: number,
+  learnedTechniques: string[],
+  weakOperations?: Operator[]
+): Exercise[] {
+  if (learnedTechniques.length < 3) {
+    return generateExercises(count, level, weakOperations, learnedTechniques);
+  }
+
+  const exercises: Exercise[] = [];
+
+  // Pick 3-5 random unique technique slugs
+  const shuffled = [...learnedTechniques].sort(() => Math.random() - 0.5);
+  const pickCount = Math.min(shuffled.length, randomInt(3, 5));
+  const selectedSlugs = shuffled.slice(0, pickCount);
+
+  // Generate 1 exercise per selected technique (guaranteed diversity)
+  for (const slug of selectedSlugs) {
+    const lesson = allLessons.find((l) => l.slug === slug);
+    if (lesson) {
+      const [ex] = lesson.practiceGenerator(1);
+      exercises.push({
+        operand1: ex.operand1,
+        operand2: ex.operand2,
+        operator: ex.operator,
+        correctAnswer: ex.correctAnswer,
+        techniqueSlug: slug,
+      });
+    }
+  }
+
+  // Fill remaining slots 50/50 between technique-based and level-based
+  const remaining = count - exercises.length;
+  for (let i = 0; i < remaining; i++) {
+    if (Math.random() < 0.5) {
+      // Technique-based
+      const slug = pickRandom(learnedTechniques);
+      const lesson = allLessons.find((l) => l.slug === slug);
+      if (lesson) {
+        const [ex] = lesson.practiceGenerator(1);
+        exercises.push({
+          operand1: ex.operand1,
+          operand2: ex.operand2,
+          operator: ex.operator,
+          correctAnswer: ex.correctAnswer,
+          techniqueSlug: slug,
+        });
+        continue;
+      }
+    }
+    // Level-based
+    exercises.push(generateExercise(level, weakOperations));
+  }
+
+  // Shuffle final array
+  for (let i = exercises.length - 1; i > 0; i--) {
+    const j = randomInt(0, i);
+    [exercises[i], exercises[j]] = [exercises[j], exercises[i]];
+  }
+
   return exercises;
 }
 
