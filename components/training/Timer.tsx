@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Clock } from "lucide-react";
 
 interface TimerProps {
   running: boolean;
@@ -36,9 +37,12 @@ export function Timer({ running }: TimerProps) {
       role="timer"
       aria-live="off"
       aria-label={`Tempo decorrido: ${formatted}`}
-      className="text-center font-mono text-2xl font-semibold text-muted-foreground"
+      className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-xl"
     >
-      {formatted}
+      <Clock className="size-3.5 text-white/40" />
+      <span className="font-mono text-sm font-semibold text-white/60 tabular-nums">
+        {formatted}
+      </span>
     </div>
   );
 }

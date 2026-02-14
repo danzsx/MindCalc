@@ -10,7 +10,7 @@ export function ProgressBar({ current, total }: ProgressBarProps) {
 
   return (
     <div
-      className="h-2 w-full overflow-hidden rounded-full bg-muted"
+      className="h-2 w-full overflow-hidden rounded-full bg-white/5"
       role="progressbar"
       aria-valuenow={current}
       aria-valuemin={0}
@@ -18,9 +18,12 @@ export function ProgressBar({ current, total }: ProgressBarProps) {
       aria-label={`Progresso: ${current} de ${total}`}
     >
       <div
-        className="h-full rounded-full bg-primary transition-all duration-300"
+        className="relative h-full rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 transition-all duration-500 ease-out overflow-hidden"
         style={{ width: `${percentage}%` }}
-      />
+      >
+        {/* Shimmer effect */}
+        <div className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      </div>
     </div>
   );
 }

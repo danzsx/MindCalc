@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface CountdownTimerProps {
   totalSeconds: number;
@@ -49,17 +49,20 @@ export function CountdownTimer({
   const fraction = remaining / totalSeconds;
   const displaySeconds = Math.ceil(remaining);
 
-  // Color based on remaining fraction
-  let strokeColor = "#22c55e"; // green
+  // Colors based on remaining fraction
+  let strokeColor = "#2dd4bf"; // teal
+  let glowColor = "rgba(45, 212, 191, 0.3)";
   if (fraction < 0.25) {
     strokeColor = "#ef4444"; // red
+    glowColor = "rgba(239, 68, 68, 0.3)";
   } else if (fraction < 0.5) {
     strokeColor = "#eab308"; // yellow
+    glowColor = "rgba(234, 179, 8, 0.3)";
   }
 
   // SVG circular progress
   const size = 72;
-  const strokeWidth = 5;
+  const strokeWidth = 4;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - fraction);
@@ -79,8 +82,7 @@ export function CountdownTimer({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="currentColor"
-          className="text-muted/20"
+          stroke="rgba(255, 255, 255, 0.08)"
           strokeWidth={strokeWidth}
         />
         {/* Progress circle */}
@@ -94,12 +96,19 @@ export function CountdownTimer({
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          style={{ transition: "stroke-dashoffset 0.1s linear, stroke 0.3s ease" }}
+          style={{
+            transition: "stroke-dashoffset 0.1s linear, stroke 0.3s ease",
+            filter: `drop-shadow(0 0 6px ${glowColor})`,
+          }}
         />
       </svg>
       <span
         className="absolute text-lg font-bold"
-        style={{ color: strokeColor, transition: "color 0.3s ease" }}
+        style={{
+          color: strokeColor,
+          transition: "color 0.3s ease",
+          fontFamily: "var(--font-family-display)",
+        }}
       >
         {displaySeconds}
       </span>

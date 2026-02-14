@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import {
   AreaChart,
   Area,
@@ -27,38 +28,21 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   if (!active || !payload?.length) return null;
 
   return (
-    <div
-      className="dash-tooltip"
-      style={{
-        background: "var(--card)",
-        border: "1px solid var(--border)",
-        borderRadius: 14,
-        padding: "12px 16px",
-        boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-      }}
-    >
-      <p
-        className="text-caption-medium text-muted-foreground"
-        style={{ marginBottom: 8 }}
-      >
-        {label}
-      </p>
+    <div className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
+      <p className="text-xs font-medium text-white/50 mb-2">{label}</p>
       {payload.map((entry) => (
         <div
           key={entry.dataKey}
-          className="flex items-center justify-between"
-          style={{ gap: 16, marginBottom: 2 }}
+          className="flex items-center justify-between gap-4 mb-0.5"
         >
-          <div className="flex items-center" style={{ gap: 6 }}>
+          <div className="flex items-center gap-2">
             <span
               className="inline-block w-2.5 h-2.5 rounded-full"
               style={{ background: entry.color }}
             />
-            <span className="text-caption text-muted-foreground">
-              {entry.name}
-            </span>
+            <span className="text-xs text-white/60">{entry.name}</span>
           </div>
-          <span className="text-caption-medium text-foreground">
+          <span className="text-xs font-semibold text-white">
             {entry.dataKey === "accuracy"
               ? `${entry.value}%`
               : `${entry.value}s`}
@@ -79,69 +63,65 @@ export function EvolutionChart({ sessions }: EvolutionChartProps) {
     avgTime: Number(s.avg_time.toFixed(1)),
   }));
 
-  const emptyState = (
-    <div
-      className="dash-card h-full"
-      style={{
-        padding: "var(--card-padding)",
-        "--card-accent": "linear-gradient(135deg, #2DD4BF, #10B981)",
-        "--card-accent-glow": "rgba(45, 212, 191, 0.04)",
-      } as React.CSSProperties}
-    >
-      <div className="relative z-10">
-        <div
-          className="flex items-center"
-          style={{ gap: "var(--card-header-gap)", marginBottom: "var(--card-section-gap)" }}
-        >
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #2DD4BF, #10B981)" }}
-          >
-            <TrendingUp className="h-5 w-5 text-white" />
+  if (data.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        className="relative group h-full"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-3xl opacity-10 blur-2xl group-hover:opacity-20 transition-opacity duration-500" />
+        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-all duration-300 h-full">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-gradient-to-br from-teal-500 to-cyan-500 p-3 rounded-2xl">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <h3
+              className="text-xl font-bold"
+              style={{ fontFamily: "var(--font-family-display)" }}
+            >
+              Sua evolução
+            </h3>
           </div>
-          <h2 className="text-card-title text-foreground">Sua evolução</h2>
+          <div className="flex items-center justify-center h-[280px] text-sm text-white/50">
+            Ainda sem treinos por aqui. Que tal começar o primeiro?
+          </div>
         </div>
-        <div className="flex items-center justify-center h-[280px] text-body-primary text-muted-foreground">
-          Ainda sem treinos por aqui. Que tal começar o primeiro?
-        </div>
-      </div>
-    </div>
-  );
-
-  if (data.length === 0) return emptyState;
+      </motion.div>
+    );
+  }
 
   return (
-    <div
-      className="dash-card h-full"
-      style={{
-        padding: "var(--card-padding)",
-        animationDelay: "160ms",
-        "--card-accent": "linear-gradient(135deg, #2DD4BF, #10B981)",
-        "--card-accent-glow": "rgba(45, 212, 191, 0.04)",
-      } as React.CSSProperties}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.8 }}
+      className="relative group h-full"
     >
-      <div className="relative z-10">
-        <div
-          className="flex items-center justify-between"
-          style={{ marginBottom: "var(--card-section-gap)" }}
-        >
-          <div className="flex items-center" style={{ gap: "var(--card-header-gap)" }}>
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #2DD4BF, #10B981)" }}
+      <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-3xl opacity-10 blur-2xl group-hover:opacity-20 transition-opacity duration-500" />
+
+      <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-all duration-300 h-full">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-teal-500 to-cyan-500 p-3 rounded-2xl">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <h3
+              className="text-xl font-bold"
+              style={{ fontFamily: "var(--font-family-display)" }}
             >
-              <TrendingUp className="h-5 w-5 text-white" />
-            </div>
-            <h2 className="text-card-title text-foreground">Sua evolução</h2>
+              Sua evolução
+            </h3>
           </div>
-          <div className="flex items-center" style={{ gap: "var(--space-lg)" }}>
-            <div className="flex items-center" style={{ gap: 6 }}>
-              <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#2DD4BF" }} />
-              <span className="text-caption text-muted-foreground">Precisão</span>
+          <div className="hidden sm:flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-teal-400" />
+              <span className="text-xs text-white/50">Precisão</span>
             </div>
-            <div className="flex items-center" style={{ gap: 6 }}>
-              <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#10B981" }} />
-              <span className="text-caption text-muted-foreground">Tempo</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+              <span className="text-xs text-white/50">Tempo</span>
             </div>
           </div>
         </div>
@@ -151,22 +131,22 @@ export function EvolutionChart({ sessions }: EvolutionChartProps) {
             <AreaChart data={data} margin={{ top: 8, right: 8, left: -12, bottom: 4 }}>
               <defs>
                 <linearGradient id="gradAccuracy" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#2DD4BF" stopOpacity={0.25} />
+                  <stop offset="0%" stopColor="#2DD4BF" stopOpacity={0.3} />
                   <stop offset="95%" stopColor="#2DD4BF" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="gradTime" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#10B981" stopOpacity={0.15} />
+                  <stop offset="0%" stopColor="#10B981" stopOpacity={0.2} />
                   <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="rgba(148, 163, 184, 0.1)"
+                stroke="rgba(255, 255, 255, 0.05)"
                 vertical={false}
               />
               <XAxis
                 dataKey="date"
-                stroke="rgba(148, 163, 184, 0.4)"
+                stroke="rgba(255, 255, 255, 0.3)"
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
@@ -175,7 +155,7 @@ export function EvolutionChart({ sessions }: EvolutionChartProps) {
               <YAxis
                 yAxisId="accuracy"
                 domain={[0, 100]}
-                stroke="rgba(148, 163, 184, 0.3)"
+                stroke="rgba(255, 255, 255, 0.2)"
                 fontSize={11}
                 tickFormatter={(v) => `${v}%`}
                 tickLine={false}
@@ -185,7 +165,7 @@ export function EvolutionChart({ sessions }: EvolutionChartProps) {
               <YAxis
                 yAxisId="time"
                 orientation="right"
-                stroke="rgba(148, 163, 184, 0.3)"
+                stroke="rgba(255, 255, 255, 0.2)"
                 fontSize={11}
                 tickFormatter={(v) => `${v}s`}
                 tickLine={false}
@@ -201,8 +181,8 @@ export function EvolutionChart({ sessions }: EvolutionChartProps) {
                 stroke="#2DD4BF"
                 strokeWidth={2.5}
                 fill="url(#gradAccuracy)"
-                dot={{ r: 4, fill: "#2DD4BF", stroke: "#fff", strokeWidth: 2 }}
-                activeDot={{ r: 6, fill: "#2DD4BF", stroke: "#fff", strokeWidth: 2 }}
+                dot={{ r: 4, fill: "#2DD4BF", stroke: "rgba(15,23,42,0.8)", strokeWidth: 2 }}
+                activeDot={{ r: 6, fill: "#2DD4BF", stroke: "rgba(15,23,42,0.8)", strokeWidth: 2 }}
               />
               <Area
                 yAxisId="time"
@@ -212,13 +192,13 @@ export function EvolutionChart({ sessions }: EvolutionChartProps) {
                 stroke="#10B981"
                 strokeWidth={2}
                 fill="url(#gradTime)"
-                dot={{ r: 3, fill: "#10B981", stroke: "#fff", strokeWidth: 2 }}
-                activeDot={{ r: 5, fill: "#10B981", stroke: "#fff", strokeWidth: 2 }}
+                dot={{ r: 3, fill: "#10B981", stroke: "rgba(15,23,42,0.8)", strokeWidth: 2 }}
+                activeDot={{ r: 5, fill: "#10B981", stroke: "rgba(15,23,42,0.8)", strokeWidth: 2 }}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -142,20 +142,22 @@ export default async function DashboardPage() {
       errorRate: data.weightedErrors / data.weightedTotal,
     }));
 
+  const firstName = user.user_metadata?.name?.split(" ")[0] || user.email?.split("@")[0] || "aluno";
+
   return (
-    <main className="flex flex-col fade-in" style={{ gap: 'var(--section-gap)' }}>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between" style={{ gap: 'var(--space-lg)' }}>
-        <h1 className="text-page-title text-foreground">Seu painel</h1>
-        <Link
-          href="/train"
-          className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground
-            px-6 py-3 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg
-            transform hover:-translate-y-0.5 transition-all duration-300 min-h-[48px] text-body-emphasis"
+    <main className="flex flex-col gap-12">
+      {/* Hero Section */}
+      <div>
+        <h1
+          className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent leading-tight"
+          style={{ fontFamily: "var(--font-family-display)" }}
         >
-          Bora treinar
-        </Link>
+          Olá, {firstName}!
+        </h1>
+        <p className="text-xl text-white/60">Pronto para turbinar seu cérebro hoje?</p>
       </div>
 
+      {/* Stats Grid */}
       <StatsSummary
         level={profile.level}
         streak={profile.streak}
@@ -163,8 +165,8 @@ export default async function DashboardPage() {
         totalSessions={totalSessions}
       />
 
-      {/* Learning row: Lessons + Tables side-by-side */}
-      <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--grid-gap)' }}>
+      {/* Bento Grid: Lessons (2/3) + Tabuada (1/3) */}
+      <div className="grid lg:grid-cols-3 gap-6">
         <LessonsOverviewCard
           completedCount={completedLessons ?? 0}
           totalCount={totalLessons ?? 0}
@@ -172,8 +174,8 @@ export default async function DashboardPage() {
         <TablesCard progress={tablesProgress} />
       </div>
 
-      {/* Analytics row: Chart (2/3) + Weak Points (1/3) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3" style={{ gap: 'var(--grid-gap)' }}>
+      {/* Analytics: Chart (2/3) + Weak Points (1/3) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <EvolutionChart sessions={orderedSessions} />
         </div>
@@ -183,7 +185,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Confidence row */}
-      <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 'var(--grid-gap)' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ConfidenceCard surveys={confidenceSurveys} />
       </div>
     </main>

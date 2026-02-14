@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 import { LessonCard, type LessonStatus } from "@/components/lessons/LessonCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LESSON_CATEGORIES, getLessonCategory } from "@/lib/lessons/categories";
+import { Plus, Minus, X, Divide, type LucideIcon } from "lucide-react";
+import { motion } from "motion/react";
 import type { Lesson } from "@/types";
 
 interface LessonWithStatus extends Lesson {
@@ -21,6 +23,18 @@ interface CategoryGroup {
   lessons: LessonWithStatus[];
   completedCount: number;
 }
+
+const CATEGORY_GRADIENTS: Record<string, string> = {
+  basicas: "from-emerald-500 to-teal-500",
+  "dia-a-dia": "from-orange-500 to-amber-500",
+  vestibulares: "from-blue-500 to-purple-500",
+};
+
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  basicas: Plus,
+  "dia-a-dia": Minus,
+  vestibulares: X,
+};
 
 export default function LessonsPage() {
   const router = useRouter();
@@ -120,21 +134,19 @@ export default function LessonsPage() {
 
   if (authLoading || loading) {
     return (
-      <main className="container mx-auto max-w-3xl px-4 py-8 space-y-6 fade-in">
+      <main className="max-w-7xl mx-auto px-6 md:px-8 py-8 space-y-8">
+        {/* Skeleton hero */}
         <div>
-          <Skeleton className="h-9 w-48 mb-2" />
-          <Skeleton className="h-5 w-72" />
+          <Skeleton className="h-4 w-40 mb-6 bg-white/5 rounded-full" />
+          <Skeleton className="h-14 w-96 mb-4 bg-white/5 rounded-2xl" />
+          <Skeleton className="h-6 w-72 bg-white/5 rounded-xl" />
         </div>
-        <div className="space-y-4">
+        {/* Skeleton progress card */}
+        <Skeleton className="h-36 w-full bg-white/5 rounded-3xl" />
+        {/* Skeleton grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex gap-4 items-start">
-              <Skeleton className="h-12 w-12 rounded-full shrink-0" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-5 w-40" />
-                <Skeleton className="h-4 w-56" />
-              </div>
-            </div>
+            <Skeleton key={i} className="h-80 bg-white/5 rounded-3xl" />
           ))}
         </div>
       </main>
@@ -144,113 +156,154 @@ export default function LessonsPage() {
   const progressPercent = lessons.length > 0 ? (totalCompleted / lessons.length) * 100 : 0;
 
   return (
-    <main className="container mx-auto max-w-3xl px-4 fade-in" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-2xl)', display: 'flex', flexDirection: 'column', gap: 'var(--section-gap)' }}>
-      {/* Header with global progress */}
-      <div>
-        <h1 className="text-page-title text-foreground">Sua Jornada</h1>
-        <p className="text-body-primary text-muted-foreground" style={{ marginTop: 'var(--space-xs)' }}>
-          Cada passo te deixa mais rapido no calculo mental
+    <main className="max-w-7xl mx-auto px-6 md:px-8 pt-8 pb-36 md:pb-8">
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-12"
+      >
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/10 border border-teal-500/20 mb-6">
+          <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse" />
+          <span className="text-sm text-teal-300 font-medium">
+            {lessons.length} aulas disponíveis
+          </span>
+        </div>
+
+        <h1
+          className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent leading-tight"
+          style={{ fontFamily: "var(--font-family-display)" }}
+        >
+          Sua Jornada de{"\n"}Aprendizado
+        </h1>
+        <p className="text-xl text-white/60 max-w-2xl">
+          Cada aula te deixa mais rapido e confiante no calculo mental. Continue evoluindo!
         </p>
-        {lessons.length > 0 && (
-          <div style={{ marginTop: 'var(--space-lg)' }}>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-caption-medium text-muted-foreground">
-                {totalCompleted} de {lessons.length} aulas concluidas
-              </span>
-              <span className="text-caption-medium text-primary">
-                {Math.round(progressPercent)}%
-              </span>
+      </motion.div>
+
+      {/* Overall Progress Card */}
+      {lessons.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+          className="mb-16 relative group"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-3xl opacity-10 blur-2xl" />
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <div>
+                <h2
+                  className="text-2xl font-bold mb-1 text-white"
+                  style={{ fontFamily: "var(--font-family-display)" }}
+                >
+                  Progresso Geral
+                </h2>
+                <p className="text-white/60">Continue assim para desbloquear novas tecnicas!</p>
+              </div>
+              <div className="text-right">
+                <div
+                  className="text-5xl font-bold text-teal-400 mb-1"
+                  style={{ fontFamily: "var(--font-family-display)" }}
+                >
+                  {Math.round(progressPercent)}%
+                </div>
+                <p className="text-sm text-white/50">
+                  {totalCompleted} de {lessons.length} concluidas
+                </p>
+              </div>
             </div>
-            <div className="w-full h-2.5 bg-primary/10 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-primary to-success transition-all duration-700"
-                style={{ width: `${progressPercent}%` }}
-              />
+            <div className="h-4 bg-white/5 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
+                className="h-full bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 rounded-full relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+              </motion.div>
             </div>
           </div>
-        )}
-      </div>
+        </motion.div>
+      )}
 
-      {/* Category sections */}
+      {/* Category Sections */}
       {categories.map((cat, catIdx) => {
         const catProgress = cat.lessons.length > 0
           ? (cat.completedCount / cat.lessons.length) * 100
           : 0;
+        const CatIcon = CATEGORY_ICONS[cat.slug] ?? Plus;
+        const catGradient = CATEGORY_GRADIENTS[cat.slug] ?? "from-teal-500 to-cyan-500";
 
         return (
-          <section key={cat.slug}>
-            {/* Category divider */}
-            {catIdx > 0 && (
-              <div className="flex items-center gap-3 mb-6">
-                <div className="h-px flex-1 bg-border" />
-                <div className="h-px flex-1 bg-border" />
-              </div>
-            )}
-
-            {/* Category header */}
-            <div className="bg-card rounded-xl border p-4 sm:p-5 mb-6">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 text-2xl">{cat.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="text-section-title text-foreground" style={{ marginBottom: 'var(--space-xs)' }}>
-                    {cat.title}
-                  </h2>
-                  <p className="text-body-primary text-muted-foreground" style={{ lineHeight: 'var(--leading-relaxed)' }}>
-                    {cat.description}
-                  </p>
-                  {/* Per-category progress */}
-                  <div style={{ marginTop: 'var(--space-sm)' }}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-caption text-muted-foreground">
+          <motion.section
+            key={cat.slug}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 + catIdx * 0.1, duration: 0.5 }}
+            className="mb-12"
+          >
+            {/* Category Header Card */}
+            <div className="relative group mb-6">
+              <div className={`absolute inset-0 bg-gradient-to-r ${catGradient} rounded-3xl opacity-10 blur-xl`} />
+              <div className="relative bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl p-6">
+                <div className="flex items-start gap-4">
+                  <div className={`bg-gradient-to-br ${catGradient} p-3 rounded-2xl flex-shrink-0`}>
+                    <span className="text-2xl">{cat.icon}</span>
+                  </div>
+                  <div className="flex-1">
+                    <h2
+                      className="text-2xl font-bold mb-1 text-white"
+                      style={{ fontFamily: "var(--font-family-display)" }}
+                    >
+                      {cat.title}
+                    </h2>
+                    <p className="text-white/60 text-sm mb-4">{cat.description}</p>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-white/50">
                         {cat.completedCount} de {cat.lessons.length}
                       </span>
-                      <span className="text-caption text-primary">
+                      <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden max-w-xs">
+                        <div
+                          className={`h-full bg-gradient-to-r ${catGradient} rounded-full transition-all duration-500`}
+                          style={{ width: `${catProgress}%` }}
+                        />
+                      </div>
+                      <span className="text-sm font-bold text-teal-400">
                         {Math.round(catProgress)}%
                       </span>
-                    </div>
-                    <div className="w-full h-1.5 bg-primary/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-success transition-all duration-700"
-                        style={{ width: `${catProgress}%` }}
-                      />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Lesson trail */}
-            <div className="relative">
-              <div
-                className="absolute left-6 top-6 bottom-6 w-0.5 bg-border -translate-x-1/2"
-                aria-hidden="true"
-              />
-              <div className="space-y-4 relative">
-                {cat.lessons.map((lesson, index) => (
-                  <div
-                    key={lesson.slug}
-                    className="fade-in"
-                    style={{ animationDelay: `${index * 80}ms` }}
-                  >
-                    <LessonCard
-                      lesson={lesson}
-                      status={lesson.status}
-                      index={index}
-                      total={cat.lessons.length}
-                      onClick={() => handleCardClick(lesson.slug)}
-                    />
-                  </div>
-                ))}
-              </div>
+            {/* Lesson Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {cat.lessons.map((lesson, index) => (
+                <LessonCard
+                  key={lesson.slug}
+                  lesson={lesson}
+                  status={lesson.status}
+                  index={index}
+                  total={cat.lessons.length}
+                  onClick={() => handleCardClick(lesson.slug)}
+                />
+              ))}
             </div>
-          </section>
+          </motion.section>
         );
       })}
 
       {lessons.length === 0 && !loading && (
-        <p className="text-center text-muted-foreground py-8">
-          Nenhuma aula disponivel no momento.
-        </p>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-3xl opacity-5 blur-2xl" />
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center">
+            <p className="text-white/60 text-lg">
+              Nenhuma aula disponivel no momento.
+            </p>
+          </div>
+        </div>
       )}
     </main>
   );

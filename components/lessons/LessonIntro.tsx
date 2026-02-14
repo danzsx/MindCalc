@@ -2,9 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Lightbulb, Play } from "lucide-react";
-import { getStepColor } from "@/lib/lessons/utils";
+import { ArrowRight, Lightbulb, Play, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const STEP_GRADIENTS = [
+  { bg: "from-teal-500/10 to-cyan-500/10", border: "border-teal-500/20", badge: "bg-gradient-to-br from-teal-500 to-cyan-500 text-white" },
+  { bg: "from-cyan-500/10 to-blue-500/10", border: "border-cyan-500/20", badge: "bg-gradient-to-br from-cyan-500 to-blue-500 text-white" },
+  { bg: "from-blue-500/10 to-purple-500/10", border: "border-blue-500/20", badge: "bg-gradient-to-br from-blue-500 to-purple-500 text-white" },
+  { bg: "from-purple-500/10 to-pink-500/10", border: "border-purple-500/20", badge: "bg-gradient-to-br from-purple-500 to-pink-500 text-white" },
+  { bg: "from-emerald-500/10 to-teal-500/10", border: "border-emerald-500/20", badge: "bg-gradient-to-br from-emerald-500 to-teal-500 text-white" },
+];
 
 interface LessonIntroProps {
   title: string;
@@ -51,22 +58,29 @@ export function LessonIntro({
 
   return (
     <div className="space-y-6">
-      {/* Explanation block */}
-      <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-5">
-        <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-lg bg-primary/10">
-          <Lightbulb className="size-4 text-primary" />
-        </div>
-        <div>
-          <h2 className="text-section-title mb-1">{title}</h2>
-          <p className="text-body-primary text-muted-foreground" style={{ lineHeight: 'var(--leading-relaxed)' }}>
-            {explanation}
-          </p>
+      {/* Explanation card — glassmorphism with gradient icon */}
+      <div className="relative group">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-cyan-500/10 rounded-2xl blur-xl opacity-50" />
+        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+          <div className="flex items-start gap-4">
+            <div className="flex items-center justify-center shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/20">
+              <Info className="size-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="font-[var(--font-family-display)] text-xl sm:text-2xl font-bold text-white mb-2">
+                {title}
+              </h2>
+              <p className="text-sm text-white/60 leading-relaxed">
+                {explanation}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Central expression */}
-      <div className="text-center py-4">
-        <p className="text-3xl sm:text-4xl font-bold tracking-wide text-foreground">
+      {/* Central expression — large, gradient text */}
+      <div className="text-center py-5">
+        <p className="font-[var(--font-family-display)] text-4xl sm:text-5xl font-bold bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent tracking-wide">
           {example.expression}
         </p>
       </div>
@@ -75,7 +89,7 @@ export function LessonIntro({
       <div className="space-y-3">
         {example.steps.map((step, index) => {
           const isVisible = index < visibleSteps;
-          const color = getStepColor(index, totalSteps);
+          const gradient = STEP_GRADIENTS[index % STEP_GRADIENTS.length];
 
           return (
             <div
@@ -87,16 +101,16 @@ export function LessonIntro({
               style={isVisible ? { animationDelay: `${index * 100}ms` } : undefined}
             >
               <div className={cn(
-                "flex items-start gap-3 rounded-lg border p-4",
-                color.bg, color.border
+                "flex items-start gap-3 rounded-xl border p-4 bg-gradient-to-r backdrop-blur-sm",
+                gradient.bg, gradient.border
               )}>
                 <div className={cn(
-                  "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                  color.badge
+                  "flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold shadow-sm",
+                  gradient.badge
                 )}>
                   {index + 1}
                 </div>
-                <span className="text-body-primary leading-relaxed pt-0.5">
+                <span className="text-sm leading-relaxed text-white/80 pt-0.5">
                   {step}
                 </span>
               </div>
@@ -104,12 +118,12 @@ export function LessonIntro({
           );
         })}
 
-        {/* "Next step" button between steps */}
+        {/* "Next step" button */}
         {visibleSteps > 0 && visibleSteps < totalSteps && (
-          <div className="flex justify-center py-1 lesson-step-in">
+          <div className="flex justify-center py-2 lesson-step-in">
             <button
               onClick={revealNext}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/50 hover:bg-muted border border-border text-muted-foreground hover:text-foreground transition-all text-sm"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all text-sm font-medium"
             >
               <span>Proximo passo</span>
               <Play className="size-3" />
@@ -120,10 +134,10 @@ export function LessonIntro({
 
       {/* Final result with glow */}
       {showResult && (
-        <div className="text-center py-4 lesson-step-in">
+        <div className="text-center py-5 lesson-step-in">
           <div className="inline-block relative">
-            <div className="absolute inset-0 bg-success/20 rounded-full blur-xl" />
-            <p className="relative text-2xl sm:text-3xl font-bold text-success">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 rounded-full blur-2xl" />
+            <p className="relative font-[var(--font-family-display)] text-3xl sm:text-4xl font-bold text-emerald-400">
               = {example.answer}
             </p>
           </div>
@@ -133,10 +147,13 @@ export function LessonIntro({
       {/* CTA — only after all steps revealed */}
       {allRevealed && (
         <div className="lesson-step-in" style={{ animationDelay: '200ms' }}>
-          <Button onClick={onContinue} className="w-full" size="lg">
+          <button
+            onClick={onContinue}
+            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white font-bold text-base shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 transition-all duration-300 group"
+          >
             Entendi! Vamos praticar
-            <ArrowRight className="size-4 ml-2" />
-          </Button>
+            <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
       )}
     </div>

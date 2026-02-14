@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { motion } from "motion/react";
+import { Send } from "lucide-react";
 import type { TablesQuestion, TablesMode } from "@/types";
 
 interface TablesQuestionCardProps {
@@ -60,22 +62,34 @@ export function TablesQuestionCard({
   );
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
       {isRetry && (
-        <span className="inline-block bg-secondary/20 text-secondary-foreground text-xs font-medium px-3 py-1 rounded-full">
+        <span className="inline-flex items-center gap-1.5 bg-orange-500/15 text-orange-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-orange-500/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
           Revisão
         </span>
       )}
 
       {/* Question display */}
-      <div className="text-center py-4">
-        <p
-          className="text-4xl font-semibold text-foreground"
+      <div className="text-center py-6">
+        <motion.p
+          key={question.id}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          className="text-5xl font-bold text-white"
           style={{ fontFamily: "var(--font-family-display)" }}
         >
-          {question.operand1} {formatOperator(question.operator)}{" "}
-          {question.operand2} = ?
-        </p>
+          {question.operand1}{" "}
+          <span className="text-teal-400">{formatOperator(question.operator)}</span>{" "}
+          {question.operand2}{" "}
+          <span className="text-white/40">=</span>{" "}
+          <span className="text-teal-300">?</span>
+        </motion.p>
       </div>
 
       {/* Input */}
@@ -89,18 +103,21 @@ export function TablesQuestionCard({
           onKeyDown={handleKeyDown}
           placeholder="Sua resposta"
           autoFocus
-          className="w-full px-6 py-4 bg-muted text-foreground rounded-xl border-2 border-primary/30 focus:border-primary focus:outline-none transition-colors text-lg text-center font-medium"
+          className="w-full px-6 py-4 bg-white/5 text-white rounded-2xl border-2 border-white/10 focus:border-teal-400 focus:bg-white/10 focus:outline-none focus:shadow-lg focus:shadow-teal-500/10 transition-all duration-300 text-xl text-center font-bold placeholder:text-white/30"
         />
       </div>
 
       {/* Submit button */}
-      <button
+      <motion.button
+        whileHover={{ scale: answer.trim() ? 1.02 : 1 }}
+        whileTap={{ scale: answer.trim() ? 0.98 : 1 }}
         onClick={handleSubmit}
         disabled={answer.trim() === ""}
-        className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:hover:shadow-md"
+        className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:from-teal-400 hover:to-cyan-400 hover:shadow-lg hover:shadow-teal-500/25 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-none"
       >
+        <Send className="w-5 h-5" />
         Essa é minha resposta
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 }

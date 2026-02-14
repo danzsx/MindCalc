@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, Sparkles } from "lucide-react";
 import type { HintLevel } from "@/lib/lessons/types";
 
 interface LessonHintProps {
@@ -14,22 +14,50 @@ export function LessonHint({ hint, level }: LessonHintProps) {
     return null;
   }
 
+  const isFull = level === "full";
+
   return (
-    <div
-      className={cn(
-        "flex items-start gap-3 rounded-lg p-4",
-        level === "full"
-          ? "border-l-4 border-l-cyan-400 bg-primary/5 border border-l-0 border-cyan-400/20"
-          : "border-l-4 border-l-amber-400 bg-muted/30 border border-l-0 border-amber-400/20"
-      )}
-    >
-      <Lightbulb
+    <div className="relative group">
+      {/* Subtle glow */}
+      <div
         className={cn(
-          "size-5 shrink-0 mt-0.5",
-          level === "full" ? "text-cyan-500" : "text-amber-500"
+          "absolute inset-0 rounded-2xl opacity-10 blur-xl transition-opacity duration-500 group-hover:opacity-15",
+          isFull
+            ? "bg-gradient-to-br from-cyan-500 to-teal-500"
+            : "bg-gradient-to-br from-amber-500 to-orange-500"
         )}
       />
-      <p className="text-sm leading-relaxed text-foreground">{hint}</p>
+      <div
+        className={cn(
+          "relative flex items-start gap-3 rounded-2xl p-5 backdrop-blur-sm transition-all duration-300",
+          isFull
+            ? "bg-teal-500/8 border border-teal-500/20 border-l-4 border-l-teal-400"
+            : "bg-amber-500/8 border border-amber-500/20 border-l-4 border-l-amber-400"
+        )}
+      >
+        {/* Icon in gradient box */}
+        <div
+          className={cn(
+            "flex items-center justify-center shrink-0 w-9 h-9 rounded-xl",
+            isFull
+              ? "bg-gradient-to-br from-teal-500 to-cyan-500"
+              : "bg-gradient-to-br from-amber-500 to-orange-500"
+          )}
+        >
+          {isFull ? (
+            <Lightbulb className="size-4 text-white" />
+          ) : (
+            <Sparkles className="size-4 text-white" />
+          )}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium uppercase tracking-wider mb-1 text-white/40">
+            {isFull ? "Dica completa" : "Uma pista"}
+          </p>
+          <p className="text-sm leading-relaxed text-white/80">{hint}</p>
+        </div>
+      </div>
     </div>
   );
 }

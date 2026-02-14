@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LessonProgressIndicator } from "./LessonProgressIndicator";
 import { LessonIntro } from "./LessonIntro";
@@ -131,10 +131,13 @@ export function LessonShell({ lesson, onComplete, nextLessonSlug }: LessonShellP
   // Practice mode
   if (showPractice) {
     return (
-      <div className="mx-auto max-w-2xl space-y-6">
-        <div className="space-y-1">
-          <h2 className="text-section-title">Mais um pouco</h2>
-          <p className="text-body-primary text-muted-foreground">
+      <div className="mx-auto max-w-2xl space-y-6 px-4 sm:px-0">
+        {/* Practice header */}
+        <div className="space-y-2">
+          <h2 className="font-[var(--font-family-display)] text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent">
+            Mais um pouco
+          </h2>
+          <p className="text-sm text-white/60">
             5 exercicios sem dica — pra deixar o truque automatico.
           </p>
         </div>
@@ -148,21 +151,27 @@ export function LessonShell({ lesson, onComplete, nextLessonSlug }: LessonShellP
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      {/* Header: Back button + title */}
+    <div className="mx-auto max-w-2xl space-y-6 px-4 sm:px-0">
+      {/* Header: Back button + lesson info */}
       <div className="flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
           onClick={handleBackToLessons}
-          className="shrink-0"
+          className="flex items-center justify-center shrink-0 w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white transition-all duration-200"
         >
           <ArrowLeft className="size-4" />
-          <span className="hidden sm:inline ml-1">Aulas</span>
-        </Button>
-        <h1 className="text-section-title truncate flex-1">
-          {lesson.title}
-        </h1>
+        </button>
+        <div className="flex-1 min-w-0">
+          <h1 className="font-[var(--font-family-display)] text-xl sm:text-2xl font-bold text-white truncate">
+            {lesson.title}
+          </h1>
+          <p className="text-xs text-white/40 flex items-center gap-1.5 mt-0.5">
+            <BookOpen className="size-3" />
+            <span>Aula interativa</span>
+            <span className="text-white/20">•</span>
+            <Clock className="size-3" />
+            <span>~5 minutos</span>
+          </p>
+        </div>
       </div>
 
       {/* Progress stepper */}
@@ -170,10 +179,15 @@ export function LessonShell({ lesson, onComplete, nextLessonSlug }: LessonShellP
 
       {/* Interstitial message */}
       {interstitialMsg && (
-        <div className="flex items-center justify-center py-8 lesson-phase-enter">
-          <p className="text-body-emphasis text-muted-foreground text-center">
-            {interstitialMsg}
-          </p>
+        <div className="flex items-center justify-center py-10 lesson-phase-enter">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-2xl blur-xl" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl px-8 py-6">
+              <p className="text-lg font-medium text-white/80 text-center">
+                {interstitialMsg}
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
@@ -229,27 +243,32 @@ export function LessonShell({ lesson, onComplete, nextLessonSlug }: LessonShellP
           {/* Phases 2-4: Exercises */}
           {(phase === "guided" || phase === "semi-guided" || phase === "free") &&
             currentExercise && (
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <h2 className="text-section-title">
-                    {PHASE_TITLES[phase]}
-                  </h2>
-                  <p className="text-body-primary text-muted-foreground">
-                    {phase === "guided" && (
-                      lesson.interactive
-                        ? "Siga os passos — voce ja sabe o caminho."
-                        : "Use a dica abaixo pra pensar junto."
-                    )}
-                    {phase === "semi-guided" && (
-                      lesson.interactive
-                        ? "Menos ajuda dessa vez — o truque ja e seu."
-                        : "A dica mostra so o comeco — tente chegar no resultado."
-                    )}
-                    {phase === "free" && (
-                      "Sem dicas dessa vez. Confia no que voce aprendeu."
-                    )}
-                  </p>
+              <div className="space-y-5">
+                {/* Phase title card */}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-2xl blur-lg" />
+                  <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5">
+                    <h2 className="font-[var(--font-family-display)] text-xl sm:text-2xl font-bold text-white mb-1">
+                      {PHASE_TITLES[phase]}
+                    </h2>
+                    <p className="text-sm text-white/50">
+                      {phase === "guided" && (
+                        lesson.interactive
+                          ? "Siga os passos — voce ja sabe o caminho."
+                          : "Use a dica abaixo pra pensar junto."
+                      )}
+                      {phase === "semi-guided" && (
+                        lesson.interactive
+                          ? "Menos ajuda dessa vez — o truque ja e seu."
+                          : "A dica mostra so o comeco — tente chegar no resultado."
+                      )}
+                      {phase === "free" && (
+                        "Sem dicas dessa vez. Confia no que voce aprendeu."
+                      )}
+                    </p>
+                  </div>
                 </div>
+
                 {lesson.interactive?.type === "round-to-ten" ? (
                   <InteractiveExercise
                     key={phase}

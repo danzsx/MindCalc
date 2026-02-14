@@ -22,7 +22,8 @@ export function LessonProgressIndicator({ currentPhase }: LessonProgressIndicato
   const currentIndex = PHASES.indexOf(currentPhase);
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
+      {/* Steps row */}
       <div className="flex items-center justify-between">
         {PHASES.map((phase, index) => {
           const isCompleted = index < currentIndex;
@@ -33,27 +34,34 @@ export function LessonProgressIndicator({ currentPhase }: LessonProgressIndicato
           return (
             <div key={phase} className="flex items-center flex-1 last:flex-none">
               {/* Step circle + label */}
-              <div className="flex flex-col items-center gap-1.5">
-                <div
-                  className={cn(
-                    "flex items-center justify-center rounded-full transition-all duration-300",
-                    "w-9 h-9 sm:w-10 sm:h-10",
-                    isCompleted && "bg-success text-success-foreground",
-                    isCurrent && "bg-primary text-primary-foreground ring-4 ring-primary/20",
-                    !isCompleted && !isCurrent && "bg-muted text-muted-foreground"
+              <div className="flex flex-col items-center gap-2">
+                <div className="relative">
+                  {/* Glow ring on current */}
+                  {isCurrent && (
+                    <div className="absolute -inset-1.5 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full opacity-30 blur-md animate-pulse" />
                   )}
-                >
-                  {isCompleted ? (
-                    <Check className="size-4" />
-                  ) : (
-                    <Icon className="size-4" />
-                  )}
+                  <div
+                    className={cn(
+                      "relative flex items-center justify-center rounded-full transition-all duration-500",
+                      "w-11 h-11 sm:w-14 sm:h-14",
+                      isCompleted && "bg-gradient-to-br from-teal-500 to-cyan-500 text-white border-2 border-teal-400/50 shadow-lg shadow-teal-500/20",
+                      isCurrent && "bg-gradient-to-br from-teal-500 to-cyan-500 text-white border-2 border-teal-400 shadow-lg shadow-teal-500/50",
+                      !isCompleted && !isCurrent && "bg-white/5 text-white/40 border-2 border-white/20"
+                    )}
+                  >
+                    {isCompleted ? (
+                      <Check className="size-4 sm:size-5" />
+                    ) : (
+                      <Icon className="size-4 sm:size-5" />
+                    )}
+                  </div>
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] sm:text-[11px] leading-none text-center whitespace-nowrap",
-                    isCurrent ? "text-foreground font-semibold" : "text-muted-foreground",
-                    isCompleted && "text-success"
+                    "text-[10px] sm:text-xs leading-none text-center whitespace-nowrap font-medium transition-colors duration-300",
+                    isCurrent && "text-teal-400",
+                    isCompleted && "text-teal-400/80",
+                    !isCompleted && !isCurrent && "text-white/40"
                   )}
                 >
                   {config.label}
@@ -62,12 +70,14 @@ export function LessonProgressIndicator({ currentPhase }: LessonProgressIndicato
 
               {/* Connector line */}
               {index < PHASES.length - 1 && (
-                <div className="flex-1 mx-1.5 sm:mx-2 -mt-5">
-                  <div className="h-0.5 w-full rounded-full bg-muted overflow-hidden">
+                <div className="flex-1 mx-1 sm:mx-2 -mt-6">
+                  <div className="h-0.5 w-full rounded-full bg-white/10 overflow-hidden">
                     <div
                       className={cn(
-                        "h-full rounded-full transition-all duration-500",
-                        index < currentIndex ? "bg-success w-full" : "w-0"
+                        "h-full rounded-full transition-all duration-700 ease-out",
+                        index < currentIndex
+                          ? "bg-gradient-to-r from-teal-500 to-cyan-500 w-full"
+                          : "w-0"
                       )}
                     />
                   </div>
@@ -78,12 +88,14 @@ export function LessonProgressIndicator({ currentPhase }: LessonProgressIndicato
         })}
       </div>
 
-      {/* Animated progress bar below */}
-      <div className="mt-4 h-1 bg-muted rounded-full overflow-hidden">
+      {/* Bottom progress bar with shimmer */}
+      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-primary to-success transition-all duration-700"
+          className="h-full rounded-full bg-gradient-to-r from-teal-500 via-cyan-400 to-teal-500 transition-all duration-700 relative"
           style={{ width: `${(currentIndex / (PHASES.length - 1)) * 100}%` }}
-        />
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+        </div>
       </div>
     </div>
   );

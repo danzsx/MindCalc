@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { PartyPopper, Dumbbell, ArrowRight, ArrowLeft } from "lucide-react";
+import { Dumbbell, ArrowRight, ArrowLeft, Sparkles, Clock, Target } from "lucide-react";
 
 const CONFETTI_COLORS = ["#22d3ee", "#fbbf24", "#34d399", "#a78bfa", "#f472b6", "#fb923c"];
 
@@ -61,42 +60,92 @@ export function LessonCompletion({
       : `${elapsedMinutes} minutos`;
 
   return (
-    <div className="flex flex-col items-center text-center space-y-6 py-6 lesson-phase-enter">
+    <div className="flex flex-col items-center text-center space-y-8 py-8 lesson-phase-enter">
       {showConfetti && <CompletionConfetti />}
 
-      <div className="flex size-20 items-center justify-center rounded-full bg-primary/10 lesson-step-in">
-        <PartyPopper className="size-10 text-primary" />
+      {/* Large emoji with spring effect */}
+      <div className="relative lesson-step-in">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/30 to-cyan-500/30 rounded-full blur-3xl scale-150" />
+        <div className="relative text-8xl" style={{ animationDelay: '100ms' }}>
+          🎉
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <h2 className="text-2xl font-bold">Esse truque ja e seu!</h2>
-        <p className="text-muted-foreground leading-relaxed">
-          Voce pegou a tecnica <span className="font-medium text-foreground">&ldquo;{technique}&rdquo;</span>.
+      {/* Title — Space Grotesk, gradient */}
+      <div className="space-y-3 lesson-step-in" style={{ animationDelay: '200ms' }}>
+        <h2 className="font-[var(--font-family-display)] text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent">
+          Missao Cumprida!
+        </h2>
+        <p className="text-sm text-white/60 leading-relaxed max-w-sm mx-auto">
+          Voce pegou a tecnica <span className="font-medium text-teal-400">&ldquo;{technique}&rdquo;</span>.
           Agora e so deixar ficar automatico.
         </p>
-        <p className="text-caption text-muted-foreground">
-          Voce completou em {timeText}
-        </p>
       </div>
 
-      <div className="flex flex-col gap-3 w-full">
+      {/* Stats row */}
+      <div className="flex gap-4 lesson-step-in" style={{ animationDelay: '300ms' }}>
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center gap-1">
+            <Sparkles className="size-5 text-emerald-400" />
+            <p className="font-[var(--font-family-display)] text-2xl font-bold text-white">+50</p>
+            <p className="text-xs text-white/40">XP</p>
+          </div>
+        </div>
+
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center gap-1">
+            <Target className="size-5 text-cyan-400" />
+            <p className="font-[var(--font-family-display)] text-2xl font-bold text-white">100%</p>
+            <p className="text-xs text-white/40">Precisao</p>
+          </div>
+        </div>
+
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center gap-1">
+            <Clock className="size-5 text-amber-400" />
+            <p className="font-[var(--font-family-display)] text-2xl font-bold text-white">{timeText}</p>
+            <p className="text-xs text-white/40">Tempo</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex flex-col gap-3 w-full lesson-step-in" style={{ animationDelay: '400ms' }}>
         {/* Primary: Next lesson */}
         {nextLessonSlug && (
-          <Button onClick={onNextLesson} size="lg" className="w-full">
-            <ArrowRight className="size-4" />
+          <button
+            onClick={onNextLesson}
+            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white font-bold text-base shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 transition-all duration-300 group"
+          >
             Proxima Aula
-          </Button>
+            <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
+          </button>
         )}
 
-        {/* Secondary actions */}
-        <Button onClick={onPracticeMore} variant={nextLessonSlug ? "outline" : "default"} size="lg" className="w-full">
+        {/* Secondary: Practice more */}
+        <button
+          onClick={onPracticeMore}
+          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-medium transition-all duration-200 ${
+            nextLessonSlug
+              ? "bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white"
+              : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white shadow-lg shadow-teal-500/25"
+          }`}
+        >
           <Dumbbell className="size-4" />
           Praticar mais
-        </Button>
-        <Button onClick={onBackToLessons} variant="ghost" size="lg" className="w-full">
+        </button>
+
+        {/* Tertiary: Back to lessons */}
+        <button
+          onClick={onBackToLessons}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white/40 hover:text-white/70 transition-all text-sm"
+        >
           <ArrowLeft className="size-4" />
           Voltar as aulas
-        </Button>
+        </button>
       </div>
     </div>
   );

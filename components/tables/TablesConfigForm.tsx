@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Zap } from "lucide-react";
+import { motion } from "motion/react";
+import { BookOpen, Zap, Plus, Minus, X, Divide } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TablesOperation, TablesMode, TablesRange, TablesConfig } from "@/types";
 
@@ -9,11 +10,11 @@ interface TablesConfigFormProps {
   onStart: (config: TablesConfig) => void;
 }
 
-const operations: { value: TablesOperation; label: string }[] = [
-  { value: "+", label: "+" },
-  { value: "-", label: "−" },
-  { value: "*", label: "×" },
-  { value: "/", label: "÷" },
+const operations: { value: TablesOperation; label: string; icon: typeof Plus; gradient: string; glowColor: string }[] = [
+  { value: "+", label: "+", icon: Plus, gradient: "from-emerald-500 to-teal-500", glowColor: "shadow-emerald-500/30" },
+  { value: "-", label: "−", icon: Minus, gradient: "from-orange-500 to-red-500", glowColor: "shadow-orange-500/30" },
+  { value: "*", label: "×", icon: X, gradient: "from-blue-500 to-purple-500", glowColor: "shadow-blue-500/30" },
+  { value: "/", label: "÷", icon: Divide, gradient: "from-yellow-500 to-orange-500", glowColor: "shadow-yellow-500/30" },
 ];
 
 const ranges: { value: TablesRange; label: string }[] = [
@@ -22,18 +23,20 @@ const ranges: { value: TablesRange; label: string }[] = [
   { value: { min: 1, max: 12 }, label: "1 a 12" },
 ];
 
-const modes: { value: TablesMode; label: string; description: string; icon: typeof BookOpen }[] = [
+const modes: { value: TablesMode; label: string; description: string; icon: typeof BookOpen; gradient: string }[] = [
   {
     value: "guided",
     label: "Guiado",
     description: "Sem tempo, com explicações",
     icon: BookOpen,
+    gradient: "from-teal-500 to-cyan-500",
   },
   {
     value: "free",
     label: "Treino livre",
     description: "Sequencial, com feedback",
     icon: Zap,
+    gradient: "from-orange-500 to-yellow-500",
   },
 ];
 
@@ -53,96 +56,121 @@ export function TablesConfigForm({ onStart }: TablesConfigFormProps) {
     <div className="space-y-6">
       {/* Operation selector */}
       <div>
-        <label className="text-sm font-medium text-foreground mb-2 block">
+        <label className="text-sm font-medium text-white/70 mb-3 block">
           Operação
         </label>
-        <div className="grid grid-cols-4 gap-2">
-          {operations.map((op) => (
-            <button
-              key={op.value}
-              onClick={() => setOperation(op.value)}
-              className={cn(
-                "px-4 py-3 rounded-xl text-lg font-medium transition-all duration-300 border-2",
-                operation === op.value
-                  ? "bg-primary text-primary-foreground border-primary shadow-md"
-                  : "bg-muted text-foreground border-transparent hover:border-primary/30 hover:shadow-sm"
-              )}
-            >
-              {op.label}
-            </button>
-          ))}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {operations.map((op, index) => {
+            const Icon = op.icon;
+            const isSelected = operation === op.value;
+            return (
+              <motion.button
+                key={op.value}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => setOperation(op.value)}
+                className={cn(
+                  "relative p-6 rounded-2xl border-2 transition-all duration-300 flex flex-col items-center gap-2",
+                  isSelected
+                    ? `border-teal-400 bg-white/10 ${op.glowColor} shadow-lg`
+                    : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20"
+                )}
+              >
+                <div className={cn(
+                  "p-2.5 rounded-xl transition-all duration-300",
+                  isSelected
+                    ? `bg-gradient-to-br ${op.gradient}`
+                    : "bg-white/10"
+                )}>
+                  <Icon className={cn(
+                    "h-5 w-5 transition-colors",
+                    isSelected ? "text-white" : "text-white/60"
+                  )} />
+                </div>
+                <span className={cn(
+                  "text-lg font-bold transition-colors",
+                  isSelected ? "text-white" : "text-white/60"
+                )}>
+                  {op.label}
+                </span>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 
       {/* Range selector */}
       <div>
-        <label className="text-sm font-medium text-foreground mb-2 block">
+        <label className="text-sm font-medium text-white/70 mb-3 block">
           Intervalo
         </label>
-        <div className="grid grid-cols-3 gap-2">
-          {ranges.map((r) => (
-            <button
-              key={r.label}
-              onClick={() => setRange(r.value)}
-              className={cn(
-                "px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 border-2",
-                range?.min === r.value.min && range?.max === r.value.max
-                  ? "bg-primary text-primary-foreground border-primary shadow-md"
-                  : "bg-muted text-foreground border-transparent hover:border-primary/30 hover:shadow-sm"
-              )}
-            >
-              {r.label}
-            </button>
-          ))}
+        <div className="grid grid-cols-3 gap-3">
+          {ranges.map((r) => {
+            const isSelected = range?.min === r.value.min && range?.max === r.value.max;
+            return (
+              <button
+                key={r.label}
+                onClick={() => setRange(r.value)}
+                className={cn(
+                  "px-4 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300 border-2",
+                  isSelected
+                    ? "bg-gradient-to-r from-teal-500/20 to-cyan-500/20 border-teal-400 text-white shadow-lg shadow-teal-500/20"
+                    : "bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                )}
+              >
+                {r.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Mode selector */}
       <div>
-        <label className="text-sm font-medium text-foreground mb-2 block">
+        <label className="text-sm font-medium text-white/70 mb-3 block">
           Modo
         </label>
         <div className="grid grid-cols-1 gap-3">
           {modes.map((m) => {
             const Icon = m.icon;
+            const isSelected = mode === m.value;
             return (
               <button
                 key={m.value}
                 onClick={() => setMode(m.value)}
                 className={cn(
-                  "flex items-center gap-4 p-4 rounded-xl text-left transition-all duration-300 border-2",
-                  mode === m.value
-                    ? "bg-primary/10 border-primary shadow-md"
-                    : "bg-muted border-transparent hover:border-primary/30 hover:shadow-sm"
+                  "relative flex items-center gap-4 p-5 rounded-2xl text-left transition-all duration-300 border-2",
+                  isSelected
+                    ? "border-teal-400 bg-teal-500/10 shadow-lg shadow-teal-500/10"
+                    : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20"
                 )}
               >
-                <div
-                  className={cn(
-                    "p-2 rounded-lg",
-                    mode === m.value ? "bg-primary/20" : "bg-background"
-                  )}
-                >
-                  <Icon
-                    className={cn(
-                      "h-5 w-5",
-                      mode === m.value
-                        ? "text-primary"
-                        : "text-muted-foreground"
-                    )}
-                  />
+                {isSelected && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-cyan-500/5 rounded-2xl" />
+                )}
+                <div className={cn(
+                  "relative p-3 rounded-xl transition-all duration-300",
+                  isSelected
+                    ? `bg-gradient-to-br ${m.gradient}`
+                    : "bg-white/10"
+                )}>
+                  <Icon className={cn(
+                    "h-5 w-5",
+                    isSelected ? "text-white" : "text-white/60"
+                  )} />
                 </div>
-                <div>
-                  <p
-                    className={cn(
-                      "font-medium",
-                      mode === m.value
-                        ? "text-foreground"
-                        : "text-foreground"
-                    )}
-                  >
+                <div className="relative">
+                  <p className={cn(
+                    "font-semibold transition-colors",
+                    isSelected ? "text-white" : "text-white/70"
+                  )}>
                     {m.label}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className={cn(
+                    "text-sm transition-colors",
+                    isSelected ? "text-white/60" : "text-white/40"
+                  )}>
                     {m.description}
                   </p>
                 </div>
@@ -153,13 +181,20 @@ export function TablesConfigForm({ onStart }: TablesConfigFormProps) {
       </div>
 
       {/* Start button */}
-      <button
+      <motion.button
+        whileHover={{ scale: canStart ? 1.02 : 1 }}
+        whileTap={{ scale: canStart ? 0.98 : 1 }}
         onClick={handleStart}
         disabled={!canStart}
-        className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:hover:shadow-md"
+        className={cn(
+          "w-full py-5 rounded-2xl font-bold text-lg transition-all duration-300",
+          canStart
+            ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-400 hover:to-purple-400 hover:shadow-lg hover:shadow-blue-500/25"
+            : "bg-white/5 text-white/30 border border-white/10 cursor-not-allowed"
+        )}
       >
         Bora começar
-      </button>
+      </motion.button>
     </div>
   );
 }

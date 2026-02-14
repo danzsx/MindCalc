@@ -10,8 +10,10 @@ import type { Operator, TrainingMode } from "@/types";
 import { ExerciseCard } from "@/components/training/ExerciseCard";
 import { Timer } from "@/components/training/Timer";
 import { CountdownTimer } from "@/components/training/CountdownTimer";
-import { X, Lock, Clock, Smile } from "lucide-react";
+import { ProgressBar } from "@/components/training/ProgressBar";
+import { X, Lock, Clock, Smile, Zap, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "motion/react";
 
 const TOTAL_EXERCISES = 10;
 
@@ -225,7 +227,10 @@ export default function TrainPage() {
   if (authLoading || checkingLimit) {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
-        <p className="text-muted-foreground">Carregando...</p>
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
+          <p className="text-white/60 text-sm">Carregando...</p>
+        </div>
       </div>
     );
   }
@@ -234,31 +239,49 @@ export default function TrainPage() {
 
   if (isBlocked && !started) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full zoom-in-95 text-center">
-          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
-            <Lock className="size-7 text-amber-600 dark:text-amber-400" />
+      <div className="flex items-center justify-center min-h-[70vh] px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="relative max-w-md w-full"
+        >
+          {/* Glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl opacity-10 blur-2xl" />
+
+          {/* Card */}
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500"
+            >
+              <Lock className="size-7 text-white" />
+            </motion.div>
+
+            <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "var(--font-family-display)" }}>
+              Limite diário atingido
+            </h2>
+            <p className="text-white/60 text-sm leading-relaxed mb-6">
+              No plano Free, você pode treinar 1 vez por dia.
+              Assine o Pro para treinar sem limites!
+            </p>
+
+            <button
+              onClick={() => router.push("/billing")}
+              className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 py-4 rounded-2xl font-semibold text-base shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:from-teal-400 hover:to-cyan-400 transform hover:-translate-y-0.5 transition-all duration-300"
+            >
+              Assinar Pro
+            </button>
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="w-full text-white/50 hover:text-white/80 px-6 py-3 rounded-xl transition-colors mt-3 text-sm"
+            >
+              Voltar ao painel
+            </button>
           </div>
-          <h2 className="text-section-title text-foreground" style={{ marginBottom: 'var(--space-sm)' }}>
-            Limite diário atingido
-          </h2>
-          <p className="text-body-primary text-muted-foreground" style={{ lineHeight: 'var(--leading-relaxed)' }}>
-            No plano Free, você pode treinar 1 vez por dia.
-            Assine o Pro para treinar sem limites!
-          </p>
-          <button
-            onClick={() => router.push("/billing")}
-            className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium mt-6"
-          >
-            Assinar Pro
-          </button>
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="w-full text-muted-foreground hover:text-foreground px-6 py-3 rounded-xl transition-colors mt-3 text-sm"
-          >
-            Voltar ao painel
-          </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -267,56 +290,125 @@ export default function TrainPage() {
 
   if (!started) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full zoom-in-95">
-          <h2 className="text-section-title text-foreground" style={{ marginBottom: 'var(--card-section-gap)' }}>Treino Mental</h2>
-          <p className="text-body-primary text-muted-foreground" style={{ marginBottom: 'var(--space-sm)', lineHeight: 'var(--leading-relaxed)' }}>
-            São {TOTAL_EXERCISES} exercícios pensados pro seu nível
-            atual ({level}). Escolha o modo:
-          </p>
+      <div className="flex items-center justify-center min-h-[70vh] px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="relative max-w-2xl w-full"
+        >
+          {/* Glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-3xl opacity-10 blur-2xl" />
 
-          {/* Mode selector */}
-          <div className="flex gap-3 mt-4">
-            <button
-              onClick={() => setSelectedMode("normal")}
-              className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${
-                selectedMode === "normal"
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/40"
-              }`}
+          {/* Card */}
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-10">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.15, type: "spring", stiffness: 200 }}
+                className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-500"
+              >
+                <Zap className="size-7 text-white" />
+              </motion.div>
+              <h2
+                className="text-4xl md:text-5xl font-bold text-white mb-3"
+                style={{ fontFamily: "var(--font-family-display)" }}
+              >
+                Treino Mental
+              </h2>
+              <p className="text-white/60 text-base">
+                {TOTAL_EXERCISES} exercícios pensados pro seu nível atual ({level}). Escolha o modo:
+              </p>
+            </div>
+
+            {/* Mode selector */}
+            <div className="grid md:grid-cols-2 gap-4 mb-8">
+              {/* Normal mode */}
+              <motion.button
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                onClick={() => setSelectedMode("normal")}
+                className={`relative p-8 rounded-2xl border-2 transition-all duration-300 text-left group ${
+                  selectedMode === "normal"
+                    ? "border-teal-400 bg-teal-500/10"
+                    : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.07]"
+                }`}
+              >
+                {selectedMode === "normal" && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-2xl opacity-10 blur-xl" />
+                )}
+                <div className="relative">
+                  <div className={`inline-flex p-3 rounded-2xl mb-4 ${
+                    selectedMode === "normal"
+                      ? "bg-gradient-to-br from-teal-500 to-cyan-500"
+                      : "bg-white/10"
+                  }`}>
+                    <Smile className="size-6 text-white" />
+                  </div>
+                  <h3
+                    className="text-2xl font-bold text-white mb-1"
+                    style={{ fontFamily: "var(--font-family-display)" }}
+                  >
+                    Tranquilo
+                  </h3>
+                  <p className="text-white/50 text-sm">Sem limite de tempo — foque na precisão</p>
+                </div>
+              </motion.button>
+
+              {/* Timed mode */}
+              <motion.button
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
+                onClick={() => setSelectedMode("timed")}
+                className={`relative p-8 rounded-2xl border-2 transition-all duration-300 text-left group ${
+                  selectedMode === "timed"
+                    ? "border-orange-400 bg-orange-500/10"
+                    : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.07]"
+                }`}
+              >
+                {selectedMode === "timed" && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl opacity-10 blur-xl" />
+                )}
+                <div className="relative">
+                  <div className={`inline-flex p-3 rounded-2xl mb-4 ${
+                    selectedMode === "timed"
+                      ? "bg-gradient-to-br from-orange-500 to-red-500"
+                      : "bg-white/10"
+                  }`}>
+                    <Clock className="size-6 text-white" />
+                  </div>
+                  <h3
+                    className="text-2xl font-bold text-white mb-1"
+                    style={{ fontFamily: "var(--font-family-display)" }}
+                  >
+                    Cronometrado
+                  </h3>
+                  <p className="text-white/50 text-sm">{questionTime.toFixed(0)}s por questão — desafie-se</p>
+                </div>
+              </motion.button>
+            </div>
+
+            {error && (
+              <p className="text-sm text-orange-400 mb-4 text-center">{error}</p>
+            )}
+
+            {/* Start button */}
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+              onClick={handleStart}
+              className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 py-5 rounded-2xl font-bold text-lg shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:from-teal-400 hover:to-cyan-400 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-3 group"
             >
-              <Smile className={`size-6 ${selectedMode === "normal" ? "text-primary" : "text-muted-foreground"}`} />
-              <span className={`text-sm font-medium ${selectedMode === "normal" ? "text-primary" : "text-muted-foreground"}`}>
-                Tranquilo
-              </span>
-              <span className="text-xs text-muted-foreground">Sem limite de tempo</span>
-            </button>
-            <button
-              onClick={() => setSelectedMode("timed")}
-              className={`flex-1 flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-200 ${
-                selectedMode === "timed"
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/40"
-              }`}
-            >
-              <Clock className={`size-6 ${selectedMode === "timed" ? "text-primary" : "text-muted-foreground"}`} />
-              <span className={`text-sm font-medium ${selectedMode === "timed" ? "text-primary" : "text-muted-foreground"}`}>
-                Cronometrado
-              </span>
-              <span className="text-xs text-muted-foreground">{questionTime.toFixed(0)}s por questão</span>
-            </button>
+              Bora treinar
+              <ArrowRight className="size-5 transition-transform duration-300 group-hover:translate-x-1" />
+            </motion.button>
           </div>
-
-          {error && (
-            <p className="text-sm text-destructive mb-4 mt-4">{error}</p>
-          )}
-          <button
-            onClick={handleStart}
-            className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium mt-6"
-          >
-            Bora treinar
-          </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -326,17 +418,24 @@ export default function TrainPage() {
   if (isFinished || isSaving) {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full">
-          <div className="flex flex-col items-center gap-4 py-4">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="text-muted-foreground">
-              Salvando resultados...
-            </p>
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative max-w-md w-full"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-3xl opacity-10 blur-2xl" />
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
+            <div className="flex flex-col items-center gap-4 py-4">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
+              <p className="text-white/60">
+                Salvando resultados...
+              </p>
+              {error && (
+                <p className="text-sm text-orange-400">{error}</p>
+              )}
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -347,74 +446,101 @@ export default function TrainPage() {
   if (!exercise) return null;
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh]">
-      <div className="bg-card rounded-[20px] p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] max-w-md w-full">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h3 className="text-foreground">Treino</h3>
-          <div className="flex items-center gap-4">
-            {sessionMode === "timed" ? (
-              <div className="flex items-center gap-3">
-                {/* Session time left */}
-                <span className="text-xs text-muted-foreground font-mono">
-                  {Math.floor(sessionTimeLeft / 60)}:{String(Math.floor(sessionTimeLeft % 60)).padStart(2, "0")}
-                </span>
-                {/* Per-question countdown */}
-                <CountdownTimer
-                  totalSeconds={questionTime}
-                  running={started && !isFinished}
-                  onExpire={handleQuestionExpire}
-                  resetKey={currentIndex}
-                />
+    <div className="flex items-center justify-center min-h-[70vh] px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative max-w-lg w-full"
+      >
+        {/* Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-3xl opacity-[0.07] blur-2xl" />
+
+        {/* Card */}
+        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="inline-flex p-2 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500">
+                <Zap className="size-4 text-white" />
               </div>
-            ) : (
-              <Timer running={started && !isFinished} />
-            )}
-            <button
-              onClick={handleEndTraining}
-              className="text-muted-foreground hover:text-foreground transition-colors p-1 hover:bg-muted rounded-lg"
-              title="Encerrar treino"
-            >
-              <X size={20} />
-            </button>
+              <h3
+                className="text-lg font-bold text-white"
+                style={{ fontFamily: "var(--font-family-display)" }}
+              >
+                Treino
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {sessionMode === "timed" ? (
+                <div className="flex items-center gap-3">
+                  {/* Session time left */}
+                  <span className="text-xs text-white/50 font-mono tabular-nums bg-white/5 px-2 py-1 rounded-lg">
+                    {Math.floor(sessionTimeLeft / 60)}:{String(Math.floor(sessionTimeLeft % 60)).padStart(2, "0")}
+                  </span>
+                  {/* Per-question countdown */}
+                  <CountdownTimer
+                    totalSeconds={questionTime}
+                    running={started && !isFinished}
+                    onExpire={handleQuestionExpire}
+                    resetKey={currentIndex}
+                  />
+                </div>
+              ) : (
+                <Timer running={started && !isFinished} />
+              )}
+              <button
+                onClick={handleEndTraining}
+                className="text-white/40 hover:text-white/80 transition-colors p-2 hover:bg-white/10 rounded-xl"
+                title="Encerrar treino"
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Exercise with progress */}
-        <ExerciseCard
-          operand1={exercise.operand1}
-          operand2={exercise.operand2}
-          operator={exercise.operator}
-          current={currentIndex + 1}
-          total={TOTAL_EXERCISES}
-        />
+          {/* Progress bar */}
+          <div className="mb-8">
+            <ProgressBar current={currentIndex} total={TOTAL_EXERCISES} />
+          </div>
 
-        {/* Answer Input */}
-        <div className={`mb-6 mt-8 ${isShaking ? "shake" : ""}`}>
-          <input
-            ref={inputRef}
-            type="number"
-            inputMode="decimal"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Sua resposta"
-            autoFocus
-            className="w-full px-6 py-4 bg-muted text-foreground rounded-xl border-2 border-primary/30 focus:border-primary focus:outline-none transition-colors text-lg text-center font-medium"
+          {/* Exercise */}
+          <ExerciseCard
+            operand1={exercise.operand1}
+            operand2={exercise.operand2}
+            operator={exercise.operator}
+            current={currentIndex + 1}
+            total={TOTAL_EXERCISES}
           />
+
+          {/* Answer Input */}
+          <div className={`mb-6 mt-8 ${isShaking ? "shake" : ""}`}>
+            <input
+              ref={inputRef}
+              type="number"
+              inputMode="decimal"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Sua resposta"
+              autoFocus
+              className="w-full px-6 py-4 bg-white/5 text-white rounded-2xl border-2 border-white/10 focus:border-teal-500/50 focus:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all duration-300 text-lg text-center font-semibold placeholder:text-white/30"
+            />
+          </div>
+
+          {/* Confirm Button */}
+          <button
+            onClick={handleSubmit}
+            disabled={answer.trim() === ""}
+            className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 py-4 rounded-2xl font-semibold shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:from-teal-400 hover:to-cyan-400 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:from-teal-500 disabled:hover:to-cyan-500"
+          >
+            Essa é minha resposta
+          </button>
+
+          {error && <p className="text-sm text-orange-400 mt-4 text-center">{error}</p>}
         </div>
-
-        {/* Confirm Button */}
-        <button
-          onClick={handleSubmit}
-          disabled={answer.trim() === ""}
-          className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transition-all duration-300 min-h-[56px] font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:hover:shadow-md"
-        >
-          Essa é minha resposta
-        </button>
-
-        {error && <p className="text-sm text-destructive mt-4">{error}</p>}
-      </div>
+      </motion.div>
     </div>
   );
 }

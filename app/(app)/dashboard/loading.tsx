@@ -1,64 +1,61 @@
-import { Skeleton } from "@/components/ui/skeleton";
-
 function StatCardSkeleton() {
   return (
-    <div className="bg-card rounded-[20px] p-6 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
-      <div className="flex flex-col items-center gap-3">
-        <Skeleton className="h-11 w-11 rounded-full" />
-        <Skeleton className="h-7 w-16" />
-        <Skeleton className="h-4 w-20" />
+    <div className="relative">
+      <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-6">
+        <div className="h-12 w-12 rounded-2xl bg-white/10 animate-pulse mb-4" />
+        <div className="h-10 w-20 rounded-lg bg-white/10 animate-pulse mb-2" />
+        <div className="h-4 w-24 rounded bg-white/5 animate-pulse" />
       </div>
+    </div>
+  );
+}
+
+function BentoCardSkeleton({ className = "" }: { className?: string }) {
+  return (
+    <div className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 ${className}`}>
+      <div className="flex items-center gap-4 mb-6">
+        <div className="h-14 w-14 rounded-2xl bg-white/10 animate-pulse" />
+        <div>
+          <div className="h-7 w-40 rounded-lg bg-white/10 animate-pulse mb-2" />
+          <div className="h-4 w-52 rounded bg-white/5 animate-pulse" />
+        </div>
+      </div>
+      <div className="h-16 w-full rounded-2xl bg-white/5 animate-pulse mb-6" />
+      <div className="h-12 w-full rounded-2xl bg-white/10 animate-pulse" />
     </div>
   );
 }
 
 function ChartSkeleton() {
   return (
-    <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
       <div className="flex items-center gap-3 mb-6">
-        <Skeleton className="h-9 w-9 rounded-lg" />
-        <Skeleton className="h-5 w-24" />
+        <div className="h-11 w-11 rounded-2xl bg-white/10 animate-pulse" />
+        <div className="h-6 w-32 rounded-lg bg-white/10 animate-pulse" />
       </div>
-      <Skeleton className="h-[300px] lg:h-[350px] w-full rounded-lg" />
-    </div>
-  );
-}
-
-function LessonsOverviewSkeleton() {
-  return (
-    <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
-      <div className="flex items-center gap-3 mb-4">
-        <Skeleton className="h-9 w-9 rounded-lg" />
-        <Skeleton className="h-5 w-32" />
-      </div>
-      <Skeleton className="h-4 w-48 mb-5" />
-      <div className="space-y-2 mb-5">
-        <div className="flex justify-between">
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-4 w-24" />
-        </div>
-        <Skeleton className="h-3 w-full rounded-full" />
-      </div>
-      <Skeleton className="h-4 w-20" />
+      <div className="h-[280px] w-full rounded-2xl bg-white/5 animate-pulse" />
     </div>
   );
 }
 
 function WeakPointsSkeleton() {
   return (
-    <div className="bg-card rounded-[20px] p-6 lg:p-8 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
       <div className="flex items-center gap-3 mb-6">
-        <Skeleton className="h-9 w-9 rounded-lg" />
-        <Skeleton className="h-5 w-28" />
+        <div className="h-11 w-11 rounded-2xl bg-white/10 animate-pulse" />
+        <div>
+          <div className="h-6 w-40 rounded-lg bg-white/10 animate-pulse mb-2" />
+          <div className="h-4 w-52 rounded bg-white/5 animate-pulse" />
+        </div>
       </div>
-      <div className="space-y-5">
+      <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="space-y-2">
-            <div className="flex justify-between">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-16" />
+          <div key={i}>
+            <div className="flex justify-between mb-2">
+              <div className="h-4 w-24 rounded bg-white/10 animate-pulse" />
+              <div className="h-4 w-12 rounded bg-white/10 animate-pulse" />
             </div>
-            <Skeleton className="h-3 w-full rounded-full" />
+            <div className="h-2 w-full rounded-full bg-white/10 animate-pulse" />
           </div>
         ))}
       </div>
@@ -68,29 +65,36 @@ function WeakPointsSkeleton() {
 
 export default function DashboardLoading() {
   return (
-    <main className="space-y-8 fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <Skeleton className="h-10 w-40" />
-        <Skeleton className="h-14 w-40 rounded-xl" />
+    <main className="flex flex-col gap-12">
+      {/* Hero */}
+      <div>
+        <div className="h-16 md:h-20 w-72 rounded-2xl bg-white/10 animate-pulse mb-4" />
+        <div className="h-6 w-80 rounded-lg bg-white/5 animate-pulse" />
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCardSkeleton />
         <StatCardSkeleton />
         <StatCardSkeleton />
         <StatCardSkeleton />
       </div>
 
-      {/* Lessons Overview */}
-      <LessonsOverviewSkeleton />
+      {/* Bento Grid */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        <BentoCardSkeleton className="lg:col-span-2" />
+        <BentoCardSkeleton />
+      </div>
 
-      {/* Evolution Chart */}
-      <ChartSkeleton />
-
-      {/* Weak Points */}
-      <WeakPointsSkeleton />
+      {/* Chart + Weak Points */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <ChartSkeleton />
+        </div>
+        <div className="lg:col-span-1">
+          <WeakPointsSkeleton />
+        </div>
+      </div>
     </main>
   );
 }

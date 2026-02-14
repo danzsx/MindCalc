@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
 import { TablesSessionSummary } from "@/components/tables/TablesSessionSummary";
+import { Grid3X3, RotateCcw, Shuffle, BookOpen, ArrowLeft } from "lucide-react";
 import type { TablesQuestionLog } from "@/types";
 
 interface ResultPageProps {
@@ -101,10 +101,19 @@ export default async function TabuadaResultPage({ params }: ResultPageProps) {
   };
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8 space-y-8 fade-in">
+    <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
+      {/* Hero header */}
       <div className="text-center">
-        <h1 className="text-foreground">Como foi sua tabuada</h1>
-        <p className="mt-1 text-muted-foreground">
+        <div className="inline-flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-500 p-4 rounded-2xl mb-4">
+          <Grid3X3 className="h-7 w-7 text-white" />
+        </div>
+        <h1
+          className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-purple-400 bg-clip-text text-transparent mb-2"
+          style={{ fontFamily: "var(--font-family-display)" }}
+        >
+          Como foi sua tabuada
+        </h1>
+        <p className="text-white/50">
           {operatorSymbols[session.operation] ?? session.operation} Tabuada do{" "}
           {session.range_min} ao {session.range_max}
         </p>
@@ -118,29 +127,39 @@ export default async function TabuadaResultPage({ params }: ResultPageProps) {
 
       {/* Actions */}
       <div className="flex flex-col gap-3">
-        <Button
-          asChild
-          className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-xl hover:bg-[#14B8A6] shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 min-h-[56px] font-medium"
+        <Link
+          href={`/tabuada/session?op=${encodeURIComponent(session.operation)}&min=${session.range_min}&max=${session.range_max}&mode=${session.mode}`}
+          className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:from-blue-400 hover:to-purple-400 hover:shadow-lg hover:shadow-blue-500/25"
         >
-          <Link
-            href={`/tabuada/session?op=${encodeURIComponent(session.operation)}&min=${session.range_min}&max=${session.range_max}&mode=${session.mode}`}
-          >
-            Quero repetir
-          </Link>
-        </Button>
-        <Button variant="outline" asChild className="w-full min-h-[56px]">
-          <Link href="/tabuada">Tentar outra operação</Link>
-        </Button>
+          <RotateCcw className="w-5 h-5" />
+          Quero repetir
+        </Link>
+
+        <Link
+          href="/tabuada"
+          className="w-full bg-white/5 border border-white/10 text-white py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/10 hover:border-white/20"
+        >
+          <Shuffle className="w-5 h-5" />
+          Tentar outra operação
+        </Link>
+
         {suggestedLesson && (
-          <Button variant="secondary" asChild className="w-full min-h-[56px]">
-            <Link href={`/lessons/${suggestedLesson.slug}`}>
-              Aula sugerida: {suggestedLesson.title}
-            </Link>
-          </Button>
+          <Link
+            href={`/lessons/${suggestedLesson.slug}`}
+            className="w-full bg-gradient-to-r from-teal-500/15 to-cyan-500/15 border border-teal-500/20 text-teal-300 py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:from-teal-500/25 hover:to-cyan-500/25"
+          >
+            <BookOpen className="w-5 h-5" />
+            Aula sugerida: {suggestedLesson.title}
+          </Link>
         )}
-        <Button variant="ghost" asChild className="w-full min-h-[56px]">
-          <Link href="/dashboard">Voltar ao painel</Link>
-        </Button>
+
+        <Link
+          href="/dashboard"
+          className="w-full text-white/50 py-4 rounded-2xl font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:text-white hover:bg-white/5"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Voltar ao painel
+        </Link>
       </div>
     </main>
   );

@@ -2,8 +2,8 @@
 
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Check, X, Sparkles, Zap, BarChart3, Brain, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Check, X, Sparkles, Zap, BarChart3, Brain, Loader2, TrendingUp } from "lucide-react";
+import { motion } from "motion/react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import type { UserPlan } from "@/types";
@@ -22,7 +22,7 @@ const whyProReasons = [
     text: "Treinos sem limite, no seu ritmo",
   },
   {
-    icon: Brain,
+    icon: TrendingUp,
     text: "Níveis que acompanham seu crescimento",
   },
   {
@@ -89,168 +89,183 @@ function BillingContent() {
     }
   };
 
-  const plans: {
-    name: string;
-    price: string;
-    period: string;
-    planKey: UserPlan;
-    highlighted: boolean;
-  }[] = [
-    {
-      name: "Free",
-      price: "R$ 0",
-      period: "/mês",
-      planKey: "free",
-      highlighted: false,
-    },
-    {
-      name: "Pro",
-      price: "R$ 19,90",
-      period: "/mês",
-      planKey: "pro",
-      highlighted: true,
-    },
-  ];
+  const isFree = plan === "free";
+  const isPro = plan === "pro";
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-12">
-      <div className="mb-10 text-center">
-        <h1 className="text-foreground">
+    <div className="mx-auto w-full max-w-5xl px-4 py-8 md:py-12">
+      {/* Hero */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-12 text-center"
+      >
+        <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent font-[var(--font-family-display)]">
           Seu plano
         </h1>
-        <p className="mt-2 text-muted-foreground">
+        <p className="text-lg md:text-xl text-white/60">
           Treine no ritmo que faz sentido pra você.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
-        {plans.map((p) => {
-          const isCurrent = plan === p.planKey;
-          const isProCard = p.planKey === "pro";
-
-          return (
-            <div
-              key={p.name}
-              className={`flex flex-col rounded-[20px] p-8 transition-all duration-300 ${
-                p.highlighted
-                  ? "bg-card ring-2 ring-primary shadow-[0_20px_40px_-10px_rgba(45,212,191,0.15)] md:scale-105"
-                  : "bg-card shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_25px_-5px_rgba(0,0,0,0.08)]"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl font-semibold text-foreground">
-                  {p.name}
-                </h2>
-                {p.highlighted && (
-                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                    Popular
-                  </span>
-                )}
-                {isCurrent && (
-                  <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-medium text-success">
-                    Atual
-                  </span>
-                )}
-              </div>
-
-              <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-bold text-foreground lg:text-5xl">
-                  {p.price}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {p.period}
-                </span>
-              </div>
-
-              <ul className="mt-8 flex-1 space-y-4">
-                {features.map((feature) => {
-                  const included = isProCard ? feature.pro : feature.free;
-                  return (
-                    <li key={feature.label} className="flex items-center gap-3">
-                      {included ? (
-                        <div className="flex size-6 items-center justify-center rounded-full bg-success/10">
-                          <Check className="size-4 text-success" />
-                        </div>
-                      ) : (
-                        <div className="flex size-6 items-center justify-center rounded-full bg-muted">
-                          <X className="size-4 text-muted-foreground" />
-                        </div>
-                      )}
-                      <span
-                        className={
-                          included
-                            ? "text-sm text-foreground"
-                            : "text-sm text-muted-foreground"
-                        }
-                      >
-                        {feature.label}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              {isProCard ? (
-                isCurrent ? (
-                  <Button
-                    className="mt-8 w-full min-h-[56px] rounded-xl text-base"
-                    variant="outline"
-                    size="xl"
-                    onClick={handlePortal}
-                    disabled={isPortalLoading}
-                  >
-                    {isPortalLoading ? (
-                      <Loader2 className="size-5 animate-spin" />
-                    ) : (
-                      "Gerenciar assinatura"
-                    )}
-                  </Button>
-                ) : (
-                  <Button
-                    className="mt-8 w-full min-h-[56px] rounded-xl text-base"
-                    variant="default"
-                    size="xl"
-                    onClick={handleCheckout}
-                    disabled={isCheckoutLoading}
-                  >
-                    {isCheckoutLoading ? (
-                      <Loader2 className="size-5 animate-spin" />
-                    ) : (
-                      "Assinar Pro"
-                    )}
-                  </Button>
-                )
-              ) : (
-                <Button
-                  className="mt-8 w-full min-h-[56px] rounded-xl text-base"
-                  variant="outline"
-                  size="xl"
-                  disabled
-                >
-                  {isCurrent ? "Plano Atual" : "Free"}
-                </Button>
+      {/* Plans Grid */}
+      <div className="grid gap-6 md:grid-cols-2 max-w-5xl mx-auto mb-16">
+        {/* Free Plan */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          className="relative group"
+        >
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
+            <div className="mb-6">
+              {isFree && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-sm font-medium mb-4">
+                  Atual
+                </div>
               )}
+              <h2 className="text-3xl font-bold mb-2 font-[var(--font-family-display)]">
+                Free
+              </h2>
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl font-bold">R$ 0</span>
+                <span className="text-white/50">/mês</span>
+              </div>
             </div>
-          );
-        })}
+
+            <ul className="space-y-3 mb-8">
+              {features.map((feature) => (
+                <li key={feature.label} className="flex items-center gap-3">
+                  {feature.free ? (
+                    <div className="bg-teal-500/20 p-1 rounded-full">
+                      <Check className="w-4 h-4 text-teal-400" />
+                    </div>
+                  ) : (
+                    <div className="bg-white/5 p-1 rounded-full">
+                      <X className="w-4 h-4 text-white/30" />
+                    </div>
+                  )}
+                  <span className={feature.free ? "text-white" : "text-white/30"}>
+                    {feature.label}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              className="w-full py-4 rounded-2xl border-2 border-white/20 bg-white/5 text-white/50 font-semibold cursor-default"
+              disabled
+            >
+              {isFree ? "Plano Atual" : "Free"}
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Pro Plan */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          className="relative group"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-3xl opacity-20 blur-2xl group-hover:opacity-30 transition-opacity" />
+          <div className="relative bg-gradient-to-br from-teal-500/10 to-cyan-500/10 backdrop-blur-xl border-2 border-teal-500/30 rounded-3xl p-8">
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-sm font-medium">
+                  <Sparkles className="w-3 h-3" />
+                  Popular
+                </div>
+                {isPro && (
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-sm font-medium">
+                    Atual
+                  </div>
+                )}
+              </div>
+              <h2 className="text-3xl font-bold mb-2 font-[var(--font-family-display)]">
+                Pro
+              </h2>
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl font-bold">R$ 19,90</span>
+                <span className="text-white/50">/mês</span>
+              </div>
+            </div>
+
+            <ul className="space-y-3 mb-8">
+              {features.map((feature) => (
+                <li key={feature.label} className="flex items-center gap-3">
+                  <div className="bg-teal-500/20 p-1 rounded-full">
+                    <Check className="w-4 h-4 text-teal-400" />
+                  </div>
+                  <span className="text-white">{feature.label}</span>
+                </li>
+              ))}
+            </ul>
+
+            {isPro ? (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-4 rounded-2xl border-2 border-white/20 bg-white/10 hover:bg-white/15 text-white font-semibold transition-all duration-300"
+                onClick={handlePortal}
+                disabled={isPortalLoading}
+              >
+                {isPortalLoading ? (
+                  <Loader2 className="size-5 animate-spin mx-auto" />
+                ) : (
+                  "Gerenciar assinatura"
+                )}
+              </motion.button>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white py-4 rounded-2xl font-bold transition-all duration-300 hover:shadow-xl hover:shadow-teal-500/30"
+                onClick={handleCheckout}
+                disabled={isCheckoutLoading}
+              >
+                {isCheckoutLoading ? (
+                  <Loader2 className="size-5 animate-spin mx-auto" />
+                ) : (
+                  "Assinar Pro"
+                )}
+              </motion.button>
+            )}
+          </div>
+        </motion.div>
       </div>
 
-      {/* Why Pro section */}
-      <div className="mt-12 rounded-[20px] border border-primary/20 bg-primary/5 p-6 lg:p-8">
-        <h2 className="mb-6 text-center text-lg font-semibold text-foreground">
-          O que muda com o Pro?
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {whyProReasons.map(({ icon: Icon, text }) => (
-            <div key={text} className="flex items-start gap-3">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                <Icon className="size-4 text-primary" />
-              </div>
-              <p className="text-sm text-foreground">{text}</p>
-            </div>
-          ))}
+      {/* Benefits Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="max-w-5xl mx-auto relative group"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl opacity-10 blur-2xl" />
+        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-10">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center font-[var(--font-family-display)]">
+            O que muda com o Pro?
+          </h2>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {whyProReasons.map(({ icon: Icon, text }, index) => (
+              <motion.div
+                key={text}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + index * 0.1 }}
+                className="flex items-start gap-4"
+              >
+                <div className="bg-gradient-to-br from-teal-500 to-cyan-500 p-3 rounded-xl shrink-0">
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+                <p className="text-white/90 leading-relaxed text-base">{text}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

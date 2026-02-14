@@ -8,7 +8,7 @@ import { LessonStepByStep } from "./LessonStepByStep";
 import { checkAnswer } from "@/lib/lessons/engine";
 import { getOperatorSymbol } from "@/lib/lessons/utils";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Eye } from "lucide-react";
+import { CheckCircle2, Eye, RotateCcw, Send } from "lucide-react";
 import type { LessonExerciseData, HintLevel } from "@/lib/lessons/types";
 
 const SUCCESS_MESSAGES: Record<HintLevel, string[]> = {
@@ -127,14 +127,19 @@ export function LessonExercise({
       {/* Confetti overlay */}
       {showConfetti && <Confetti intensity={confettiIntensity} />}
 
-      {/* Expression */}
-      <div className="text-center">
-        <p className={cn(
-          "font-bold tracking-wide",
-          hintLevel === "none" ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl"
-        )}>
-          {exercise.operand1} {symbol} {exercise.operand2} = ?
-        </p>
+      {/* Expression — large, centered, gradient */}
+      <div className="text-center py-4">
+        <div className="relative inline-block">
+          {hintLevel === "none" && (
+            <div className="absolute -inset-4 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-3xl blur-2xl" />
+          )}
+          <p className={cn(
+            "relative font-[var(--font-family-display)] font-bold tracking-wide bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent",
+            hintLevel === "none" ? "text-5xl sm:text-6xl" : "text-4xl sm:text-5xl"
+          )}>
+            {exercise.operand1} {symbol} {exercise.operand2} = ?
+          </p>
+        </div>
       </div>
 
       {/* Hint */}
@@ -143,56 +148,67 @@ export function LessonExercise({
       {/* Input + Submit — before any feedback */}
       {feedback === null && (
         <div className="flex gap-3">
-          <Input
-            ref={inputRef}
-            type="number"
-            inputMode="numeric"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Sua resposta"
-            className="text-center text-lg"
-          />
-          <Button onClick={handleSubmit} disabled={userInput.trim() === ""}>
-            Essa e minha resposta
-          </Button>
+          <div className="relative flex-1">
+            <Input
+              ref={inputRef}
+              type="number"
+              inputMode="numeric"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Sua resposta"
+              className="text-center text-lg h-12 bg-white/5 border-white/15 text-white placeholder:text-white/30 rounded-xl focus:border-teal-500/50 focus:ring-teal-500/20"
+            />
+          </div>
+          <button
+            onClick={handleSubmit}
+            disabled={userInput.trim() === ""}
+            className="flex items-center gap-2 px-6 h-12 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white font-medium shadow-lg shadow-teal-500/20 hover:shadow-teal-500/30 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+          >
+            <Send className="size-4" />
+            <span className="hidden sm:inline">Responder</span>
+          </button>
         </div>
       )}
 
       {/* Correct feedback */}
       {feedback === "correct" && (
-        <div className="flex items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 p-4 lesson-step-in">
-          <CheckCircle2 className="size-5 text-green-600" />
-          <span className="font-medium text-green-700 dark:text-green-400">
-            {successMessage}
-          </span>
+        <div className="relative lesson-step-in">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 rounded-2xl blur-xl" />
+          <div className="relative flex items-center justify-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-sm p-5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500">
+              <CheckCircle2 className="size-4 text-white" />
+            </div>
+            <span className="font-medium text-emerald-400">
+              {successMessage}
+            </span>
+          </div>
         </div>
       )}
 
       {/* Incorrect feedback — gentle, with opt-in step-by-step */}
       {feedback === "incorrect" && !showSteps && (
         <div className="space-y-4 lesson-step-in">
-          <div className="flex items-center justify-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-            <span className="text-sm text-amber-700 dark:text-amber-400">
+          <div className="flex items-center justify-center gap-2 rounded-2xl border border-amber-500/20 bg-amber-500/8 backdrop-blur-sm p-4">
+            <span className="text-sm text-amber-400">
               Quase! Quer rever os passos?
             </span>
           </div>
           <div className="flex gap-3">
-            <Button
+            <button
               onClick={() => setShowSteps(true)}
-              variant="outline"
-              className="flex-1"
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white transition-all text-sm font-medium"
             >
-              <Eye className="size-4 mr-1" />
+              <Eye className="size-4" />
               Ver passos
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={resetForRetry}
-              variant="outline"
-              className="flex-1"
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white transition-all text-sm font-medium"
             >
+              <RotateCcw className="size-4" />
               Tentar de novo
-            </Button>
+            </button>
           </div>
         </div>
       )}

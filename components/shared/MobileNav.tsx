@@ -1,74 +1,53 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { navLinks } from "./Navbar";
-import { Menu, Sparkles } from "lucide-react";
+  LayoutDashboard,
+  BookOpen,
+  Grid3X3,
+  Dumbbell,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const mobileNavItems = [
+  { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
+  { href: "/lessons", label: "Aulas", icon: BookOpen },
+  { href: "/tabuada", label: "Tabuada", icon: Grid3X3 },
+  { href: "/train", label: "Treinar", icon: Dumbbell },
+];
 
 export function MobileNav() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <button
-          className="flex items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          aria-label="Abrir menu"
-        >
-          <Menu size={22} />
-        </button>
-      </SheetTrigger>
+    <nav className="md:hidden fixed bottom-6 left-6 right-6 z-50">
+      <div className="relative">
+        {/* Glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-3xl opacity-20 blur-xl" />
 
-      <SheetContent side="left" className="w-72 p-0">
-        <SheetHeader className="border-b border-border px-6 py-5">
-          <SheetTitle
-            className="text-xl font-bold text-primary"
-            style={{ fontFamily: "var(--font-family-display)" }}
-          >
-            MindCalc
-          </SheetTitle>
-        </SheetHeader>
-
-        <nav className="flex flex-col gap-1 px-4 py-4">
-          {navLinks.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setOpen(false)}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-4 py-3 text-sm transition-colors",
-                pathname === href
-                  ? "bg-muted text-foreground font-medium"
-                  : "text-muted-foreground hover:text-primary hover:bg-muted"
-              )}
-            >
-              <Icon size={20} />
-              <span>{label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="mt-auto border-t border-border px-4 py-4">
-          <Link
-            href="/billing"
-            onClick={() => setOpen(false)}
-            className="flex items-center justify-center gap-2 w-full bg-primary text-primary-foreground px-4 py-3 rounded-xl text-sm font-medium hover:bg-[#14B8A6] transition-colors shadow-sm"
-          >
-            <Sparkles size={16} />
-            Assinar Pro
-          </Link>
+        {/* Nav container */}
+        <div className="relative bg-slate-900/90 backdrop-blur-2xl border border-white/20 rounded-3xl p-2 flex items-center justify-around">
+          {mobileNavItems.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "flex flex-col items-center gap-1 px-4 py-2 rounded-2xl font-medium transition-all duration-300",
+                  isActive
+                    ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/25"
+                    : "text-white/60 active:scale-95"
+                )}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-xs">{label}</span>
+              </Link>
+            );
+          })}
         </div>
-      </SheetContent>
-    </Sheet>
+      </div>
+    </nav>
   );
 }

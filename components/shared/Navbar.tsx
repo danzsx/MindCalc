@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { UserMenu } from "./UserMenu";
-import { MobileNav } from "./MobileNav";
 import {
   LayoutDashboard,
   BookOpen,
@@ -12,11 +10,10 @@ import {
   Dumbbell,
   CreditCard,
   Sparkles,
-  Sun,
-  Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { motion } from "motion/react";
 
 export const navLinks = [
   { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
@@ -28,70 +25,72 @@ export const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
   const { isAdmin } = useAuth();
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-card shadow-sm border-b border-border">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-12">
-        {/* Mobile hamburger */}
-        <div className="md:hidden">
-          <MobileNav />
-        </div>
-
+    <motion.nav
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="sticky top-0 z-50 hidden md:block bg-slate-900/80 backdrop-blur-xl border-b border-white/10"
+    >
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         {/* Logo */}
-        <Link
-          href="/dashboard"
-          className="text-xl font-bold tracking-tight text-primary"
-          style={{ fontFamily: "var(--font-family-display)" }}
-        >
-          MindCalc
-          {isAdmin && (
-            <span className="ml-2 rounded-md bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
-              Admin
+        <Link href="/dashboard" className="flex items-center gap-3">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-400 to-cyan-400 rounded-2xl blur-lg opacity-50" />
+            <div className="relative bg-gradient-to-br from-teal-500 to-cyan-500 p-2.5 rounded-2xl">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+          </div>
+          <div>
+            <span
+              className="text-xl font-bold tracking-tight text-white"
+              style={{ fontFamily: "var(--font-family-display)" }}
+            >
+              MindCalc
             </span>
-          )}
+            {isAdmin && (
+              <span className="ml-2 text-xs font-medium text-teal-400">
+                Admin
+              </span>
+            )}
+          </div>
         </Link>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "flex items-center gap-2 rounded-lg px-3 py-2 text-body-primary transition-colors",
-                pathname === href
-                  ? "bg-muted text-foreground font-medium"
-                  : "text-muted-foreground hover:text-primary hover:bg-muted"
-              )}
-            >
-              <Icon size={18} />
-              <span>{label}</span>
-            </Link>
-          ))}
+        <div className="flex items-center gap-1">
+          {navLinks.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200",
+                  isActive
+                    ? "bg-white/15 text-white shadow-lg"
+                    : "text-white/60 hover:text-white hover:bg-white/5"
+                )}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{label}</span>
+              </Link>
+            );
+          })}
         </div>
 
-        {/* Right side: Theme toggle + Pro button + User menu */}
+        {/* Right side */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            aria-label="Alternar tema"
-          >
-            <Sun size={18} className="hidden dark:block" />
-            <Moon size={18} className="block dark:hidden" />
-          </button>
           <Link
             href="/billing"
-            className="hidden lg:inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-body-emphasis hover:bg-[#14B8A6] transition-colors shadow-sm"
+            className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 px-5 py-2 rounded-xl text-sm font-medium text-white transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-teal-500/25"
           >
-            <Sparkles size={16} />
             Assinar Pro
           </Link>
           <UserMenu />
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
