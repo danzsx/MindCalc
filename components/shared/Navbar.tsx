@@ -3,24 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserMenu } from "./UserMenu";
-import {
-  LayoutDashboard,
-  BookOpen,
-  Grid3X3,
-  Dumbbell,
-  CreditCard,
-  Sparkles,
-} from "lucide-react";
+import { NumetriaLogo } from "./NumetriaLogo";
+import { LayoutDashboard, BookOpen, Grid3X3, Dumbbell, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "motion/react";
 
 export const navLinks = [
   { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
-  { href: "/lessons", label: "Aulas", icon: BookOpen },
-  { href: "/tabuada", label: "Tabuada", icon: Grid3X3 },
-  { href: "/train", label: "Treinar", icon: Dumbbell },
-  { href: "/billing", label: "Planos", icon: CreditCard },
+  { href: "/lessons",   label: "Aulas",  icon: BookOpen },
+  { href: "/tabuada",   label: "Tabuada", icon: Grid3X3 },
+  { href: "/train",     label: "Treinar", icon: Dumbbell },
 ];
 
 export function Navbar() {
@@ -31,63 +24,107 @@ export function Navbar() {
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="sticky top-0 z-50 hidden md:block bg-slate-900/80 backdrop-blur-xl border-b border-white/10"
+      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="sticky top-0 z-50 hidden md:block"
+      style={{
+        background: "var(--glass-navbar-bg, rgba(8, 15, 30, 0.85))",
+        borderBottom: "1px solid var(--glass-navbar-border, rgba(141, 194, 255, 0.08))",
+        backdropFilter: "blur(32px)",
+        WebkitBackdropFilter: "blur(32px)",
+        boxShadow: "0 1px 0 rgba(141, 194, 255, 0.06)",
+      }}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-6 lg:px-8">
+
         {/* Logo */}
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-teal-400 to-cyan-400 rounded-2xl blur-lg opacity-50" />
-            <div className="relative bg-gradient-to-br from-teal-500 to-cyan-500 p-2.5 rounded-2xl">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-          </div>
-          <div>
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#cef26d]"
+        >
+          <NumetriaLogo variant="full" size={28} color="light" />
+          {isAdmin && (
             <span
-              className="text-xl font-bold tracking-tight text-white"
-              style={{ fontFamily: "var(--font-family-display)" }}
+              className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md"
+              style={{ color: "#cef26d", background: "rgba(206, 242, 109, 0.1)" }}
             >
-              MindCalc
+              Admin
             </span>
-            {isAdmin && (
-              <span className="ml-2 text-xs font-medium text-teal-400">
-                Admin
-              </span>
-            )}
-          </div>
+          )}
         </Link>
 
-        {/* Desktop nav links */}
-        <div className="flex items-center gap-1">
+        {/* Center nav pills */}
+        <div
+          className="flex items-center gap-1 p-1.5 rounded-2xl"
+          style={{
+            background: "rgba(13, 29, 58, 0.6)",
+            border: "1px solid rgba(141, 194, 255, 0.08)",
+          }}
+        >
           {navLinks.map(({ href, label, icon: Icon }) => {
-            const isActive = pathname === href;
+            const isActive =
+              pathname === href ||
+              (href !== "/" && pathname.startsWith(href + "/"));
+
             return (
               <Link
                 key={href}
                 href={href}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200",
-                  isActive
-                    ? "bg-white/15 text-white shadow-lg"
-                    : "text-white/60 hover:text-white hover:bg-white/5"
+                  "relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[#cef26d]",
+                  isActive ? "text-white" : "text-[#6b89b4] hover:text-[#a8c0e0]"
                 )}
               >
-                <Icon className="w-4 h-4" />
+                {isActive && (
+                  <motion.div
+                    layoutId="navbar-pill"
+                    className="absolute inset-0 rounded-xl -z-10"
+                    style={{
+                      background: "rgba(55, 112, 191, 0.15)",
+                      border: "1px solid rgba(55, 112, 191, 0.4)",
+                    }}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                  />
+                )}
+                <Icon
+                  className={cn(
+                    "w-4 h-4 transition-colors duration-200",
+                    isActive ? "text-[#8dc2ff]" : "text-[#6b89b4]"
+                  )}
+                />
                 <span>{label}</span>
               </Link>
             );
           })}
         </div>
 
-        {/* Right side */}
+        {/* Right side — Upgrade CTA + divider + UserMenu */}
         <div className="flex items-center gap-3">
           <Link
             href="/billing"
-            className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 px-5 py-2 rounded-xl text-sm font-medium text-white transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-teal-500/25"
+            className="hidden lg:flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-px outline-none focus-visible:ring-2 focus-visible:ring-[#cef26d]"
+            style={{
+              background: "#cef26d",
+              color: "#080f1e",
+              boxShadow: "0 4px 16px rgba(206, 242, 109, 0.2)",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.boxShadow =
+                "0 8px 24px rgba(206, 242, 109, 0.35)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.boxShadow =
+                "0 4px 16px rgba(206, 242, 109, 0.2)";
+            }}
           >
-            Assinar Pro
+            <Zap className="w-3.5 h-3.5 fill-current" />
+            <span>Upgrade</span>
           </Link>
+
+          <div
+            className="hidden lg:block h-6 w-px"
+            style={{ background: "rgba(141, 194, 255, 0.1)" }}
+          />
+
           <UserMenu />
         </div>
       </div>

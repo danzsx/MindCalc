@@ -42,179 +42,250 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-sans: var(--font-family-body);
-  --font-display: var(--font-space-grotesk);
-  --font-mono: var(--font-family-body);
+  /* Numetria font stack — Oddval display, Inter body */
+  --font-sans: var(--font-inter, 'Inter', sans-serif);
+  --font-display: var(--font-oddval, 'Inter', sans-serif);
+  --font-mono: var(--font-inter, 'Inter', sans-serif);
 
-  --radius-sm: calc(var(--radius) - 8px);
-  --radius-md: calc(var(--radius) - 4px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  /* Numetria radius scale (absolute values per design spec) */
+  --radius-sm: 0.75rem;   /* 12px */
+  --radius-md: 1rem;      /* 16px */
+  --radius-lg: 1.5rem;    /* 24px */
+  --radius-xl: 2rem;      /* 32px */
+  --radius-2xl: 2.5rem;   /* 40px */
+  --radius-3xl: 3rem;     /* 48px */
+  --radius-4xl: 3.5rem;   /* 56px */
 }
 
 :root {
-  --radius: 1.5rem;
-  --font-size: 16px;
-  --font-family-display: var(--font-space-grotesk, 'Space Grotesk', sans-serif);
-  --font-family-body: var(--font-family-body, 'Inter', sans-serif);
+  --radius: 2rem; /* 32px — kept for any legacy calc() references */
 
-  /* ── Typography Scale ── */
-  --text-page-title: 1.875rem;       /* 30px — page headings (h1) */
-  --text-section-title: 1.25rem;     /* 20px — section dividers (h2) */
-  --text-card-title: 0.9375rem;      /* 15px — card headers (h2 inside cards) */
-  --text-body: 0.875rem;             /* 14px — paragraphs, descriptions */
-  --text-body-lg: 1rem;              /* 16px — emphasized body */
-  --text-label: 0.75rem;             /* 12px — labels, captions, small meta */
-  --text-metric: 1.375rem;           /* 22px — stat values, KPI numbers */
-  --text-metric-lg: 3rem;            /* 48px — large exercise numbers */
+  /* ── Numetria Font System ── */
+  --font-family-display: var(--font-oddval, 'Inter', sans-serif);
+  --font-family-body: var(--font-inter, 'Inter', sans-serif);
 
-  --leading-tight: 1.2;              /* headings, metrics */
-  --leading-normal: 1.5;             /* body text */
-  --leading-relaxed: 1.625;          /* long-form text, hints */
+  /* ═══════════════════════════════════════════════
+     NUMETRIA — Dark-First Theme (Deep Navy / Glass)
+     ═══════════════════════════════════════════════ */
 
-  --tracking-tight: -0.01em;         /* headings */
-  --tracking-normal: 0;              /* body */
-  --tracking-wide: 0.025em;          /* labels, uppercase */
+  /* Base */
+  --background: #080f1e;           /* Deep Navy */
+  --foreground: #f0f4ff;
 
-  /* ── Spacing Tokens ── */
-  --space-xs: 0.25rem;               /* 4px */
-  --space-sm: 0.5rem;                /* 8px */
-  --space-md: 0.75rem;               /* 12px */
-  --space-lg: 1rem;                  /* 16px */
-  --space-xl: 1.5rem;                /* 24px */
-  --space-2xl: 2rem;                 /* 32px */
-  --space-3xl: 3rem;                 /* 48px */
+  /* Cards — Ocean Glass surface */
+  --card: #0d1d3a;
+  --card-foreground: #f0f4ff;
 
-  --card-padding: var(--space-xl);          /* 24px */
-  --card-header-gap: var(--space-md);       /* 12px — between icon and title */
-  --card-section-gap: var(--space-lg);      /* 16px — between header and content */
-  --section-gap: var(--space-2xl);          /* 32px — between page sections */
-  --grid-gap: var(--space-xl);              /* 24px — between grid cards */
-  --stats-gap: var(--space-lg);             /* 16px — between stat cards */
+  --popover: #080f1e;
+  --popover-foreground: #f0f4ff;
 
-  /* ── Dark Glassmorphism Theme ── */
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --card: rgba(255, 255, 255, 0.05);
-  --card-foreground: #f8fafc;
-  --popover: rgba(15, 23, 42, 0.95);
-  --popover-foreground: #f8fafc;
-  --primary: #2DD4BF;
-  --primary-foreground: #ffffff;
-  --secondary: rgba(255, 255, 255, 0.1);
-  --secondary-foreground: #f8fafc;
-  --muted: rgba(255, 255, 255, 0.05);
-  --muted-foreground: rgba(255, 255, 255, 0.6);
-  --accent: rgba(255, 255, 255, 0.1);
-  --accent-foreground: #f8fafc;
-  --destructive: #FB923C;
-  --destructive-foreground: #ffffff;
-  --success: #10B981;
-  --success-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: transparent;
-  --input-background: rgba(255, 255, 255, 0.05);
-  --switch-background: rgba(255, 255, 255, 0.2);
-  --ring: #2DD4BF;
-  --chart-1: #2DD4BF;
-  --chart-2: #10B981;
-  --chart-3: #22d3ee;
-  --chart-4: #a78bfa;
-  --chart-5: #f97316;
-  --sidebar: rgba(15, 23, 42, 0.8);
-  --sidebar-foreground: #f8fafc;
-  --sidebar-primary: #2DD4BF;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(255, 255, 255, 0.1);
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #2DD4BF;
+  /* Brand Primary: Blue Harbor */
+  --primary: #3770bf;
+  --primary-foreground: #f0f4ff;
 
-  /* ── Gradient Tokens (per operation) ── */
-  --gradient-addition: linear-gradient(135deg, #10b981, #14b8a6);
-  --gradient-subtraction: linear-gradient(135deg, #f97316, #ef4444);
-  --gradient-multiplication: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  --gradient-division: linear-gradient(135deg, #eab308, #f97316);
-  --gradient-primary: linear-gradient(135deg, #14b8a6, #06b6d4);
-  --gradient-accent: linear-gradient(135deg, #ec4899, #8b5cf6);
+  --secondary: #122040;            /* surface-mid */
+  --secondary-foreground: #a8c0e0;
+
+  --muted: #0d1d3a;
+  --muted-foreground: #6b89b4;     /* Névoa */
+
+  /* Brand Accent: Sunny Herb (lime) */
+  --accent: #cef26d;
+  --accent-foreground: #080f1e;    /* Dark text on lime */
+
+  /* Destructive: Ice Blue (not aggressive red) */
+  --destructive: #8dc2ff;
+  --destructive-foreground: #080f1e;
+
+  /* Success: Sunny Herb */
+  --success: #cef26d;
+  --success-foreground: #080f1e;
+
+  /* Inputs & Borders — glass tinted */
+  --border: rgba(141, 194, 255, 0.12);
+  --input: rgba(141, 194, 255, 0.12);
+  --input-background: rgba(13, 29, 58, 0.8);
+  --switch-background: #122040;
+
+  /* Focus ring: lime */
+  --ring: #cef26d;
+
+  /* Charts — Numetria operation palette */
+  --chart-1: #3770bf;              /* Blue Harbor — Addition */
+  --chart-2: #8dc2ff;              /* Ice Blue — Subtraction */
+  --chart-3: #cef26d;              /* Sunny Herb — Multiplication */
+  --chart-4: #a8cc47;              /* Muted Lime — Division */
+  --chart-5: #5a8fd4;              /* Primary Light */
+
+  /* Sidebar */
+  --sidebar: #080f1e;
+  --sidebar-foreground: #f0f4ff;
+  --sidebar-primary: #3770bf;
+  --sidebar-primary-foreground: #f0f4ff;
+  --sidebar-accent: #122040;
+  --sidebar-accent-foreground: #f0f4ff;
+  --sidebar-border: rgba(141, 194, 255, 0.12);
+  --sidebar-ring: #cef26d;
+
+  /* ── Gradient Tokens ── */
+  --gradient-primary: linear-gradient(135deg, #3770bf, #5a8fd4);
+  --gradient-secondary: linear-gradient(135deg, #0d1d3a, #122040);
+  --gradient-accent: linear-gradient(135deg, #cef26d, #b8d85a);
+
+  /* Operation Gradients — Numetria remapped */
+  --gradient-addition: linear-gradient(135deg, #3770bf, #5a8fd4);
+  --gradient-subtraction: linear-gradient(135deg, #8dc2ff, #6aaaf0);
+  --gradient-multiplication: linear-gradient(135deg, #cef26d, #b8d85a);
+  --gradient-division: linear-gradient(135deg, #a8cc47, #8baa35);
+
+  /* ── NUMETRIA Core Design Tokens ── */
+  --color-primary-nm: #3770bf;     /* Blue Harbor */
+  --color-primary-light: #5a8fd4;
+  --color-primary-dark: #2558a0;
+  --color-accent-nm: #cef26d;      /* Sunny Herb */
+  --color-accent-dim: #b8d85a;
+  --color-glass: #8dc2ff;          /* Ice Blue */
+
+  /* Surfaces */
+  --color-bg-dark: #080f1e;        /* Deep Navy */
+  --color-surface-dark: #0d1d3a;   /* Ocean Glass */
+  --color-surface-mid: #122040;
+  --color-surface-light: #1a2f55;
+  --color-bg-light: #f3f6ff;       /* Moon Tint */
+
+  /* Text */
+  --color-text-primary: #f0f4ff;
+  --color-text-secondary: #a8c0e0;
+  --color-text-muted: #6b89b4;
+  --color-text-dark: #0d1d3a;
+
+  /* ── Glassmorphism Tokens ── */
+  --glass-bg: rgba(13, 29, 58, 0.6);
+  --glass-border: rgba(141, 194, 255, 0.15);
+  --glass-blur: blur(20px);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Glassmorphism by surface (per Appendix B) */
+  --glass-navbar-bg: rgba(8, 15, 30, 0.85);
+  --glass-navbar-border: rgba(141, 194, 255, 0.08);
+  --glass-modal-bg: rgba(8, 15, 30, 0.95);
+  --glass-modal-border: rgba(141, 194, 255, 0.15);
+  --glass-elevated-bg: rgba(18, 32, 64, 0.75);
+  --glass-elevated-border: rgba(141, 194, 255, 0.2);
+
+  /* ── Operation Color Tokens ── */
+  --op-add: #3770bf;               /* Blue Harbor */
+  --op-sub: #8dc2ff;               /* Ice Blue */
+  --op-mul: #cef26d;               /* Sunny Herb */
+  --op-div: #a8cc47;               /* Muted Lime */
 }
 
 .dark {
-  /* Already dark by default — mirror :root */
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --card: rgba(255, 255, 255, 0.05);
-  --card-foreground: #f8fafc;
-  --popover: rgba(15, 23, 42, 0.95);
-  --popover-foreground: #f8fafc;
-  --primary: #2DD4BF;
-  --primary-foreground: #ffffff;
-  --secondary: rgba(255, 255, 255, 0.1);
-  --secondary-foreground: #f8fafc;
-  --muted: rgba(255, 255, 255, 0.05);
-  --muted-foreground: rgba(255, 255, 255, 0.6);
-  --accent: rgba(255, 255, 255, 0.1);
-  --accent-foreground: #f8fafc;
-  --destructive: #FB923C;
-  --destructive-foreground: #ffffff;
-  --success: #10B981;
-  --success-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: transparent;
-  --input-background: rgba(255, 255, 255, 0.05);
-  --switch-background: rgba(255, 255, 255, 0.2);
-  --ring: #2DD4BF;
-  --chart-1: #2DD4BF;
-  --chart-2: #10B981;
-  --chart-3: #22d3ee;
-  --chart-4: #a78bfa;
-  --chart-5: #f97316;
-  --sidebar: rgba(15, 23, 42, 0.8);
-  --sidebar-foreground: #f8fafc;
-  --sidebar-primary: #2DD4BF;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(255, 255, 255, 0.1);
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #2DD4BF;
+  /* Dark = same as :root — Numetria is dark-first, not a mode toggle */
+  --background: #080f1e;
+  --foreground: #f0f4ff;
+  --card: #0d1d3a;
+  --card-foreground: #f0f4ff;
+  --popover: #080f1e;
+  --popover-foreground: #f0f4ff;
+  --primary: #3770bf;
+  --primary-foreground: #f0f4ff;
+  --secondary: #122040;
+  --secondary-foreground: #a8c0e0;
+  --muted: #0d1d3a;
+  --muted-foreground: #6b89b4;
+  --accent: #cef26d;
+  --accent-foreground: #080f1e;
+  --destructive: #8dc2ff;
+  --destructive-foreground: #080f1e;
+  --success: #cef26d;
+  --success-foreground: #080f1e;
+  --border: rgba(141, 194, 255, 0.12);
+  --input: rgba(141, 194, 255, 0.12);
+  --input-background: rgba(13, 29, 58, 0.8);
+  --switch-background: #122040;
+  --ring: #cef26d;
+  --sidebar: #080f1e;
+  --sidebar-foreground: #f0f4ff;
+  --sidebar-primary: #3770bf;
+  --sidebar-primary-foreground: #f0f4ff;
+  --sidebar-accent: #122040;
+  --sidebar-accent-foreground: #f0f4ff;
+  --sidebar-border: rgba(141, 194, 255, 0.12);
+  --sidebar-ring: #cef26d;
 }
 
-/* ── Lesson Semantic Colors ── */
+/* ── Lesson Semantic Colors (Numetria) ── */
 :root {
-  --lesson-step-cyan: #22d3ee;
-  --lesson-step-amber: #fbbf24;
-  --lesson-step-emerald: #34d399;
+  --lesson-step-cyan: #8dc2ff;     /* Ice Blue */
+  --lesson-step-amber: #cef26d;    /* Sunny Herb */
+  --lesson-step-emerald: #cef26d;  /* Sunny Herb (success) */
   --lesson-node-size: 3rem;
 }
 
 /* ── Lesson Animations ── */
 @keyframes lesson-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(45, 212, 191, 0); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(55, 112, 191, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(55, 112, 191, 0);
+  }
 }
 
 @keyframes lesson-step-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes lesson-phase-slide-out {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(-40px); }
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
 }
 
 @keyframes lesson-phase-slide-in {
-  from { opacity: 0; transform: translateX(40px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes confetti-burst {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
-  50% { opacity: 1; }
-  100% { opacity: 0; transform: translateY(-60px) scale(0.5); }
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scale(0.5);
+  }
 }
 
 .lesson-pulse {
@@ -233,48 +304,120 @@
   animation: lesson-phase-slide-out 0.2s ease-in both;
 }
 
-.lesson-digit-tens { color: var(--lesson-step-cyan); }
-.lesson-digit-units { color: var(--lesson-step-amber); }
-.lesson-digit-result { color: var(--lesson-step-emerald); }
+.lesson-digit-tens {
+  color: var(--lesson-step-cyan);
+}
+
+.lesson-digit-units {
+  color: var(--lesson-step-amber);
+}
+
+.lesson-digit-result {
+  color: var(--lesson-step-emerald);
+}
 
 /* ── Interactive Lesson Animations ── */
 @keyframes interactive-fade-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes interactive-micro-win {
-  0% { opacity: 0; transform: scale(0.9) translateY(8px); }
-  60% { transform: scale(1.02) translateY(0); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(8px);
+  }
+
+  60% {
+    transform: scale(1.02) translateY(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes interactive-block-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.15); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.15);
+  }
 }
 
 @keyframes interactive-block-pop {
-  0% { opacity: 0; transform: scale(0); }
-  70% { transform: scale(1.2); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  70% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes interactive-transfer-slide {
-  0% { opacity: 1; transform: translateX(-40px); }
-  50% { opacity: 1; transform: translateX(0px); }
-  100% { opacity: 0.5; transform: translateX(40px) scale(0.8); }
+  0% {
+    opacity: 1;
+    transform: translateX(-40px);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(0px);
+  }
+
+  100% {
+    opacity: 0.5;
+    transform: translateX(40px) scale(0.8);
+  }
 }
 
 @keyframes interactive-number-reveal {
-  0% { opacity: 0; transform: scale(0.5); }
-  50% { transform: scale(1.1); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes interactive-glow-ring {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
-  50% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(206, 242, 109, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 0 12px rgba(206, 242, 109, 0);
+  }
 }
 
 .interactive-fade-up {
@@ -310,26 +453,61 @@
 }
 
 /* Stagger interactive fade-ups */
-.interactive-stagger > .interactive-fade-up:nth-child(1) { animation-delay: 0ms; }
-.interactive-stagger > .interactive-fade-up:nth-child(2) { animation-delay: 120ms; }
-.interactive-stagger > .interactive-fade-up:nth-child(3) { animation-delay: 240ms; }
-.interactive-stagger > .interactive-fade-up:nth-child(4) { animation-delay: 360ms; }
+.interactive-stagger>.interactive-fade-up:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.interactive-stagger>.interactive-fade-up:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.interactive-stagger>.interactive-fade-up:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.interactive-stagger>.interactive-fade-up:nth-child(4) {
+  animation-delay: 360ms;
+}
 
 /* Pizza fraction animations */
 @keyframes pizza-cut-line {
-  from { stroke-dashoffset: 100; opacity: 0; }
-  to { stroke-dashoffset: 0; opacity: 1; }
+  from {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
 }
 
 @keyframes pizza-slice-pop {
-  0% { opacity: 0; transform: scale(0.8); }
-  60% { transform: scale(1.05); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  60% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes pizza-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 .pizza-cut-line {
@@ -348,53 +526,133 @@
 
 /* ── Price Comparison Lesson Animations ── */
 @keyframes price-product-pop {
-  0% { opacity: 0; transform: scale(0.7) translateY(16px); }
-  60% { transform: scale(1.05) translateY(0); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.7) translateY(16px);
+  }
+
+  60% {
+    transform: scale(1.05) translateY(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes price-item-pop {
-  0% { opacity: 0; transform: scale(0); }
-  70% { transform: scale(1.2); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  70% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes price-tag-pop {
-  0% { opacity: 0; transform: scale(0.5) rotate(-8deg); }
-  60% { transform: scale(1.1) rotate(2deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-8deg);
+  }
+
+  60% {
+    transform: scale(1.1) rotate(2deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 @keyframes price-unit-reveal {
-  0% { opacity: 0; transform: translateY(8px) scale(0.8); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.8);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes price-winner-crown {
-  0% { opacity: 0; transform: translateY(10px) scale(0); }
-  50% { transform: translateY(-4px) scale(1.2); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0);
+  }
+
+  50% {
+    transform: translateY(-4px) scale(1.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes price-cart-bounce {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-8px) rotate(-3deg); }
-  75% { transform: translateY(-4px) rotate(2deg); }
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-8px) rotate(-3deg);
+  }
+
+  75% {
+    transform: translateY(-4px) rotate(2deg);
+  }
 }
 
 @keyframes price-formula-reveal {
-  0% { opacity: 0; transform: scale(0.9); letter-spacing: 0.1em; }
-  100% { opacity: 1; transform: scale(1); letter-spacing: 0; }
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+    letter-spacing: 0.1em;
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    letter-spacing: 0;
+  }
 }
 
 @keyframes price-scale-reveal {
-  0% { opacity: 0; transform: scaleY(0.5); }
-  100% { opacity: 1; transform: scaleY(1); }
+  0% {
+    opacity: 0;
+    transform: scaleY(0.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
 }
 
 @keyframes price-coin-stack {
-  0% { opacity: 0; transform: translateY(-12px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .price-product-pop {
@@ -455,45 +713,105 @@
 }
 
 @keyframes confetti-fall {
-  0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
-  100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.3); }
+  0% {
+    opacity: 1;
+    transform: translateY(-20px) rotate(0deg) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(100vh) rotate(720deg) scale(0.3);
+  }
 }
 
 /* Custom animations */
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes zoom-in-95 {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes slide-in-left {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.1; }
-  50% { opacity: 0.2; }
+
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
 }
 
 .animate-in {
@@ -526,6 +844,18 @@
   animation: glow-pulse 3s ease-in-out infinite;
 }
 
+/* ── Mobile Keyboard Avoidance ── */
+/* Adds safe-area padding so inputs aren't hidden under virtual keyboard */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@supports (padding-bottom: env(keyboard-inset-height)) {
+  .lesson-keyboard-safe {
+    padding-bottom: env(keyboard-inset-height, 0px);
+  }
+}
+
 /* Hide scrollbar but keep functionality */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -534,6 +864,127 @@
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ── Phase 3: Visual Component Animations ── */
+
+/* Step slides in from the left when a new strategy step appears */
+@keyframes step-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Lime glow pulse on step completion (one-shot) */
+@keyframes step-done-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(206, 242, 109, 0.45);
+  }
+
+  55% {
+    box-shadow: 0 0 0 8px rgba(206, 242, 109, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(206, 242, 109, 0);
+  }
+}
+
+/* Bouncy reveal for the final correct answer */
+@keyframes number-bounce-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  55% {
+    transform: scale(1.18);
+  }
+
+  75% {
+    transform: scale(0.94);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pop-in for decomposition nodes (NumberDecompositionVisual) */
+@keyframes decomp-node-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) translateY(-6px);
+  }
+
+  65% {
+    transform: scale(1.08) translateY(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Horizontal bar pop-in for base-10 blocks (BaseBlockVisual) */
+@keyframes block-bar-pop {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+/* Number line arc draw (for NumberLine SVG) */
+@keyframes arc-draw {
+  from {
+    stroke-dashoffset: 300;
+    opacity: 0;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.step-slide-in {
+  animation: step-slide-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.step-done-reveal {
+  animation: step-done-glow 0.65s ease-out;
+}
+
+.number-bounce-reveal {
+  animation: number-bounce-reveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.decomp-node-pop {
+  animation: decomp-node-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.block-bar-pop {
+  animation: block-bar-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.arc-draw {
+  stroke-dasharray: 300;
+  animation: arc-draw 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @layer base {
@@ -546,6 +997,11 @@
     font-family: var(--font-family-body);
     font-size: var(--text-body-lg);
     line-height: var(--leading-normal);
+    /* Numetria ambient gradient on body */
+    background-image:
+      radial-gradient(ellipse 80% 60% at 70% -10%, rgba(55, 112, 191, 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 0% 90%, rgba(141, 194, 255, 0.04) 0%, transparent 50%);
+    background-attachment: fixed;
   }
 
   html {
@@ -662,81 +1118,195 @@
 }
 
 .text-metric {
-  font-family: var(--font-family-body);
+  font-family: var(--font-family-display);  /* Oddval for metrics */
   font-size: var(--text-metric);
-  font-weight: 700;
+  font-weight: 600;
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
 }
 
 .text-metric-lg {
-  font-family: var(--font-family-body);
+  font-family: var(--font-family-display);  /* Oddval for large metrics */
   font-size: var(--text-metric-lg);
-  font-weight: 700;
+  font-weight: 600;
   line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: var(--tracking-tight);
 }
 
-/* ── Glassmorphism Utility Classes ── */
+/* ═══════════════════════════════════════════════════════════════
+   NUMETRIA — Glassmorphism System ("Glass Intelligence")
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Standard glass card — Ocean Glass surface with ice-blue border */
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Hover elevation — adds depth and ice-blue glow */
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card-hover:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(18, 32, 64, 0.7);
+  border-color: rgba(141, 194, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5),
+              0 0 0 1px rgba(141, 194, 255, 0.2);
 }
 
+/* Lime-tinted glass — for accent/success surfaces */
+.glass-accent {
+  background: rgba(206, 242, 109, 0.08);
+  border: 1px solid rgba(206, 242, 109, 0.2);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* Blue-tinted glass — for primary/info surfaces */
+.glass-primary {
+  background: rgba(55, 112, 191, 0.15);
+  border: 1px solid rgba(55, 112, 191, 0.3);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* Elevated glass — for modals, dialogs */
+.glass-elevated {
+  background: var(--glass-elevated-bg);
+  border: 1px solid var(--glass-elevated-border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+
+/* Subtle inner glow — overlay element inside a glass card */
 .glass-glow {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  opacity: 0.1;
-  filter: blur(40px);
+  opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 
 .group:hover .glass-glow {
-  opacity: 0.2;
+  opacity: 1;
 }
 
+/* ── Skeleton shimmer — Ocean Glass base + Ice Blue sweep ── */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: rgba(13, 29, 58, 0.8);
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(141, 194, 255, 0.07) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2.2s ease-in-out infinite;
+}
+
+/* Gradient text using Numetria primary gradient */
 .gradient-text {
-  background: linear-gradient(to right, #ffffff, #99f6e4, #22d3ee);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* Lime gradient text */
+.gradient-text-accent {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Background utility for the Numetria page background */
+.bg-numetria {
+  background-color: var(--color-bg-dark);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 70% -10%, rgba(55, 112, 191, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(141, 194, 255, 0.05) 0%, transparent 50%);
+}
+
 /* ── Landing Page Animations ── */
 @keyframes landing-fade-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes landing-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
 @keyframes landing-drift {
-  0% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -20px) scale(1.05); }
-  66% { transform: translate(-15px, 15px) scale(0.97); }
-  100% { transform: translate(0, 0) scale(1); }
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-15px, 15px) scale(0.97);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
 }
 
 .landing-fade-up {
   animation: landing-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.landing-stagger > .landing-fade-up:nth-child(1) { animation-delay: 0ms; }
-.landing-stagger > .landing-fade-up:nth-child(2) { animation-delay: 100ms; }
-.landing-stagger > .landing-fade-up:nth-child(3) { animation-delay: 200ms; }
-.landing-stagger > .landing-fade-up:nth-child(4) { animation-delay: 300ms; }
+.landing-stagger>.landing-fade-up:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.landing-stagger>.landing-fade-up:nth-child(2) {
+  animation-delay: 100ms;
+}
+
+.landing-stagger>.landing-fade-up:nth-child(3) {
+  animation-delay: 200ms;
+}
+
+.landing-stagger>.landing-fade-up:nth-child(4) {
+  animation-delay: 300ms;
+}
 
 .landing-float {
   animation: landing-float 5s ease-in-out infinite;
@@ -750,27 +1320,38 @@
 }
 
 .landing-shape-1 {
-  width: 400px; height: 400px;
-  top: -100px; right: -100px;
-  background: rgba(45, 212, 191, 0.06);
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  right: -100px;
+  background: rgba(55, 112, 191, 0.10);  /* Blue Harbor */
   animation-delay: 0s;
 }
+
 .landing-shape-2 {
-  width: 350px; height: 350px;
-  bottom: 30%; left: -80px;
-  background: rgba(124, 58, 237, 0.05);
+  width: 350px;
+  height: 350px;
+  bottom: 30%;
+  left: -80px;
+  background: rgba(141, 194, 255, 0.06);  /* Ice Blue */
   animation-delay: -7s;
 }
+
 .landing-shape-3 {
-  width: 300px; height: 300px;
-  top: 40%; right: 10%;
-  background: rgba(253, 224, 71, 0.04);
+  width: 300px;
+  height: 300px;
+  top: 40%;
+  right: 10%;
+  background: rgba(206, 242, 109, 0.05);  /* Sunny Herb */
   animation-delay: -14s;
 }
+
 .landing-shape-4 {
-  width: 250px; height: 250px;
-  bottom: -50px; left: 30%;
-  background: rgba(45, 212, 191, 0.04);
+  width: 250px;
+  height: 250px;
+  bottom: -50px;
+  left: 30%;
+  background: rgba(55, 112, 191, 0.05);  /* Blue Harbor dim */
   animation-delay: -5s;
 }
 
@@ -784,56 +1365,83 @@
 
 /* ── Dashboard Card System ── */
 @keyframes dash-slide-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes dash-number-in {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes dash-progress-fill {
-  from { width: 0%; }
+  from {
+    width: 0%;
+  }
 }
 
 @keyframes dash-ring-fill {
-  from { stroke-dashoffset: var(--ring-circumference); }
+  from {
+    stroke-dashoffset: var(--ring-circumference);
+  }
 }
 
 @keyframes dash-pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .dash-card {
   position: relative;
   overflow: hidden;
-  border-radius: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
   animation: dash-slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dash-card:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(18, 32, 64, 0.7);
+  border-color: rgba(141, 194, 255, 0.25);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
 }
 
-/* Accent glow — positioned via the card's ::before */
+/* Accent glow overlay — tinted with Numetria primary by default */
 .dash-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--card-accent-glow, linear-gradient(135deg, rgba(45, 212, 191, 0.08), transparent));
+  background: var(--card-accent-glow, linear-gradient(135deg, rgba(55, 112, 191, 0.06), transparent));
   border-radius: inherit;
   pointer-events: none;
 }
 
-/* No top bar anymore — glassmorphism style */
 .dash-card::after {
   content: none;
 }
@@ -853,25 +1461,38 @@
 }
 
 /* Stagger children */
-.dash-stagger > *:nth-child(1) { animation-delay: 0ms; }
-.dash-stagger > *:nth-child(2) { animation-delay: 80ms; }
-.dash-stagger > *:nth-child(3) { animation-delay: 160ms; }
-.dash-stagger > *:nth-child(4) { animation-delay: 240ms; }
+.dash-stagger>*:nth-child(1) {
+  animation-delay: 0ms;
+}
 
-/* Recharts custom tooltip */
+.dash-stagger>*:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.dash-stagger>*:nth-child(3) {
+  animation-delay: 160ms;
+}
+
+.dash-stagger>*:nth-child(4) {
+  animation-delay: 240ms;
+}
+
+/* Recharts custom tooltip — Numetria glass, below MobileNav z-index */
 .dash-tooltip {
-  background: rgba(15, 23, 42, 0.9) !important;
+  background: rgba(8, 15, 30, 0.95) !important;
   backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(141, 194, 255, 0.15) !important;
   border-radius: 1rem !important;
   padding: 12px 16px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  z-index: 40 !important; /* below MobileNav (z-50) */
 }
 
 .dash-tooltip .recharts-tooltip-label {
   font-weight: 600;
   margin-bottom: 6px;
-  color: #f8fafc;
+  color: #f0f4ff;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -881,60 +1502,145 @@
 /* ── Keyframes ── */
 
 @keyframes parc-fade-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes parc-slide-in-right {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes parc-number-pop {
-  0% { opacity: 0; transform: scale(0.3); }
-  50% { transform: scale(1.15); }
-  70% { transform: scale(0.95); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+
+  70% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes parc-glow-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.3); }
-  50% { box-shadow: 0 0 20px 4px rgba(45, 212, 191, 0.15); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 4px rgba(45, 212, 191, 0.15);
+  }
 }
 
 @keyframes parc-bar-fill {
-  from { width: 0; opacity: 0; }
-  to { opacity: 1; }
+  from {
+    width: 0;
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes parc-thinking-bounce {
-  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1.2); }
+
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 @keyframes parc-hint-slide {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes parc-mystery-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.1); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
 }
 
 @keyframes parc-shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
 }
 
 @keyframes parc-card-entrance {
-  from { opacity: 0; transform: translateY(24px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes parc-micro-label-in {
-  from { opacity: 0; letter-spacing: 0.2em; }
-  to { opacity: 1; letter-spacing: 0.05em; }
+  from {
+    opacity: 0;
+    letter-spacing: 0.2em;
+  }
+
+  to {
+    opacity: 1;
+    letter-spacing: 0.05em;
+  }
 }
 
 /* ── Stage Container ── */
@@ -958,10 +1664,21 @@
 }
 
 /* Staggered entrance delays */
-.parc-stagger-1 { animation: parc-card-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
-.parc-stagger-2 { animation: parc-card-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
-.parc-stagger-3 { animation: parc-card-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
-.parc-stagger-4 { animation: parc-card-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both; }
+.parc-stagger-1 {
+  animation: parc-card-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.parc-stagger-2 {
+  animation: parc-card-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.parc-stagger-3 {
+  animation: parc-card-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.parc-stagger-4 {
+  animation: parc-card-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+}
 
 /* ── Prompt Bubble ── */
 

@@ -93,7 +93,7 @@ function TabuadaSessionContent() {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#8dc2ff] border-t-transparent" />
       </div>
     );
   }
@@ -103,11 +103,11 @@ function TabuadaSessionContent() {
       <div className="flex items-center justify-center min-h-[70vh]">
         <div className="relative group max-w-md w-full">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-3xl opacity-10 blur-2xl" />
-          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 text-center">
-            <p className="text-white/60 mb-6">Configuração inválida.</p>
+          <div className="relative bg-[var(--color-surface-dark)] border border-white/10 rounded-[32px] p-8 text-center shadow-lg">
+            <p className="text-[var(--color-text-secondary)] mb-6 font-medium">Configuração inválida.</p>
             <button
               onClick={() => router.push("/tabuada")}
-              className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 py-4 rounded-2xl hover:from-teal-400 hover:to-cyan-400 hover:shadow-lg hover:shadow-teal-500/25 transition-all duration-300 font-semibold"
+              className="bg-gradient-to-r from-[#3770bf] to-[#8dc2ff] text-white px-6 py-4 rounded-2xl hover:opacity-90 hover:shadow-lg hover:shadow-[#3770bf]/25 transition-all duration-300 font-bold"
             >
               Voltar à configuração
             </button>
@@ -120,7 +120,7 @@ function TabuadaSessionContent() {
   if (!state) {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#8dc2ff] border-t-transparent" />
       </div>
     );
   }
@@ -132,11 +132,11 @@ function TabuadaSessionContent() {
       <div className="flex items-center justify-center min-h-[70vh]">
         <div className="relative group max-w-md w-full">
           <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-3xl opacity-10 blur-2xl" />
-          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
+          <div className="relative bg-[var(--color-surface-dark)] border border-white/10 rounded-[32px] p-8 shadow-lg">
             <div className="flex flex-col items-center gap-4 py-4">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
-              <p className="text-white/60">Salvando resultados...</p>
-              {error && <p className="text-sm text-red-400">{error}</p>}
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#8dc2ff] border-t-transparent" />
+              <p className="text-[var(--color-text-secondary)] font-medium">Salvando resultados...</p>
+              {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
             </div>
           </div>
         </div>
@@ -149,25 +149,25 @@ function TabuadaSessionContent() {
   const currentBlock = state.blocks[state.currentBlockIndex];
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh] px-4">
+    <div className="flex items-center justify-center min-h-[70vh] px-4 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative group max-w-md w-full"
       >
         {/* Glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-3xl opacity-10 blur-2xl group-hover:opacity-15 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-[40px] opacity-10 blur-3xl group-hover:opacity-15 transition-opacity duration-500" />
 
         {/* Card */}
-        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8">
+        <div className="relative bg-[var(--color-surface-dark)] border border-white/10 rounded-[32px] p-8 shadow-xl">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-blue-500 to-purple-500 p-2 rounded-xl">
-                <Grid3X3 className="w-4 h-4 text-white" />
+              <div className="bg-[#3770bf]/15 p-2.5 rounded-xl">
+                <Grid3X3 className="w-5 h-5 text-[#8dc2ff]" />
               </div>
               <h3
-                className="text-white font-bold"
+                className="text-xl font-bold text-[var(--color-text-primary)]"
                 style={{ fontFamily: "var(--font-family-display)" }}
               >
                 Tabuada
@@ -175,10 +175,10 @@ function TabuadaSessionContent() {
             </div>
             <button
               onClick={handleEndTraining}
-              className="text-white/40 hover:text-white hover:bg-white/10 transition-all duration-200 p-2 rounded-xl border border-transparent hover:border-white/10"
+              className="text-[var(--color-text-muted)] hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 p-2 rounded-xl border border-transparent hover:border-red-500/20"
               title="Encerrar treino"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
 
@@ -228,7 +228,7 @@ export default function TabuadaSessionPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center min-h-[70vh]">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#8dc2ff] border-t-transparent" />
         </div>
       }
     >

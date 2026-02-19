@@ -5,31 +5,60 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-sm font-semibold transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-teal-500/40 focus-visible:ring-[3px] cursor-pointer",
+  [
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold",
+    "rounded-2xl transition-all duration-300",
+    "disabled:pointer-events-none disabled:opacity-40",
+    "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0",
+    "outline-none focus-visible:ring-[3px] focus-visible:ring-[rgba(206,242,109,0.35)]",
+    "cursor-pointer select-none",
+  ].join(" "),
   {
     variants: {
       variant: {
+        // ── Blue Harbor — primary action
         default:
-          "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/30 hover:from-teal-400 hover:to-cyan-400 hover:-translate-y-0.5 active:translate-y-0",
+          "bg-[#3770bf] text-[#f0f4ff] shadow-lg shadow-[rgba(55,112,191,0.25)] hover:bg-[#2558a0] hover:shadow-xl hover:shadow-[rgba(55,112,191,0.35)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-md",
+
+        // ── Sunny Herb — most important CTA in the interface
+        accent:
+          "bg-[#cef26d] text-[#080f1e] font-bold shadow-lg shadow-[rgba(206,242,109,0.2)] hover:bg-[#b8d85a] hover:shadow-xl hover:shadow-[rgba(206,242,109,0.3)] hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-[rgba(55,112,191,0.4)]",
+
+        // ── Ice Blue — soft destructive (non-aggressive)
         destructive:
-          "bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 hover:from-red-400 hover:to-pink-400 hover:-translate-y-0.5",
+          "bg-[rgba(141,194,255,0.1)] text-[#8dc2ff] border border-[rgba(141,194,255,0.25)] hover:bg-[rgba(141,194,255,0.18)] hover:border-[rgba(141,194,255,0.4)] hover:-translate-y-0.5 active:translate-y-0",
+
+        // ── Glass border — secondary outlined action
         outline:
-          "border-2 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 backdrop-blur-sm",
+          "border border-[rgba(141,194,255,0.2)] bg-transparent text-[#f0f4ff] hover:bg-[rgba(141,194,255,0.06)] hover:border-[rgba(141,194,255,0.35)]",
+
+        // ── Surface mid — secondary fill
         secondary:
-          "bg-white/10 text-white border border-white/10 hover:bg-white/15 hover:border-white/20 backdrop-blur-sm",
+          "bg-[#122040] text-[#a8c0e0] border border-[rgba(141,194,255,0.1)] hover:bg-[#1a2f55] hover:text-[#f0f4ff] hover:border-[rgba(141,194,255,0.2)]",
+
+        // ── Glass ghost — tertiary / navigation
         ghost:
-          "text-white/70 hover:bg-white/10 hover:text-white",
-        link: "text-teal-400 underline-offset-4 hover:underline hover:text-teal-300",
+          "bg-transparent text-[#a8c0e0] border border-[rgba(141,194,255,0.12)] hover:bg-[rgba(141,194,255,0.07)] hover:text-[#f0f4ff] hover:border-[rgba(141,194,255,0.28)]",
+
+        // ── Ice Blue link
+        link: "text-[#8dc2ff] underline-offset-4 hover:underline hover:text-[#f0f4ff] border-none bg-transparent shadow-none",
+
+        // ── Lime success (same as accent)
         success:
-          "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 hover:from-emerald-400 hover:to-teal-400 hover:-translate-y-0.5",
+          "bg-[#cef26d] text-[#080f1e] font-bold shadow-lg shadow-[rgba(206,242,109,0.2)] hover:bg-[#b8d85a] hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-[rgba(55,112,191,0.4)]",
+
+        // ── Operation variants — Numetria remapped
         addition:
-          "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-0.5",
+          "bg-gradient-to-r from-[#3770bf] to-[#5a8fd4] text-[#f0f4ff] shadow-lg shadow-[rgba(55,112,191,0.25)] hover:shadow-xl hover:shadow-[rgba(55,112,191,0.35)] hover:-translate-y-0.5 active:translate-y-0",
+
         subtraction:
-          "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5",
+          "bg-gradient-to-r from-[#8dc2ff] to-[#6aaaf0] text-[#080f1e] shadow-lg shadow-[rgba(141,194,255,0.2)] hover:shadow-xl hover:shadow-[rgba(141,194,255,0.3)] hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-[rgba(141,194,255,0.4)]",
+
         multiplication:
-          "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5",
+          "bg-gradient-to-r from-[#cef26d] to-[#b8d85a] text-[#080f1e] font-bold shadow-lg shadow-[rgba(206,242,109,0.2)] hover:shadow-xl hover:shadow-[rgba(206,242,109,0.3)] hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-[rgba(55,112,191,0.4)]",
+
         division:
-          "bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-yellow-500/25 hover:shadow-xl hover:shadow-yellow-500/30 hover:-translate-y-0.5",
+          "bg-gradient-to-r from-[#a8cc47] to-[#8baa35] text-[#080f1e] font-bold shadow-lg shadow-[rgba(168,204,71,0.2)] hover:shadow-xl hover:shadow-[rgba(168,204,71,0.3)] hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-[rgba(168,204,71,0.4)]",
       },
       size: {
         default: "h-10 px-5 py-2.5 has-[>svg]:px-3",

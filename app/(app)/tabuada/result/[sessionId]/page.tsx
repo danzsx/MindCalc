@@ -104,16 +104,16 @@ export default async function TabuadaResultPage({ params }: ResultPageProps) {
     <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
       {/* Hero header */}
       <div className="text-center">
-        <div className="inline-flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-500 p-4 rounded-2xl mb-4">
-          <Grid3X3 className="h-7 w-7 text-white" />
+        <div className="inline-flex items-center justify-center bg-blue-50 p-4 rounded-2xl mb-4 shadow-sm">
+          <Grid3X3 className="h-8 w-8 text-blue-600" />
         </div>
         <h1
-          className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-purple-400 bg-clip-text text-transparent mb-2"
+          className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
           style={{ fontFamily: "var(--font-family-display)" }}
         >
           Como foi sua tabuada
         </h1>
-        <p className="text-white/50">
+        <p className="text-gray-500 font-medium">
           {operatorSymbols[session.operation] ?? session.operation} Tabuada do{" "}
           {session.range_min} ao {session.range_max}
         </p>
@@ -126,10 +126,10 @@ export default async function TabuadaResultPage({ params }: ResultPageProps) {
       />
 
       {/* Actions */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
         <Link
           href={`/tabuada/session?op=${encodeURIComponent(session.operation)}&min=${session.range_min}&max=${session.range_max}&mode=${session.mode}`}
-          className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:from-blue-400 hover:to-purple-400 hover:shadow-lg hover:shadow-blue-500/25"
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all duration-300 hover:from-blue-500 hover:to-purple-500 hover:shadow-lg hover:shadow-blue-500/25"
         >
           <RotateCcw className="w-5 h-5" />
           Quero repetir
@@ -137,7 +137,7 @@ export default async function TabuadaResultPage({ params }: ResultPageProps) {
 
         <Link
           href="/tabuada"
-          className="w-full bg-white/5 border border-white/10 text-white py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/10 hover:border-white/20"
+          className="w-full bg-white border-2 border-gray-100 text-gray-700 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all duration-300 hover:bg-gray-50 hover:border-gray-200 hover:text-gray-900"
         >
           <Shuffle className="w-5 h-5" />
           Tentar outra operação
@@ -146,7 +146,7 @@ export default async function TabuadaResultPage({ params }: ResultPageProps) {
         {suggestedLesson && (
           <Link
             href={`/lessons/${suggestedLesson.slug}`}
-            className="w-full bg-gradient-to-r from-teal-500/15 to-cyan-500/15 border border-teal-500/20 text-teal-300 py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:from-teal-500/25 hover:to-cyan-500/25"
+            className="w-full bg-teal-50 border border-teal-100 text-teal-700 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all duration-300 hover:bg-teal-100/50 hover:border-teal-200"
           >
             <BookOpen className="w-5 h-5" />
             Aula sugerida: {suggestedLesson.title}
@@ -155,7 +155,7 @@ export default async function TabuadaResultPage({ params }: ResultPageProps) {
 
         <Link
           href="/dashboard"
-          className="w-full text-white/50 py-4 rounded-2xl font-medium flex items-center justify-center gap-2 transition-all duration-300 hover:text-white hover:bg-white/5"
+          className="w-full text-gray-400 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:text-gray-600 hover:bg-gray-50"
         >
           <ArrowLeft className="w-5 h-5" />
           Voltar ao painel

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { motion } from "motion/react";
 import { CheckCircle2, XCircle, Lightbulb, ArrowRight } from "lucide-react";
 import type { TablesQuestion, TablesAnswer } from "@/types";
@@ -39,47 +39,41 @@ export function TablesFeedback({
     return "Quase. Vamos pensar juntos:";
   }, [answer.isCorrect]);
 
-  useEffect(() => {
-    if (answer.isCorrect) {
-      const timer = setTimeout(onContinue, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [answer.isCorrect, onContinue]);
 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: "spring", stiffness: 200 }}
-      className="space-y-5"
+      className="space-y-6"
     >
       {/* Icon + message */}
-      <div className="flex flex-col items-center gap-3 text-center">
+      <div className="flex flex-col items-center gap-4 text-center">
         {answer.isCorrect ? (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 300, delay: 0.1 }}
-            className="bg-emerald-500/15 p-4 rounded-full border border-emerald-500/20"
+            className="bg-emerald-500/10 p-5 rounded-full"
           >
-            <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+            <CheckCircle2 className="h-10 w-10 text-emerald-400" />
           </motion.div>
         ) : (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 300, delay: 0.1 }}
-            className="bg-red-500/15 p-4 rounded-full border border-red-500/20"
+            className="bg-red-500/10 p-5 rounded-full"
           >
-            <XCircle className="h-8 w-8 text-red-400" />
+            <XCircle className="h-10 w-10 text-red-400" />
           </motion.div>
         )}
-        <p className="text-lg font-semibold text-white">{message}</p>
+        <p className="text-xl font-bold text-[var(--color-text-primary)] tracking-tight">{message}</p>
       </div>
 
       {/* Question recap */}
-      <div className="text-center text-white/50">
-        <p className="text-lg">
+      <div className="text-center text-[var(--color-text-secondary)]">
+        <p className="text-lg font-medium">
           {question.operand1} {formatOperator(question.operator)}{" "}
           {question.operand2}
         </p>
@@ -89,10 +83,10 @@ export function TablesFeedback({
       {!answer.isCorrect && (
         <>
           {/* Correct answer */}
-          <div className="bg-teal-500/10 border border-teal-500/20 rounded-2xl p-5 text-center">
-            <p className="text-sm text-white/50 mb-1">A resposta é</p>
+          <div className="bg-[#3770bf]/15 border border-[#3770bf]/25 rounded-2xl p-6 text-center">
+            <p className="text-sm font-bold text-[#8dc2ff] uppercase tracking-wide mb-1">A resposta é</p>
             <p
-              className="text-3xl font-bold text-teal-400"
+              className="text-4xl font-bold text-[#8dc2ff]"
               style={{ fontFamily: "var(--font-family-display)" }}
             >
               {question.correctAnswer}
@@ -100,23 +94,23 @@ export function TablesFeedback({
           </div>
 
           {/* Explanation */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
-              <Lightbulb className="w-4 h-4 text-yellow-400" />
-              <p className="text-sm text-white/50">Explicação</p>
+              <Lightbulb className="w-5 h-5 text-amber-400 fill-amber-400/20" />
+              <p className="text-sm font-bold text-[var(--color-text-muted)] uppercase tracking-wide">Explicação</p>
             </div>
-            <p className="text-white font-medium">{question.explanation}</p>
+            <p className="text-[var(--color-text-secondary)] font-medium text-lg leading-relaxed">{question.explanation}</p>
           </div>
         </>
       )}
 
       {answer.isCorrect && (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
-            <Lightbulb className="w-4 h-4 text-yellow-400" />
-            <p className="text-sm text-white/50">Explicação</p>
+            <Lightbulb className="w-5 h-5 text-amber-400 fill-amber-400/20" />
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-wide">Explicação</p>
           </div>
-          <p className="text-white font-medium">{question.explanation}</p>
+          <p className="text-gray-700 font-medium text-lg leading-relaxed">{question.explanation}</p>
         </div>
       )}
 
@@ -125,7 +119,7 @@ export function TablesFeedback({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={onContinue}
-        className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:from-teal-400 hover:to-cyan-400 hover:shadow-lg hover:shadow-teal-500/25"
+        className="w-full bg-gradient-to-r from-[#3770bf] to-[#8dc2ff] text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all duration-300 hover:opacity-90 hover:shadow-lg hover:shadow-[#3770bf]/25"
       >
         {answer.isCorrect ? "Bora pra próxima" : "Ahhh, agora fez sentido"}
         <ArrowRight className="w-5 h-5" />

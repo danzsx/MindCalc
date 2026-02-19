@@ -2,51 +2,85 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  BookOpen,
-  Grid3X3,
-  Dumbbell,
-} from "lucide-react";
+import { LayoutDashboard, BookOpen, Grid3X3, Dumbbell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const mobileNavItems = [
-  { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
-  { href: "/lessons", label: "Aulas", icon: BookOpen },
-  { href: "/tabuada", label: "Tabuada", icon: Grid3X3 },
-  { href: "/train", label: "Treinar", icon: Dumbbell },
+  { href: "/dashboard", label: "Painel",  icon: LayoutDashboard },
+  { href: "/lessons",   label: "Aulas",   icon: BookOpen },
+  { href: "/tabuada",   label: "Tabuada", icon: Grid3X3 },
+  { href: "/train",     label: "Treinar", icon: Dumbbell },
 ];
 
 export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-6 left-6 right-6 z-50">
-      <div className="relative">
-        {/* Glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-3xl opacity-20 blur-xl" />
+    <nav
+      className="md:hidden fixed left-4 right-4 z-50"
+      style={{
+        // Respect iOS home indicator via safe-area-inset — fixes keyboard/URL bar conflict
+        bottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))",
+      }}
+      aria-label="Navegação principal"
+    >
+      <div
+        className="flex items-center justify-around px-2 py-1.5 rounded-[2rem]"
+        style={{
+          background: "rgba(8, 15, 30, 0.95)",
+          border: "1px solid rgba(141, 194, 255, 0.12)",
+          backdropFilter: "blur(40px)",
+          WebkitBackdropFilter: "blur(40px)",
+          boxShadow:
+            "0 -4px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(141, 194, 255, 0.06)",
+        }}
+      >
+        {mobileNavItems.map(({ href, label, icon: Icon }) => {
+          const isActive =
+            pathname === href ||
+            (href !== "/" && pathname.startsWith(href + "/"));
 
-        {/* Nav container */}
-        <div className="relative bg-slate-900/90 backdrop-blur-2xl border border-white/20 rounded-3xl p-2 flex items-center justify-around">
-          {mobileNavItems.map(({ href, label, icon: Icon }) => {
-            const isActive = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "flex flex-col items-center gap-1 px-4 py-2 rounded-2xl font-medium transition-all duration-300",
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-label={label}
+              aria-current={isActive ? "page" : undefined}
+              className={cn(
+                "relative flex flex-col items-center justify-center gap-0.5 py-2 px-4 rounded-2xl transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-[#cef26d] min-w-[60px]",
+                !isActive && "opacity-50 hover:opacity-75"
+              )}
+            >
+              {/* Icon container — highlighted when active */}
+              <div
+                className="p-2 rounded-xl transition-all duration-300"
+                style={
                   isActive
-                    ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/25"
-                    : "text-white/60 active:scale-95"
-                )}
+                    ? {
+                        background: "rgba(55, 112, 191, 0.2)",
+                        boxShadow: "0 0 14px rgba(55, 112, 191, 0.18)",
+                      }
+                    : {}
+                }
               >
-                <Icon className="w-5 h-5" />
-                <span className="text-xs">{label}</span>
-              </Link>
-            );
-          })}
-        </div>
+                <Icon
+                  className="w-5 h-5 transition-colors duration-300"
+                  style={{ color: isActive ? "#8dc2ff" : "#6b89b4" }}
+                />
+              </div>
+
+              {/* Label — only visible when active */}
+              {isActive && (
+                <span
+                  className="text-[9px] font-semibold tracking-widest leading-none uppercase"
+                  style={{ color: "#cef26d" }}
+                >
+                  {label}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );

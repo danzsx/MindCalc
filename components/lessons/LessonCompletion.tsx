@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Dumbbell, ArrowRight, ArrowLeft, Sparkles, Clock, Target } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const CONFETTI_COLORS = ["#22d3ee", "#fbbf24", "#34d399", "#a78bfa", "#f472b6", "#fb923c"];
+/* Numetria confetti palette */
+const CONFETTI_COLORS = ["#cef26d", "#8dc2ff", "#3770bf", "#a8cc47", "#f0f4ff", "#5a8fd4"];
 
 function CompletionConfetti() {
   return (
@@ -33,6 +35,7 @@ interface LessonCompletionProps {
   technique: string;
   elapsedMinutes: number;
   nextLessonSlug?: string;
+  phaseAttempts?: { guided: number; "semi-guided": number; free: number };
   onNextLesson: () => void;
   onPracticeMore: () => void;
   onBackToLessons: () => void;
@@ -42,6 +45,7 @@ export function LessonCompletion({
   technique,
   elapsedMinutes,
   nextLessonSlug,
+  phaseAttempts,
   onNextLesson,
   onPracticeMore,
   onBackToLessons,
@@ -54,97 +58,173 @@ export function LessonCompletion({
   }, []);
 
   const timeText = elapsedMinutes <= 0
-    ? "menos de 1 minuto"
+    ? "menos de 1 min"
     : elapsedMinutes === 1
       ? "1 minuto"
-      : `${elapsedMinutes} minutos`;
+      : `${elapsedMinutes} min`;
+
+  const statsItems = [
+    { icon: Sparkles, value: "+50", label: "XP" },
+    { icon: Target, value: "100%", label: "Precisão" },
+    { icon: Clock, value: timeText, label: "Tempo" },
+  ];
 
   return (
-    <div className="flex flex-col items-center text-center space-y-8 py-8 lesson-phase-enter">
+    <div className="flex flex-col items-center text-center space-y-7 py-6 lesson-phase-enter">
       {showConfetti && <CompletionConfetti />}
 
-      {/* Large emoji with spring effect */}
+      {/* Trophy icon */}
       <div className="relative lesson-step-in">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/30 to-cyan-500/30 rounded-full blur-3xl scale-150" />
-        <div className="relative text-8xl" style={{ animationDelay: '100ms' }}>
+        <div
+          className="absolute inset-0 rounded-full scale-150"
+          style={{
+            background: "radial-gradient(circle, rgba(206,242,109,0.2) 0%, transparent 70%)",
+            filter: "blur(20px)",
+          }}
+        />
+        <div className="relative text-7xl" style={{ animationDelay: "100ms" }}>
           🎉
         </div>
       </div>
 
-      {/* Title — Space Grotesk, gradient */}
-      <div className="space-y-3 lesson-step-in" style={{ animationDelay: '200ms' }}>
-        <h2 className="font-[var(--font-family-display)] text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent">
-          Missao Cumprida!
+      {/* Title */}
+      <div className="space-y-2.5 lesson-step-in" style={{ animationDelay: "200ms" }}>
+        <h2
+          className="text-3xl sm:text-4xl font-bold text-[#cef26d]"
+          style={{ fontFamily: "var(--font-family-display)" }}
+        >
+          Missão Cumprida!
         </h2>
-        <p className="text-sm text-white/60 leading-relaxed max-w-sm mx-auto">
-          Voce pegou a tecnica <span className="font-medium text-teal-400">&ldquo;{technique}&rdquo;</span>.
-          Agora e so deixar ficar automatico.
+        <p className="text-sm text-[#6b89b4] leading-relaxed max-w-xs mx-auto">
+          Você pegou a técnica{" "}
+          <span className="font-semibold text-[#a8c0e0]">&ldquo;{technique}&rdquo;</span>.
+          Agora é só deixar ficar automático.
         </p>
       </div>
 
       {/* Stats row */}
-      <div className="flex gap-4 lesson-step-in" style={{ animationDelay: '300ms' }}>
-        <div className="relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center gap-1">
-            <Sparkles className="size-5 text-emerald-400" />
-            <p className="font-[var(--font-family-display)] text-2xl font-bold text-white">+50</p>
-            <p className="text-xs text-white/40">XP</p>
+      <div className="flex gap-3 lesson-step-in" style={{ animationDelay: "300ms" }}>
+        {statsItems.map(({ icon: Icon, value, label }) => (
+          <div
+            key={label}
+            className="rounded-2xl px-5 py-4 flex flex-col items-center gap-1 border"
+            style={{
+              background: "rgba(13,29,58,0.7)",
+              borderColor: "rgba(141,194,255,0.12)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+            }}
+          >
+            <Icon className="size-4 text-[#8dc2ff]" />
+            <p
+              className="text-xl font-bold text-[#f0f4ff]"
+              style={{ fontFamily: "var(--font-family-display)" }}
+            >
+              {value}
+            </p>
+            <p className="text-xs text-[#6b89b4]">{label}</p>
           </div>
-        </div>
-
-        <div className="relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center gap-1">
-            <Target className="size-5 text-cyan-400" />
-            <p className="font-[var(--font-family-display)] text-2xl font-bold text-white">100%</p>
-            <p className="text-xs text-white/40">Precisao</p>
-          </div>
-        </div>
-
-        <div className="relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-4 flex flex-col items-center gap-1">
-            <Clock className="size-5 text-amber-400" />
-            <p className="font-[var(--font-family-display)] text-2xl font-bold text-white">{timeText}</p>
-            <p className="text-xs text-white/40">Tempo</p>
-          </div>
-        </div>
+        ))}
       </div>
 
+      {/* Per-phase attempt breakdown */}
+      {phaseAttempts && (
+        <div
+          className="w-full rounded-2xl border p-4 space-y-2.5 lesson-step-in"
+          style={{
+            animationDelay: "350ms",
+            background: "rgba(13,29,58,0.6)",
+            borderColor: "rgba(141,194,255,0.1)",
+          }}
+        >
+          <p className="text-xs font-semibold text-[#6b89b4] uppercase tracking-widest">
+            Resultados por fase
+          </p>
+          <div className="space-y-2">
+            {(
+              [
+                { label: "Guiada", key: "guided" as const },
+                { label: "Semi-guiada", key: "semi-guided" as const },
+                { label: "Livre", key: "free" as const },
+              ] as const
+            ).map(({ label, key }) => {
+              const attempts = phaseAttempts[key];
+              const text =
+                attempts === 0
+                  ? "—"
+                  : attempts === 1
+                    ? "Acertou de primeira!"
+                    : `${attempts} tentativas`;
+              return (
+                <div key={key} className="flex items-center justify-between">
+                  <span className="text-sm text-[#6b89b4]">{label}</span>
+                  <span
+                    className="text-sm font-semibold"
+                    style={{
+                      color: attempts === 0
+                        ? "#3a5070"
+                        : attempts === 1
+                          ? "#cef26d"
+                          : "#a8c0e0",
+                    }}
+                  >
+                    {text}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Action buttons */}
-      <div className="flex flex-col gap-3 w-full lesson-step-in" style={{ animationDelay: '400ms' }}>
-        {/* Primary: Next lesson */}
+      <div className="flex flex-col gap-3 w-full lesson-step-in" style={{ animationDelay: "400ms" }}>
         {nextLessonSlug && (
           <button
             onClick={onNextLesson}
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white font-bold text-base shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 transition-all duration-300 group"
+            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base transition-all duration-300 group"
+            style={{
+              background: "linear-gradient(135deg, #cef26d 0%, #a8cc47 100%)",
+              color: "#080f1e",
+              boxShadow: "0 4px 20px rgba(206,242,109,0.25)",
+            }}
           >
-            Proxima Aula
+            Próxima Aula
             <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
           </button>
         )}
 
-        {/* Secondary: Practice more */}
         <button
           onClick={onPracticeMore}
-          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-medium transition-all duration-200 ${
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-medium transition-all duration-200 border"
+          style={
             nextLessonSlug
-              ? "bg-white/5 hover:bg-white/10 border border-white/10 text-white/80 hover:text-white"
-              : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white shadow-lg shadow-teal-500/25"
-          }`}
+              ? {
+                  background: "rgba(13,29,58,0.6)",
+                  borderColor: "rgba(141,194,255,0.12)",
+                  color: "#a8c0e0",
+                }
+              : {
+                  background: "linear-gradient(135deg, #cef26d 0%, #a8cc47 100%)",
+                  borderColor: "transparent",
+                  color: "#080f1e",
+                  boxShadow: "0 4px 20px rgba(206,242,109,0.25)",
+                }
+          }
         >
           <Dumbbell className="size-4" />
           Praticar mais
         </button>
 
-        {/* Tertiary: Back to lessons */}
         <button
           onClick={onBackToLessons}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white/40 hover:text-white/70 transition-all text-sm"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all"
+          style={{ color: "#3a5070" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "#6b89b4"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "#3a5070"; }}
         >
           <ArrowLeft className="size-4" />
-          Voltar as aulas
+          Voltar às aulas
         </button>
       </div>
     </div>

@@ -30,7 +30,7 @@ export function TablesProgressBar({
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="h-full rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 relative overflow-hidden"
+          className="h-full rounded-full bg-gradient-to-r from-[#3770bf] to-[#8dc2ff] relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
         </motion.div>

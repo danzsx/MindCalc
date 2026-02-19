@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { StatsSummary } from "@/components/dashboard/StatsSummary";
 import { EvolutionChart } from "@/components/dashboard/EvolutionChart";
@@ -57,7 +58,14 @@ export default async function DashboardPage() {
     .order("updated_at", { ascending: false });
 
   const tablesProgress: TablesProgress[] = (tablesProgressRaw ?? []).map(
-    (p: { id: string; operation: string; range_min: number; range_max: number; mastered_percentage: number; last_practiced_at: string | null }) => ({
+    (p: {
+      id: string;
+      operation: string;
+      range_min: number;
+      range_max: number;
+      mastered_percentage: number;
+      last_practiced_at: string | null;
+    }) => ({
       id: p.id,
       operation: p.operation as TablesProgress["operation"],
       rangeMin: p.range_min,
@@ -74,7 +82,10 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: true });
 
-  const confidenceSurveys = (confidenceSurveysRaw ?? []) as { score: number; created_at: string }[];
+  const confidenceSurveys = (confidenceSurveysRaw ?? []) as {
+    score: number;
+    created_at: string;
+  }[];
 
   const orderedSessions: Session[] = (sessions ?? []).reverse();
   const totalSessions = orderedSessions.length;
@@ -87,7 +98,10 @@ export default async function DashboardPage() {
 
   // Fetch exercise logs for weak points analysis (last 10 sessions)
   const sessionIds = orderedSessions.map((s) => s.id);
-  const operatorMap: Record<string, { weightedErrors: number; weightedTotal: number }> = {};
+  const operatorMap: Record<
+    string,
+    { weightedErrors: number; weightedTotal: number }
+  > = {};
 
   if (sessionIds.length > 0) {
     const { data: logs } = await supabase
@@ -142,22 +156,120 @@ export default async function DashboardPage() {
       errorRate: data.weightedErrors / data.weightedTotal,
     }));
 
-  const firstName = user.user_metadata?.name?.split(" ")[0] || user.email?.split("@")[0] || "aluno";
+  const firstName =
+    user.user_metadata?.name?.split(" ")[0] ||
+    user.email?.split("@")[0] ||
+    "aluno";
 
   return (
-    <main className="flex flex-col gap-12">
-      {/* Hero Section */}
-      <div>
-        <h1
-          className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent leading-tight"
-          style={{ fontFamily: "var(--font-family-display)" }}
-        >
-          Olá, {firstName}!
-        </h1>
-        <p className="text-xl text-white/60">Pronto para turbinar seu cérebro hoje?</p>
-      </div>
+    <main className="flex flex-col gap-8">
+      {/* ── Hero Section ── */}
+      <section
+        className="relative overflow-hidden rounded-[32px] p-8 md:p-10"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(13,29,58,0.85) 0%, rgba(8,15,30,0.7) 100%)",
+          border: "1px solid rgba(141, 194, 255, 0.12)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+        }}
+      >
+        {/* Ambient glow */}
+        <div
+          className="absolute top-0 right-0 w-72 h-72 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(55,112,191,0.18) 0%, transparent 70%)",
+            transform: "translate(30%, -30%)",
+          }}
+        />
+        <div
+          className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(206,242,109,0.05) 0%, transparent 70%)",
+            transform: "translate(-20%, 20%)",
+          }}
+        />
 
-      {/* Stats Grid */}
+        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          {/* Left: Greeting */}
+          <div>
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-3"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              Numetria · Painel
+            </p>
+            <h1
+              className="mb-3 leading-none"
+              style={{
+                fontFamily: "var(--font-family-display)",
+                fontSize: "clamp(2rem, 5vw, 3.25rem)",
+                color: "var(--color-text-primary)",
+                fontWeight: 700,
+              }}
+            >
+              Olá, {firstName}.
+            </h1>
+            <p
+              className="text-base font-medium"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              Continue de onde parou — seu progresso está esperando.
+            </p>
+          </div>
+
+          {/* Right: Badges + CTA */}
+          <div className="flex flex-col gap-3">
+            {/* Badges */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold"
+                style={{
+                  background: "rgba(55, 112, 191, 0.15)",
+                  border: "1px solid rgba(55, 112, 191, 0.3)",
+                  color: "#8dc2ff",
+                }}
+              >
+                Nível {profile.level}
+              </span>
+              {profile.streak > 0 && (
+                <span
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-semibold"
+                  style={{
+                    background: "rgba(206, 242, 109, 0.1)",
+                    border: "1px solid rgba(206, 242, 109, 0.22)",
+                    color: "#cef26d",
+                  }}
+                >
+                  🔥 {profile.streak} dias
+                </span>
+              )}
+            </div>
+
+            {/* CTA */}
+            <Link
+              href="/lessons"
+              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 group"
+              style={{
+                background: "#cef26d",
+                color: "#080f1e",
+                boxShadow: "0 4px 20px rgba(206, 242, 109, 0.25)",
+              }}
+            >
+              Continuar Aula
+              <ArrowRight
+                className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                strokeWidth={2.5}
+              />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats Grid ── */}
       <StatsSummary
         level={profile.level}
         streak={profile.streak}
@@ -165,17 +277,21 @@ export default async function DashboardPage() {
         totalSessions={totalSessions}
       />
 
-      {/* Bento Grid: Lessons (2/3) + Tabuada (1/3) */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <LessonsOverviewCard
-          completedCount={completedLessons ?? 0}
-          totalCount={totalLessons ?? 0}
-        />
-        <TablesCard progress={tablesProgress} />
+      {/* ── Bento Grid: Lessons (2/3) + Tabuada (1/3) ── */}
+      <div className="grid lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2">
+          <LessonsOverviewCard
+            completedCount={completedLessons ?? 0}
+            totalCount={totalLessons ?? 0}
+          />
+        </div>
+        <div className="lg:col-span-1">
+          <TablesCard progress={tablesProgress} />
+        </div>
       </div>
 
-      {/* Analytics: Chart (2/3) + Weak Points (1/3) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* ── Analytics: Chart (2/3) + Weak Points (1/3) ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2">
           <EvolutionChart sessions={orderedSessions} />
         </div>
@@ -184,8 +300,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Confidence row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* ── Confidence row ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pb-6">
         <ConfidenceCard surveys={confidenceSurveys} />
       </div>
     </main>

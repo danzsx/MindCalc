@@ -68,28 +68,24 @@ export function TablesQuestionCard({
       className="space-y-6"
     >
       {isRetry && (
-        <span className="inline-flex items-center gap-1.5 bg-orange-500/15 text-orange-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-orange-500/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+        <span className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 text-xs font-bold px-3 py-1.5 rounded-full border border-orange-200 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
           Revisão
         </span>
       )}
 
       {/* Question display */}
       <div className="text-center py-6">
-        <motion.p
-          key={question.id}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 200 }}
-          className="text-5xl font-bold text-white"
+        <p
+          className="text-6xl font-bold text-[var(--color-text-primary)] tracking-tight"
           style={{ fontFamily: "var(--font-family-display)" }}
         >
           {question.operand1}{" "}
-          <span className="text-teal-400">{formatOperator(question.operator)}</span>{" "}
+          <span className="text-[#8dc2ff]">{formatOperator(question.operator)}</span>{" "}
           {question.operand2}{" "}
-          <span className="text-white/40">=</span>{" "}
-          <span className="text-teal-300">?</span>
-        </motion.p>
+          <span className="text-white/20">=</span>{" "}
+          <span className="text-[#8dc2ff]">?</span>
+        </p>
       </div>
 
       {/* Input */}
@@ -103,7 +99,7 @@ export function TablesQuestionCard({
           onKeyDown={handleKeyDown}
           placeholder="Sua resposta"
           autoFocus
-          className="w-full px-6 py-4 bg-white/5 text-white rounded-2xl border-2 border-white/10 focus:border-teal-400 focus:bg-white/10 focus:outline-none focus:shadow-lg focus:shadow-teal-500/10 transition-all duration-300 text-xl text-center font-bold placeholder:text-white/30"
+          className="w-full px-6 py-5 bg-white/5 text-[var(--color-text-primary)] rounded-[20px] border-2 border-white/15 focus:border-[#8dc2ff] focus:ring-4 focus:ring-[#8dc2ff]/10 focus:outline-none focus:shadow-xl transition-all duration-300 text-2xl text-center font-bold placeholder:text-[var(--color-text-muted)] shadow-sm"
         />
       </div>
 
@@ -113,10 +109,10 @@ export function TablesQuestionCard({
         whileTap={{ scale: answer.trim() ? 0.98 : 1 }}
         onClick={handleSubmit}
         disabled={answer.trim() === ""}
-        className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:from-teal-400 hover:to-cyan-400 hover:shadow-lg hover:shadow-teal-500/25 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-none"
+        className="w-full bg-gradient-to-r from-[#3770bf] to-[#8dc2ff] text-white py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 transition-all duration-300 hover:opacity-90 hover:shadow-lg hover:shadow-[#3770bf]/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
       >
         <Send className="w-5 h-5" />
-        Essa é minha resposta
+        Responder
       </motion.button>
     </motion.div>
   );

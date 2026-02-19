@@ -27,6 +27,22 @@ export interface LessonExerciseData {
   fullHint: string;
   partialHint: string;
   stepByStep: string[];
+  /** Optional real-world context shown above the expression (Phase 5.1) */
+  context?: string;
+}
+
+// ---------------------------------------------------------------------------
+// Comprehension check (Phase 5.4)
+// Shown between guided and semi-guided phases — no impact on progress
+// ---------------------------------------------------------------------------
+
+export interface ComprehensionCheck {
+  question: string;
+  options: Array<{ label: string }>;
+  /** 0-based index of the correct option */
+  correctIndex: number;
+  /** Feedback shown after answering (for both correct and incorrect) */
+  feedback: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -88,13 +104,52 @@ export interface IntroScreenSummary {
   closingMsg: string;
 }
 
+// ---------------------------------------------------------------------------
+// Phase 4 — Advanced interaction screen types
+// ---------------------------------------------------------------------------
+
+/** Tap-to-select + tap-to-place decomposition of a number into tens and units */
+export interface IntroScreenDragDecompose {
+  kind: "drag-decompose";
+  /** The number to decompose, e.g. 37 → 30 (tens) + 7 (units) */
+  number: number;
+  winMsg: string;
+}
+
+/** Visual equation with an inline blank input — e.g. "30 + 40 = [__]" */
+export interface IntroScreenEquationFill {
+  kind: "equation-fill";
+  question: string;
+  /** Left side of the equation, e.g. "30 + 40 =" */
+  equationLeft: string;
+  /** Optional right side after blank */
+  equationRight?: string;
+  answer: number;
+  winMsg: string;
+  wrongMsg?: string;
+}
+
+/** Slider that the user drags to reach the nearest decade */
+export interface IntroScreenNumberSlider {
+  kind: "number-slider";
+  question: string;
+  /** Starting value for the slider (e.g. 53) */
+  number: number;
+  /** Target decade the user must slide to (e.g. 50) */
+  target: number;
+  winMsg: string;
+}
+
 export type IntroScreen =
   | IntroScreenObserve
   | IntroScreenChoice
   | IntroScreenFill
   | IntroScreenAction
   | IntroScreenSolve
-  | IntroScreenSummary;
+  | IntroScreenSummary
+  | IntroScreenDragDecompose
+  | IntroScreenEquationFill
+  | IntroScreenNumberSlider;
 
 // ---------------------------------------------------------------------------
 // Strategy step for exercise scaffolding
@@ -110,6 +165,8 @@ export interface StrategyStep {
 // Interactive lesson configuration
 // ---------------------------------------------------------------------------
 
+export type LessonVisualType = "decomposition" | "number-line" | "blocks";
+
 export interface InteractiveLessonConfig {
   type: InteractiveLessonType;
   /** Operands used in the interactive intro discovery journey */
@@ -119,6 +176,8 @@ export interface InteractiveLessonConfig {
   introScreens?: IntroScreen[];
   /** Builds strategy steps for scaffolded exercises (only for type "step-discovery") */
   buildExerciseSteps?: (exercise: LessonExerciseData) => StrategyStep[];
+  /** Optional visual component shown alongside the exercise scaffolding (Phase 3) */
+  visual?: LessonVisualType;
 }
 
 // ---------------------------------------------------------------------------
@@ -151,4 +210,7 @@ export interface LessonContent {
 
   /** When present, the lesson uses the interactive discovery flow */
   interactive?: InteractiveLessonConfig;
+
+  /** Optional comprehension check shown after guided phase, before semi-guided (Phase 5.4) */
+  comprehensionCheck?: ComprehensionCheck;
 }

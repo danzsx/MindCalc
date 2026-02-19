@@ -9,6 +9,8 @@ import {
   Lightbulb,
   Rocket,
   Wand2,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -23,6 +25,9 @@ import {
   RecapStep,
   Confetti,
 } from "./shared";
+import { DragDecompose } from "./DragDecompose";
+import { EquationFill } from "./EquationFill";
+import { NumberSlider } from "./NumberSlider";
 import type { IntroScreen } from "@/lib/lessons/types";
 import type { Operator } from "@/types";
 
@@ -117,6 +122,45 @@ export function GenericInteractiveIntro({
       {screen.kind === "summary" && (
         <SummaryScreen screen={screen} onContinue={onContinue} />
       )}
+
+      {/* Screen: DragDecompose (Phase 4.1) */}
+      {screen.kind === "drag-decompose" && (
+        <DragDecompose
+          number={screen.number}
+          winMsg={screen.winMsg}
+          onNext={
+            screenIndex + 1 < screens.length ? goNext : onContinue
+          }
+        />
+      )}
+
+      {/* Screen: EquationFill (Phase 4.3) */}
+      {screen.kind === "equation-fill" && (
+        <EquationFill
+          question={screen.question}
+          equationLeft={screen.equationLeft}
+          equationRight={screen.equationRight}
+          answer={screen.answer}
+          winMsg={screen.winMsg}
+          wrongMsg={screen.wrongMsg}
+          onNext={
+            screenIndex + 1 < screens.length ? goNext : onContinue
+          }
+        />
+      )}
+
+      {/* Screen: NumberSlider (Phase 4.5) */}
+      {screen.kind === "number-slider" && (
+        <NumberSlider
+          question={screen.question}
+          number={screen.number}
+          target={screen.target}
+          winMsg={screen.winMsg}
+          onNext={
+            screenIndex + 1 < screens.length ? goNext : onContinue
+          }
+        />
+      )}
     </div>
   );
 }
@@ -143,7 +187,7 @@ function ObserveScreen({
       <FriendlyMessage icon={Lightbulb}>{screen.message}</FriendlyMessage>
 
       <div className="text-center py-2">
-        <p className="text-3xl sm:text-4xl font-bold tracking-wide">
+        <p className="text-4xl sm:text-5xl font-bold tracking-wide">
           {screen.expressionLabel ? (
             <span className="text-foreground">{screen.expressionLabel}</span>
           ) : (
@@ -177,16 +221,19 @@ function ChoiceScreen({
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [correct, setCorrect] = useState(false);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
 
   const handleChoice = useCallback(
     (value: string) => {
+      if (correct) return;
       setSelected(value);
       if (value === screen.correct) {
         setCorrect(true);
-        setTimeout(() => onNext(), 1200);
+      } else {
+        setWrongAttempts((n) => n + 1);
       }
     },
-    [screen.correct, onNext]
+    [correct, screen.correct]
   );
 
   return (
@@ -194,42 +241,85 @@ function ChoiceScreen({
       <FriendlyMessage icon={Lightbulb}>{screen.question}</FriendlyMessage>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {screen.options.map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => handleChoice(opt.value)}
-            disabled={correct}
-            className={cn(
-              "flex flex-col items-center gap-2 rounded-2xl border-2 p-5 transition-all duration-300",
-              correct && selected === opt.value && opt.value === screen.correct
-                ? "border-emerald-400 bg-emerald-500/10 ring-4 ring-emerald-400/20"
-                : selected === opt.value && opt.value !== screen.correct
-                  ? "border-destructive/50 bg-destructive/5"
-                  : "border-border hover:border-primary/40 hover:bg-primary/5"
-            )}
-          >
-            <span
-              className="text-2xl font-bold text-foreground"
-              style={{ fontFamily: "var(--font-family-display)" }}
+        {screen.options.map((opt) => {
+          const isSelected = selected === opt.value;
+          const isCorrectOpt = opt.value === screen.correct;
+          const isWrong = isSelected && !isCorrectOpt;
+          const isWinner = isSelected && isCorrectOpt && correct;
+
+          return (
+            <button
+              key={opt.value}
+              onClick={() => handleChoice(opt.value)}
+              disabled={correct}
+              className={cn(
+                "group relative flex flex-col items-center justify-center gap-2 rounded-2xl border-2 p-5 min-h-[80px]",
+                "transition-all duration-300 select-none",
+                "hover:scale-[1.03] active:scale-95",
+                isWinner
+                  ? "border-emerald-400 bg-emerald-500/10 ring-4 ring-emerald-400/20 scale-[1.03]"
+                  : isWrong
+                    ? "border-destructive/50 bg-destructive/5 shake"
+                    : correct && isCorrectOpt
+                      ? "border-emerald-300/50 bg-emerald-500/5"
+                      : "border-border hover:border-primary/50 hover:bg-primary/5 hover:shadow-sm"
+              )}
             >
-              {opt.label}
-            </span>
-            {opt.sublabel && (
-              <span className="text-caption text-muted-foreground">
-                {opt.sublabel}
+              {/* Status icon */}
+              {isWinner && (
+                <CheckCircle2 className="absolute top-2 right-2 size-4 text-emerald-500" />
+              )}
+              {isWrong && (
+                <XCircle className="absolute top-2 right-2 size-4 text-destructive/70" />
+              )}
+
+              <span
+                className={cn(
+                  "text-2xl font-bold transition-colors duration-200",
+                  isWinner
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : isWrong
+                      ? "text-destructive/80"
+                      : "text-foreground"
+                )}
+                style={{ fontFamily: "var(--font-family-display)" }}
+              >
+                {opt.label}
               </span>
-            )}
-          </button>
-        ))}
+              {opt.sublabel && (
+                <span
+                  className={cn(
+                    "text-[11px] font-medium transition-colors duration-200",
+                    isWinner
+                      ? "text-emerald-600/70 dark:text-emerald-400/70"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {opt.sublabel}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {selected && !correct && (
+      {/* Wrong feedback */}
+      {selected && !correct && wrongAttempts > 0 && (
         <div className="text-center text-sm text-muted-foreground interactive-fade-up">
           {screen.wrongMsg}
         </div>
       )}
 
-      {correct && <MicroWin message={screen.winMsg} />}
+      {/* Success */}
+      {correct && (
+        <div className="space-y-4 interactive-fade-up">
+          <MicroWin message={screen.winMsg} />
+          <Button onClick={onNext} className="w-full" size="lg">
+            Continuar
+            <ArrowRight className="size-4 ml-2" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -261,7 +351,7 @@ function FillScreen({
     if (isApproximatelyEqual(screen.answer, num)) {
       setDone(true);
       setWrongFeedback(null);
-      setTimeout(() => onNext(), 1200);
+      // Avanço acontece via botão "Continuar →"
     } else {
       const nextAttempts = attempts + 1;
       setAttempts(nextAttempts);
@@ -273,7 +363,7 @@ function FillScreen({
       inputRef.current?.classList.add("shake");
       setTimeout(() => inputRef.current?.classList.remove("shake"), 500);
     }
-  }, [attempts, input, onNext, screen.answer, screen.wrongMsg]);
+  }, [attempts, input, screen.answer, screen.wrongMsg]);
 
   return (
     <div className="space-y-5 interactive-fade-up">
@@ -288,7 +378,7 @@ function FillScreen({
       )}
 
       {!done && (
-        <div className="flex gap-3 max-w-xs mx-auto">
+        <div className="flex gap-3 max-w-sm mx-auto">
           <Input
             ref={inputRef}
             type="number"
@@ -297,9 +387,9 @@ function FillScreen({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="?"
-            className="text-center text-lg"
+            className="text-center text-xl h-12"
           />
-          <Button onClick={handleSubmit} disabled={input.trim() === ""}>
+          <Button onClick={handleSubmit} disabled={input.trim() === ""} size="lg" className="shrink-0">
             Isso!
           </Button>
         </div>
@@ -311,7 +401,15 @@ function FillScreen({
         </p>
       )}
 
-      {done && <MicroWin message={screen.winMsg} />}
+      {done && (
+        <div className="space-y-4 interactive-fade-up">
+          <MicroWin message={screen.winMsg} />
+          <Button onClick={onNext} className="w-full" size="lg">
+            Continuar
+            <ArrowRight className="size-4 ml-2" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -401,7 +499,7 @@ function SolveScreen({
       setDone(true);
       setWrongFeedback(null);
       onConfetti();
-      setTimeout(() => onNext(), 1500);
+      // Avanço acontece via botão "Continuar →"
     } else {
       const nextAttempts = attempts + 1;
       setAttempts(nextAttempts);
@@ -413,7 +511,7 @@ function SolveScreen({
       inputRef.current?.classList.add("shake");
       setTimeout(() => inputRef.current?.classList.remove("shake"), 500);
     }
-  }, [attempts, input, onConfetti, onNext, screen.answer, screen.wrongMsg]);
+  }, [attempts, input, onConfetti, screen.answer, screen.wrongMsg]);
 
   return (
     <div className="space-y-5 interactive-fade-up">
@@ -435,9 +533,9 @@ function SolveScreen({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             placeholder="Sua resposta"
-            className="text-center text-xl"
+            className="text-center text-xl h-12"
           />
-          <Button onClick={handleSubmit} disabled={input.trim() === ""} size="lg">
+          <Button onClick={handleSubmit} disabled={input.trim() === ""} size="lg" className="shrink-0">
             Essa!
           </Button>
         </div>
@@ -450,13 +548,17 @@ function SolveScreen({
       )}
 
       {done && (
-        <div className="space-y-4">
+        <div className="space-y-4 interactive-fade-up">
           <div className="text-center interactive-number-reveal">
             <p className="text-5xl sm:text-6xl font-bold text-success">
               = {screen.answer}
             </p>
           </div>
           <MicroWin message={screen.winMsg} />
+          <Button onClick={onNext} className="w-full" size="lg">
+            Continuar
+            <ArrowRight className="size-4 ml-2" />
+          </Button>
         </div>
       )}
     </div>

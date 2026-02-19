@@ -29,7 +29,15 @@
       "Bash(curl:*)",
       "Bash(git push:*)",
       "Bash(git mv:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(echo:*)",
+      "Bash(findstr:*)",
+      "Bash(cd:*)",
+      "Bash(cmd /c \"dir \"\"C:\\\\Users\\\\nathu\\\\OneDrive\\\\Área de Trabalho\\\\newprojet\\\\Calc\\\\public\\\\fonts\"\"\")",
+      "Bash(cmd /c dir \"C:\\\\Users\\\\nathu\\\\OneDrive\\\\Área de Trabalho\\\\newprojet\\\\Calc\\\\public\")",
+      "Bash(powershell -Command:*)",
+      "Bash(head:*)",
+      "Bash(node node_modules/typescript/bin/tsc:*)"
     ]
   }
 }

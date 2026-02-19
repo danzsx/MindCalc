@@ -1,7 +1,7 @@
 "use client";
 
 import type { Operator } from "@/types";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 const operatorSymbol: Record<Operator, string> = {
   "+": "+",
@@ -10,11 +10,35 @@ const operatorSymbol: Record<Operator, string> = {
   "/": "÷",
 };
 
-const operatorGradient: Record<Operator, string> = {
-  "+": "from-emerald-500 to-teal-500",
-  "-": "from-orange-500 to-red-500",
-  "*": "from-blue-500 to-purple-500",
-  "/": "from-yellow-500 to-orange-500",
+// Numetria operation colors — remapped per spec
+const operatorColors: Record<
+  Operator,
+  { bg: string; border: string; text: string; glow: string }
+> = {
+  "+": {
+    bg: "rgba(55, 112, 191, 0.15)",
+    border: "rgba(55, 112, 191, 0.45)",
+    text: "#5a8fd4",
+    glow: "rgba(55, 112, 191, 0.35)",
+  },
+  "-": {
+    bg: "rgba(141, 194, 255, 0.12)",
+    border: "rgba(141, 194, 255, 0.38)",
+    text: "#8dc2ff",
+    glow: "rgba(141, 194, 255, 0.3)",
+  },
+  "*": {
+    bg: "rgba(206, 242, 109, 0.1)",
+    border: "rgba(206, 242, 109, 0.35)",
+    text: "#cef26d",
+    glow: "rgba(206, 242, 109, 0.35)",
+  },
+  "/": {
+    bg: "rgba(168, 204, 71, 0.1)",
+    border: "rgba(168, 204, 71, 0.32)",
+    text: "#a8cc47",
+    glow: "rgba(168, 204, 71, 0.3)",
+  },
 };
 
 interface ExerciseCardProps {
@@ -32,48 +56,93 @@ export function ExerciseCard({
   current,
   total,
 }: ExerciseCardProps) {
-  const gradient = operatorGradient[operator];
+  const colors = operatorColors[operator];
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {/* Counter badge */}
-      <span className="text-xs font-medium text-white/40 bg-white/5 px-3 py-1 rounded-full" role="status">
-        {current} / {total}
+    <div className="flex flex-col items-center">
+      {/* Counter label */}
+      <span
+        className="text-xs font-semibold uppercase tracking-widest mb-10"
+        style={{ color: "var(--color-text-muted)", letterSpacing: "0.18em" }}
+        role="status"
+      >
+        Questão {current} / {total}
       </span>
 
-      {/* Exercise display */}
-      <motion.div
-        key={`${operand1}-${operator}-${operand2}`}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        className="flex items-center justify-center gap-5 py-8"
-        aria-live="polite"
-        aria-label={`Exercício: ${operand1} ${operatorSymbol[operator]} ${operand2}`}
-      >
-        <span
-          className="text-5xl md:text-6xl font-bold text-white"
-          style={{ fontFamily: "var(--font-family-display)" }}
+      {/* Equation with slide transition */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${operand1}-${operator}-${operand2}`}
+          initial={{ opacity: 0, x: 48 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -48 }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+          className="flex items-center justify-center gap-4 md:gap-6"
+          aria-live="polite"
+          aria-label={`Exercício: ${operand1} ${operatorSymbol[operator]} ${operand2}`}
         >
-          {operand1}
-        </span>
+          {/* Operand 1 */}
+          <span
+            className="text-5xl md:text-6xl font-bold tabular-nums select-none"
+            style={{
+              fontFamily: "var(--font-family-display)",
+              color: "var(--color-text-primary)",
+              lineHeight: 1,
+            }}
+          >
+            {operand1}
+          </span>
 
-        {/* Operator in gradient box */}
-        <span className={`inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br ${gradient} text-white text-2xl font-bold shadow-lg`}>
-          {operatorSymbol[operator]}
-        </span>
+          {/* Operator badge */}
+          <span
+            className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-2xl text-2xl md:text-3xl font-bold flex-shrink-0 select-none"
+            style={{
+              background: colors.bg,
+              border: `2px solid ${colors.border}`,
+              color: colors.text,
+              boxShadow: `0 0 24px ${colors.glow}, inset 0 1px 0 rgba(255,255,255,0.04)`,
+              fontFamily: "var(--font-family-display)",
+            }}
+            aria-hidden
+          >
+            {operatorSymbol[operator]}
+          </span>
 
-        <span
-          className="text-5xl md:text-6xl font-bold text-white"
-          style={{ fontFamily: "var(--font-family-display)" }}
-        >
-          {operand2}
-        </span>
+          {/* Operand 2 */}
+          <span
+            className="text-5xl md:text-6xl font-bold tabular-nums select-none"
+            style={{
+              fontFamily: "var(--font-family-display)",
+              color: "var(--color-text-primary)",
+              lineHeight: 1,
+            }}
+          >
+            {operand2}
+          </span>
 
-        <span className="text-3xl text-white/30 font-light">=</span>
+          {/* Equals */}
+          <span
+            className="text-4xl md:text-5xl font-light select-none"
+            style={{ color: "var(--color-text-muted)", opacity: 0.6 }}
+            aria-hidden
+          >
+            =
+          </span>
 
-        <span className="text-4xl text-white/20 font-light">?</span>
-      </motion.div>
+          {/* Question mark */}
+          <span
+            className="text-4xl md:text-5xl font-bold select-none"
+            style={{
+              color: colors.text,
+              opacity: 0.45,
+              fontFamily: "var(--font-family-display)",
+            }}
+            aria-hidden
+          >
+            ?
+          </span>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

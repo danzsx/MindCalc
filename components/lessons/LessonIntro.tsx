@@ -1,16 +1,41 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Lightbulb, Play, Info } from "lucide-react";
+import { ArrowRight, Info, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const STEP_GRADIENTS = [
-  { bg: "from-teal-500/10 to-cyan-500/10", border: "border-teal-500/20", badge: "bg-gradient-to-br from-teal-500 to-cyan-500 text-white" },
-  { bg: "from-cyan-500/10 to-blue-500/10", border: "border-cyan-500/20", badge: "bg-gradient-to-br from-cyan-500 to-blue-500 text-white" },
-  { bg: "from-blue-500/10 to-purple-500/10", border: "border-blue-500/20", badge: "bg-gradient-to-br from-blue-500 to-purple-500 text-white" },
-  { bg: "from-purple-500/10 to-pink-500/10", border: "border-purple-500/20", badge: "bg-gradient-to-br from-purple-500 to-pink-500 text-white" },
-  { bg: "from-emerald-500/10 to-teal-500/10", border: "border-emerald-500/20", badge: "bg-gradient-to-br from-emerald-500 to-teal-500 text-white" },
+/* Numetria step color palette — no legacy teal/cyan/purple */
+const STEP_STYLES = [
+  {
+    bg: "rgba(55,112,191,0.08)",
+    border: "rgba(55,112,191,0.2)",
+    badgeBg: "#3770bf",
+    badgeText: "#f0f4ff",
+  },
+  {
+    bg: "rgba(141,194,255,0.06)",
+    border: "rgba(141,194,255,0.18)",
+    badgeBg: "#5a8fd4",
+    badgeText: "#f0f4ff",
+  },
+  {
+    bg: "rgba(206,242,109,0.06)",
+    border: "rgba(206,242,109,0.16)",
+    badgeBg: "#a8cc47",
+    badgeText: "#080f1e",
+  },
+  {
+    bg: "rgba(55,112,191,0.06)",
+    border: "rgba(55,112,191,0.15)",
+    badgeBg: "#2558a0",
+    badgeText: "#f0f4ff",
+  },
+  {
+    bg: "rgba(141,194,255,0.05)",
+    border: "rgba(141,194,255,0.15)",
+    badgeBg: "#8dc2ff",
+    badgeText: "#080f1e",
+  },
 ];
 
 interface LessonIntroProps {
@@ -34,7 +59,6 @@ export function LessonIntro({
   const [showResult, setShowResult] = useState(false);
   const totalSteps = example.steps.length;
 
-  // Auto-reveal first step after 600ms
   useEffect(() => {
     if (visibleSteps === 0) {
       const timer = setTimeout(() => setVisibleSteps(1), 600);
@@ -42,7 +66,6 @@ export function LessonIntro({
     }
   }, []);
 
-  // Show result after all steps revealed
   useEffect(() => {
     if (visibleSteps === totalSteps && !showResult) {
       const timer = setTimeout(() => setShowResult(true), 400);
@@ -57,39 +80,56 @@ export function LessonIntro({
   const allRevealed = visibleSteps >= totalSteps && showResult;
 
   return (
-    <div className="space-y-6">
-      {/* Explanation card — glassmorphism with gradient icon */}
-      <div className="relative group">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-cyan-500/10 rounded-2xl blur-xl opacity-50" />
-        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="flex items-center justify-center shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 shadow-lg shadow-teal-500/20">
-              <Info className="size-5 text-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h2 className="font-[var(--font-family-display)] text-xl sm:text-2xl font-bold text-white mb-2">
-                {title}
-              </h2>
-              <p className="text-sm text-white/60 leading-relaxed">
-                {explanation}
-              </p>
-            </div>
+    <div className="space-y-5">
+      {/* Explanation card — glass dark */}
+      <div
+        className="rounded-2xl p-5 border"
+        style={{
+          background: "rgba(13,29,58,0.7)",
+          borderColor: "rgba(141,194,255,0.12)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+        }}
+      >
+        <div className="flex items-start gap-4">
+          <div
+            className="flex items-center justify-center shrink-0 w-9 h-9 rounded-xl"
+            style={{
+              background: "rgba(55,112,191,0.15)",
+              border: "1px solid rgba(55,112,191,0.3)",
+            }}
+          >
+            <Info className="size-4 text-[#8dc2ff]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2
+              className="text-xl sm:text-2xl font-bold text-[#f0f4ff] mb-1.5"
+              style={{ fontFamily: "var(--font-family-display)" }}
+            >
+              {title}
+            </h2>
+            <p className="text-sm text-[#a8c0e0] leading-relaxed">
+              {explanation}
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Central expression — large, gradient text */}
+      {/* Central expression */}
       <div className="text-center py-5">
-        <p className="font-[var(--font-family-display)] text-4xl sm:text-5xl font-bold bg-gradient-to-r from-white via-teal-200 to-cyan-400 bg-clip-text text-transparent tracking-wide">
+        <p
+          className="text-4xl sm:text-5xl font-bold text-[#f0f4ff] tracking-wide"
+          style={{ fontFamily: "var(--font-family-display)" }}
+        >
           {example.expression}
         </p>
       </div>
 
       {/* Progressive step revelation */}
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {example.steps.map((step, index) => {
           const isVisible = index < visibleSteps;
-          const gradient = STEP_GRADIENTS[index % STEP_GRADIENTS.length];
+          const style = STEP_STYLES[index % STEP_STYLES.length];
 
           return (
             <div
@@ -98,19 +138,22 @@ export function LessonIntro({
                 "transition-all duration-400",
                 isVisible ? "lesson-step-in" : "opacity-0 pointer-events-none h-0 overflow-hidden"
               )}
-              style={isVisible ? { animationDelay: `${index * 100}ms` } : undefined}
+              style={isVisible ? { animationDelay: `${index * 80}ms` } : undefined}
             >
-              <div className={cn(
-                "flex items-start gap-3 rounded-xl border p-4 bg-gradient-to-r backdrop-blur-sm",
-                gradient.bg, gradient.border
-              )}>
-                <div className={cn(
-                  "flex size-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold shadow-sm",
-                  gradient.badge
-                )}>
+              <div
+                className="flex items-start gap-3 rounded-xl border p-4"
+                style={{
+                  background: style.bg,
+                  borderColor: style.border,
+                }}
+              >
+                <div
+                  className="flex size-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold"
+                  style={{ background: style.badgeBg, color: style.badgeText }}
+                >
                   {index + 1}
                 </div>
-                <span className="text-sm leading-relaxed text-white/80 pt-0.5">
+                <span className="text-sm leading-relaxed text-[#a8c0e0] pt-0.5 font-medium">
                   {step}
                 </span>
               </div>
@@ -120,24 +163,42 @@ export function LessonIntro({
 
         {/* "Next step" button */}
         {visibleSteps > 0 && visibleSteps < totalSteps && (
-          <div className="flex justify-center py-2 lesson-step-in">
+          <div className="flex justify-center py-1 lesson-step-in">
             <button
               onClick={revealNext}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/60 hover:text-white transition-all text-sm font-medium"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
+              style={{
+                background: "rgba(55,112,191,0.1)",
+                border: "1px solid rgba(55,112,191,0.25)",
+                color: "#8dc2ff",
+              }}
             >
-              <span>Proximo passo</span>
-              <Play className="size-3" />
+              <span>Próximo passo</span>
+              <Play className="size-3 fill-current" />
             </button>
           </div>
         )}
       </div>
 
-      {/* Final result with glow */}
+      {/* Final result */}
       {showResult && (
-        <div className="text-center py-5 lesson-step-in">
+        <div className="text-center py-4 lesson-step-in">
           <div className="inline-block relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 rounded-full blur-2xl" />
-            <p className="relative font-[var(--font-family-display)] text-3xl sm:text-4xl font-bold text-emerald-400">
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: "radial-gradient(circle, rgba(206,242,109,0.15) 0%, transparent 70%)",
+                filter: "blur(16px)",
+                transform: "scale(1.5)",
+              }}
+            />
+            <p
+              className="relative text-4xl sm:text-5xl font-bold"
+              style={{
+                fontFamily: "var(--font-family-display)",
+                color: "#cef26d",
+              }}
+            >
               = {example.answer}
             </p>
           </div>
@@ -146,10 +207,15 @@ export function LessonIntro({
 
       {/* CTA — only after all steps revealed */}
       {allRevealed && (
-        <div className="lesson-step-in" style={{ animationDelay: '200ms' }}>
+        <div className="lesson-step-in" style={{ animationDelay: "200ms" }}>
           <button
             onClick={onContinue}
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-white font-bold text-base shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 transition-all duration-300 group"
+            className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-base transition-all duration-300 group"
+            style={{
+              background: "linear-gradient(135deg, #cef26d 0%, #a8cc47 100%)",
+              color: "#080f1e",
+              boxShadow: "0 4px 20px rgba(206,242,109,0.25)",
+            }}
           >
             Entendi! Vamos praticar
             <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />

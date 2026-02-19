@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "theme_name": "MindCalc Playful",
+    "vibe": "Approachable, Motivating, Clean, Soft-Pop",
+    "mode": "Light",
+    "inspiration": "Modern SaaS mobile onboarding, Duolingo-esque friendliness"
+  },
+  "colors": {
+    "background": {
+      "main": "#F8F9FA",
+      "card": "#FFFFFF",
+      "featured_card": "#FFD058"
+    },
+    "text": {
+      "primary": "#111827",
+      "secondary": "#6B7280",
+      "muted": "#9CA3AF",
+      "on_dark_button": "#FFFFFF"
+    },
+    "brand": {
+      "primary": "#FCD34D",
+      "primary_hover": "#FBBF24",
+      "secondary": "#A78BFA",
+      "accent_teal": "#2DD4BF",
+      "accent_rose": "#FB7185"
+    },
+    "ui": {
+      "button_primary": "#1F2937",
+      "button_primary_text": "#FFFFFF",
+      "button_secondary": "#F3F4F6",
+      "border": "#E5E7EB",
+      "input_bg": "#F9FAFB"
+    }
+  },
+  "typography": {
+    "font_family_display": "Plus Jakarta Sans, sans-serif",
+    "font_family_body": "Inter, sans-serif",
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "bold": 700
+    },
+    "scale": {
+      "h1": "text-4xl font-bold tracking-tight",
+      "h2": "text-2xl font-bold",
+      "h3": "text-xl font-bold",
+      "body": "text-base leading-relaxed"
+    }
+  },
+  "shapes": {
+    "radius": {
+      "card": "rounded-[32px]",
+      "button": "rounded-full",
+      "input": "rounded-xl"
+    },
+    "spacing": {
+      "page_padding": "p-6",
+      "card_padding": "p-6",
+      "gap": "gap-4"
+    }
+  },
+  "effects": {
+    "shadows": {
+      "card": "shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+      "button": "shadow-lg shadow-gray-900/20",
+      "float": "shadow-xl"
+    },
+    "transitions": "transition-all duration-300 ease-in-out"
+  },
+  "illustration_style": {
+    "type": "Flat Vector 2D",
+    "characteristics": [
+      "No outlines",
+      "Pastel backgrounds with vibrant characters",
+      "Exaggerated limbs/proportions",
+      "Flowing shapes",
+      "Themes: Success, climbing, thinking, peace"
+    ]
+  }
+}

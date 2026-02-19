@@ -88,6 +88,7 @@ const subtrairCompletando: LessonContent = {
 
   interactive: {
     type: "step-discovery",
+    visual: "number-line",
     introOperand1: 53,
     introOperand2: 17,
     introScreens: (() => {
@@ -96,15 +97,17 @@ const subtrairCompletando: LessonContent = {
       const resto = b - unidadesA; // 14
       const answer = dezAbaixo - resto; // 36
       return [
+        // 0 — Observe
         { kind: "observe", message: "Subtrair de cabeca pode ser chato. Mas tem um atalho usando as dezenas!" } as IntroScreen,
-        { kind: "choice", question: "Qual dezena exata esta logo abaixo de 53?", options: [
-          { label: "40", value: "40", sublabel: "4 dezenas" },
-          { label: "50", value: "50", sublabel: "5 dezenas" },
-          { label: "60", value: "60", sublabel: "6 dezenas" },
-        ], correct: "50", wrongMsg: "Quase! Pense no numero redondo logo abaixo de 53...", winMsg: "Isso! 50 e a dezena logo abaixo de 53!" } as IntroScreen,
-        { kind: "fill", question: `Quanto falta do 53 pro 50? (53 - ? = 50)`, answer: unidadesA, winMsg: `Isso! Tiramos ${unidadesA} pra chegar em ${dezAbaixo}!`, equationHint: `53 - ? = 50` } as IntroScreen,
+        // 1 — NumberSlider: slide 53 to 50 (Phase 4.5)
+        { kind: "number-slider", question: "Deslize o 53 ate a dezena mais proxima abaixo:", number: a, target: dezAbaixo, winMsg: `Isso! ${dezAbaixo} e a dezena logo abaixo de ${a}!` } as IntroScreen,
+        // 2 — Fill: how much from 53 to 50?
+        { kind: "fill", question: `Quanto tiramos do 53 pra chegar em ${dezAbaixo}? (53 - ? = 50)`, answer: unidadesA, winMsg: `Isso! Tiramos ${unidadesA} pra chegar em ${dezAbaixo}!`, equationHint: `53 - ? = 50` } as IntroScreen,
+        // 3 — Fill: how much left to complete b?
         { kind: "fill", question: `Ja tiramos ${unidadesA}. Quanto falta pra completar ${b}?`, answer: resto, winMsg: `Boa! Faltam ${resto} pra completar os ${b}!`, equationHint: `${b} - ${unidadesA} = ?` } as IntroScreen,
+        // 4 — Solve: final calculation
         { kind: "solve", message: "Agora faca a conta facil:", equationDisplay: `${dezAbaixo} - ${resto} = ?`, answer: answer, winMsg: "Voce resolveu usando a dezena como apoio!" } as IntroScreen,
+        // 5 — Summary
         { kind: "summary", recapSteps: [
           { text: `Tiramos ${unidadesA} para chegar na dezena: 53 - ${unidadesA} = ${dezAbaixo}`, color: "cyan" as const },
           { text: `Faltam ${resto} para completar ${b}: ${b} - ${unidadesA} = ${resto}`, color: "amber" as const },

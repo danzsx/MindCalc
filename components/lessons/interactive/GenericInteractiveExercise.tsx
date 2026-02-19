@@ -10,6 +10,7 @@ import {
   Sparkles,
   Lightbulb,
   Zap,
+  ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { checkAnswer } from "@/lib/lessons/engine";
@@ -25,9 +26,13 @@ import {
   Confetti,
   SUCCESS_MESSAGES,
 } from "./shared";
+import { NumberDecompositionVisual } from "./NumberDecompositionVisual";
+import { BaseBlockVisual } from "./BaseBlockVisual";
+import { NumberLine } from "./NumberLine";
 import type {
   LessonExerciseData,
   HintLevel,
+  LessonVisualType,
   StrategyStep,
 } from "@/lib/lessons/types";
 
@@ -40,6 +45,9 @@ interface GenericInteractiveExerciseProps {
   hintLevel: HintLevel;
   onAnswer: (correct: boolean) => void;
   strategySteps: StrategyStep[];
+  visual?: LessonVisualType;
+  /** Called on each submit attempt for per-phase tracking (Phase 5.5) */
+  onAttempt?: () => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -51,6 +59,8 @@ export function GenericInteractiveExercise({
   hintLevel,
   onAnswer,
   strategySteps,
+  visual,
+  onAttempt,
 }: GenericInteractiveExerciseProps) {
   if (hintLevel === "none") {
     return (
@@ -58,6 +68,7 @@ export function GenericInteractiveExercise({
         exercise={exercise}
         onAnswer={onAnswer}
         strategySteps={strategySteps}
+        onAttempt={onAttempt}
       />
     );
   }
@@ -68,6 +79,8 @@ export function GenericInteractiveExercise({
       hintLevel={hintLevel}
       onAnswer={onAnswer}
       strategySteps={strategySteps}
+      visual={visual}
+      onAttempt={onAttempt}
     />
   );
 }
@@ -81,6 +94,8 @@ function ScaffoldedExercise({
   hintLevel,
   onAnswer,
   strategySteps,
+  visual,
+  onAttempt,
 }: GenericInteractiveExerciseProps) {
   const { operand1, operand2, correctAnswer } = exercise;
   const symbol = getOperatorSymbol(exercise.operator);
@@ -109,6 +124,10 @@ function ScaffoldedExercise({
 
   const stepInputRef = useRef<HTMLInputElement>(null);
   const finalInputRef = useRef<HTMLInputElement>(null);
+  // Guard contra double-fire: bloqueia chamadas múltiplas durante a janela de avanço
+  const isAdvancingRef = useRef(false);
+  // Ref para scroll automático ao novo step em mobile
+  const newStepRef = useRef<HTMLDivElement>(null);
 
   // Total progress: visible strategy steps + final answer
   const totalProgressSteps = visibleSteps.length + 1;
@@ -134,19 +153,32 @@ function ScaffoldedExercise({
     }
   }, [allStepsDone]);
 
+  // 2.4 — Scroll automático ao novo step em mobile
+  useEffect(() => {
+    setTimeout(() => {
+      newStepRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 850);
+  }, [currentStepIdx]);
+
   const handleStepSubmit = useCallback(() => {
+    if (isAdvancingRef.current) return; // Guard: bloqueia double-fire durante avanço
     const val = parseNumericInput(inputs[currentStepIdx] ?? "");
     if (val === null) return;
     if (isApproximatelyEqual(currentStep.answer, val)) {
+      isAdvancingRef.current = true; // Lock
       setStepFeedback(null);
       setStepDone((prev) => {
         const next = [...prev];
         next[currentStepIdx] = true;
         return next;
       });
-      // Auto-advance to next step
       if (currentStepIdx + 1 < visibleSteps.length) {
-        setTimeout(() => setCurrentStepIdx((i) => i + 1), 800);
+        setTimeout(() => {
+          setCurrentStepIdx((i) => i + 1);
+          isAdvancingRef.current = false; // Unlock após avanço
+        }, 800);
+      } else {
+        isAdvancingRef.current = false; // Unlock imediato no último passo
       }
     } else {
       const nextAttempts = [...stepAttempts];
@@ -166,9 +198,12 @@ function ScaffoldedExercise({
   }, [currentStep, currentStepIdx, inputs, stepAttempts, visibleSteps.length]);
 
   const handleFinalSubmit = useCallback(() => {
+    if (isAdvancingRef.current) return; // Guard: evita dupla confirmação
     const num = parseNumericInput(finalInput);
     if (num === null) return;
+    onAttempt?.(); // 5.5: count this final answer attempt
     if (isApproximatelyEqual(correctAnswer, num)) {
+      isAdvancingRef.current = true; // Lock até o usuário clicar em Continuar
       const messages = SUCCESS_MESSAGES[hintLevel];
       setSuccessMessage(
         messages[Math.floor(Math.random() * messages.length)]
@@ -177,7 +212,7 @@ function ScaffoldedExercise({
       setFinalFeedback(null);
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 2000);
-      setTimeout(() => onAnswer(true), 1500);
+      // Avanço agora acontece via botão "Continuar →", não por setTimeout
     } else {
       const nextAttempts = finalAttempts + 1;
       setFinalAttempts(nextAttempts);
@@ -192,7 +227,7 @@ function ScaffoldedExercise({
         500
       );
     }
-  }, [correctAnswer, finalAttempts, finalInput, hintLevel, onAnswer]);
+  }, [correctAnswer, finalAttempts, finalInput, hintLevel, onAttempt]);
 
   return (
     <div className="space-y-5">
@@ -200,9 +235,16 @@ function ScaffoldedExercise({
         <Confetti intensity={hintLevel === "partial" ? 1.5 : 1} />
       )}
 
+      {/* 5.1: Real-world context */}
+      {exercise.context && (
+        <p className="text-sm text-muted-foreground text-center italic px-4 leading-relaxed">
+          {exercise.context}
+        </p>
+      )}
+
       {/* Expression header */}
       <div className="text-center py-2">
-        <p className="text-3xl sm:text-4xl font-bold tracking-wide">
+        <p className="text-4xl sm:text-5xl font-bold tracking-wide">
           <span className="text-primary">{operand1}</span>
           <span className="text-muted-foreground mx-2">{symbol}</span>
           <span className="text-amber-500">{operand2}</span>
@@ -213,6 +255,40 @@ function ScaffoldedExercise({
 
       {/* Progress dots */}
       <ScreenProgress current={currentProgress} total={totalProgressSteps} />
+
+      {/* Phase 3: Visual component (decomposition / number-line / blocks) */}
+      {visual === "decomposition" && exercise.operator === "+" && (
+        <NumberDecompositionVisual
+          a={operand1}
+          b={operand2}
+          currentStep={allStepsDone ? visibleSteps.length : currentStepIdx}
+          allDone={answerCorrect}
+        />
+      )}
+      {visual === "blocks" && exercise.operator === "+" && (
+        <BaseBlockVisual
+          a={operand1}
+          b={operand2}
+          currentStep={allStepsDone ? visibleSteps.length : currentStepIdx}
+        />
+      )}
+      {visual === "number-line" && exercise.operator === "-" && (() => {
+        const decade = Math.floor(operand1 / 10) * 10;
+        const s1 = operand1 - decade;
+        const s2 = decade - correctAnswer;
+        // Only render when the number line shows a meaningful 2-hop journey
+        if (s1 <= 0 || s2 <= 0) return null;
+        return (
+          <NumberLine
+            from={operand1}
+            decade={decade}
+            to={correctAnswer}
+            step1={s1}
+            step2={s2}
+            currentStep={allStepsDone ? 2 : currentStepIdx}
+          />
+        );
+      })()}
 
       {/* Semi-guided hint: show first step's answer */}
       {skipFirst && (
@@ -230,10 +306,10 @@ function ScaffoldedExercise({
           if (i > currentStepIdx) return null;
 
           return (
-            <div key={i} className="interactive-fade-up">
+            <div key={i} className={i === 0 ? "interactive-fade-up" : "step-slide-in"}>
               {stepDone[i] ? (
                 /* Completed step */
-                <div className="flex items-center gap-3 rounded-lg border border-emerald-400/20 bg-emerald-500/5 p-3">
+                <div className="flex items-center gap-3 rounded-lg border border-emerald-400/20 bg-emerald-500/5 p-3 step-done-reveal">
                   <CheckCircle2 className="size-4 text-emerald-500 shrink-0" />
                   <span className="text-sm text-foreground">
                     {step.prompt.replace("?", String(step.answer))}
@@ -241,7 +317,7 @@ function ScaffoldedExercise({
                 </div>
               ) : (
                 /* Active step */
-                <div className="space-y-3">
+                <div ref={newStepRef} className="space-y-3">
                   <p className="text-sm text-muted-foreground text-center">
                     {step.prompt.replace(
                       / = \?$/,
@@ -253,7 +329,7 @@ function ScaffoldedExercise({
                       {step.hint}
                     </p>
                   )}
-                  <div className="flex gap-3 max-w-[220px] mx-auto">
+                  <div className="flex gap-3 max-w-sm mx-auto">
                     <Input
                       ref={stepInputRef}
                       type="number"
@@ -270,12 +346,12 @@ function ScaffoldedExercise({
                         e.key === "Enter" && handleStepSubmit()
                       }
                       placeholder="?"
-                      className="text-center text-lg"
+                      className="text-center text-xl h-12"
                     />
                     <Button
                       onClick={handleStepSubmit}
                       disabled={inputs[i]?.trim() === ""}
-                      size="sm"
+                      className="h-12 shrink-0"
                     >
                       OK
                     </Button>
@@ -305,7 +381,7 @@ function ScaffoldedExercise({
               <span className="text-foreground">?</span>
             </p>
           </div>
-          <div className="flex gap-3 max-w-[240px] mx-auto">
+          <div className="flex gap-3 max-w-sm mx-auto">
             <Input
               ref={finalInputRef}
               type="number"
@@ -314,11 +390,12 @@ function ScaffoldedExercise({
               onChange={(e) => setFinalInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleFinalSubmit()}
               placeholder="Resposta"
-              className="text-center text-lg"
+              className="text-center text-xl h-12"
             />
             <Button
               onClick={handleFinalSubmit}
               disabled={finalInput.trim() === ""}
+              className="h-12 shrink-0"
             >
               Essa!
             </Button>
@@ -333,18 +410,26 @@ function ScaffoldedExercise({
 
       {/* Correct answer */}
       {answerCorrect && (
-        <div className="space-y-3">
-          <div className="text-center interactive-number-reveal">
+        <div className="space-y-3 interactive-fade-up">
+          <div className="text-center number-bounce-reveal">
             <p className="text-4xl font-bold text-success">
               = {correctAnswer}
             </p>
           </div>
-          <div className="flex items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 p-3 interactive-fade-up">
+          <div className="flex items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 p-3">
             <CheckCircle2 className="size-4 text-green-600" />
             <span className="text-sm font-medium text-green-700 dark:text-green-400">
               {successMessage}
             </span>
           </div>
+          <Button
+            onClick={() => onAnswer(true)}
+            className="w-full"
+            size="lg"
+          >
+            Continuar
+            <ArrowRight className="size-4 ml-2" />
+          </Button>
         </div>
       )}
     </div>
@@ -359,10 +444,12 @@ function FreeExercise({
   exercise,
   onAnswer,
   strategySteps,
+  onAttempt,
 }: {
   exercise: LessonExerciseData;
   onAnswer: (correct: boolean) => void;
   strategySteps: StrategyStep[];
+  onAttempt?: () => void;
 }) {
   const [input, setInput] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(
@@ -390,6 +477,7 @@ function FreeExercise({
   const handleSubmit = useCallback(() => {
     const num = parseNumericInput(input);
     if (num === null) return;
+    onAttempt?.(); // 5.5: count this attempt
 
     if (checkAnswer(exercise, num)) {
       const messages = SUCCESS_MESSAGES.none;
@@ -399,15 +487,22 @@ function FreeExercise({
       setFeedback("correct");
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 2500);
-      setTimeout(() => onAnswer(true), 1500);
+      // Avanço acontece via botão "Continuar →"
     } else {
       setFeedback("incorrect");
     }
-  }, [input, exercise, onAnswer]);
+  }, [input, exercise, onAttempt]);
 
   return (
     <div className="space-y-6">
       {showConfetti && <Confetti intensity={2} />}
+
+      {/* 5.1: Real-world context */}
+      {exercise.context && (
+        <p className="text-sm text-muted-foreground text-center italic px-4 leading-relaxed">
+          {exercise.context}
+        </p>
+      )}
 
       {/* Big expression */}
       <div className="text-center py-4">
@@ -447,18 +542,22 @@ function FreeExercise({
 
       {/* Correct */}
       {feedback === "correct" && (
-        <div className="space-y-3">
+        <div className="space-y-3 interactive-fade-up">
           <div className="text-center interactive-number-reveal">
             <p className="text-5xl font-bold text-success">
               = {correctAnswer}
             </p>
           </div>
-          <div className="flex items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 p-4 interactive-fade-up">
+          <div className="flex items-center justify-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 p-4">
             <CheckCircle2 className="size-5 text-green-600" />
             <span className="font-medium text-green-700 dark:text-green-400">
               {successMessage}
             </span>
           </div>
+          <Button onClick={() => onAnswer(true)} className="w-full" size="lg">
+            Continuar
+            <ArrowRight className="size-4 ml-2" />
+          </Button>
         </div>
       )}
 

@@ -22,7 +22,7 @@ export function LessonProgressIndicator({ currentPhase }: LessonProgressIndicato
   const currentIndex = PHASES.indexOf(currentPhase);
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-3">
       {/* Steps row */}
       <div className="flex items-center justify-between">
         {PHASES.map((phase, index) => {
@@ -34,35 +34,58 @@ export function LessonProgressIndicator({ currentPhase }: LessonProgressIndicato
           return (
             <div key={phase} className="flex items-center flex-1 last:flex-none">
               {/* Step circle + label */}
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center gap-1.5">
                 <div className="relative">
                   {/* Glow ring on current */}
                   {isCurrent && (
-                    <div className="absolute -inset-1.5 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full opacity-30 blur-md animate-pulse" />
+                    <div
+                      className="absolute -inset-2 rounded-full animate-pulse"
+                      style={{ background: "rgba(206,242,109,0.15)", filter: "blur(6px)" }}
+                    />
                   )}
                   <div
                     className={cn(
-                      "relative flex items-center justify-center rounded-full transition-all duration-500",
-                      "w-11 h-11 sm:w-14 sm:h-14",
-                      isCompleted && "bg-gradient-to-br from-teal-500 to-cyan-500 text-white border-2 border-teal-400/50 shadow-lg shadow-teal-500/20",
-                      isCurrent && "bg-gradient-to-br from-teal-500 to-cyan-500 text-white border-2 border-teal-400 shadow-lg shadow-teal-500/50",
-                      !isCompleted && !isCurrent && "bg-white/5 text-white/40 border-2 border-white/20"
+                      "relative flex items-center justify-center rounded-full transition-all duration-500 w-9 h-9 sm:w-10 sm:h-10"
                     )}
+                    style={
+                      isCompleted
+                        ? {
+                            background: "rgba(206,242,109,0.15)",
+                            border: "1.5px solid rgba(206,242,109,0.4)",
+                            color: "#cef26d",
+                          }
+                        : isCurrent
+                        ? {
+                            background: "rgba(206,242,109,0.12)",
+                            border: "1.5px solid #cef26d",
+                            color: "#cef26d",
+                            boxShadow: "0 0 12px rgba(206,242,109,0.25)",
+                          }
+                        : {
+                            background: "rgba(13,29,58,0.8)",
+                            border: "1.5px solid rgba(141,194,255,0.12)",
+                            color: "#3a5070",
+                          }
+                    }
                   >
                     {isCompleted ? (
-                      <Check className="size-4 sm:size-5" />
+                      <Check className="size-4" />
                     ) : (
-                      <Icon className="size-4 sm:size-5" />
+                      <Icon className="size-4" />
                     )}
                   </div>
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] sm:text-xs leading-none text-center whitespace-nowrap font-medium transition-colors duration-300",
-                    isCurrent && "text-teal-400",
-                    isCompleted && "text-teal-400/80",
-                    !isCompleted && !isCurrent && "text-white/40"
+                    "hidden min-[380px]:block text-[10px] leading-none text-center whitespace-nowrap font-medium transition-colors duration-300"
                   )}
+                  style={
+                    isCurrent
+                      ? { color: "#cef26d", fontWeight: 600 }
+                      : isCompleted
+                      ? { color: "#6b89b4" }
+                      : { color: "#3a5070" }
+                  }
                 >
                   {config.label}
                 </span>
@@ -70,15 +93,17 @@ export function LessonProgressIndicator({ currentPhase }: LessonProgressIndicato
 
               {/* Connector line */}
               {index < PHASES.length - 1 && (
-                <div className="flex-1 mx-1 sm:mx-2 -mt-6">
-                  <div className="h-0.5 w-full rounded-full bg-white/10 overflow-hidden">
+                <div className="flex-1 mx-1 sm:mx-2 -mt-4">
+                  <div
+                    className="h-px w-full rounded-full overflow-hidden"
+                    style={{ background: "rgba(141,194,255,0.08)" }}
+                  >
                     <div
-                      className={cn(
-                        "h-full rounded-full transition-all duration-700 ease-out",
-                        index < currentIndex
-                          ? "bg-gradient-to-r from-teal-500 to-cyan-500 w-full"
-                          : "w-0"
-                      )}
+                      className="h-full rounded-full transition-all duration-700 ease-out"
+                      style={{
+                        width: index < currentIndex ? "100%" : "0%",
+                        background: "linear-gradient(90deg, rgba(206,242,109,0.6) 0%, #cef26d 100%)",
+                      }}
                     />
                   </div>
                 </div>
@@ -88,13 +113,19 @@ export function LessonProgressIndicator({ currentPhase }: LessonProgressIndicato
         })}
       </div>
 
-      {/* Bottom progress bar with shimmer */}
-      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+      {/* Bottom progress bar */}
+      <div
+        className="h-1 rounded-full overflow-hidden"
+        style={{ background: "rgba(141,194,255,0.06)" }}
+      >
         <div
-          className="h-full rounded-full bg-gradient-to-r from-teal-500 via-cyan-400 to-teal-500 transition-all duration-700 relative"
-          style={{ width: `${(currentIndex / (PHASES.length - 1)) * 100}%` }}
+          className="h-full rounded-full transition-all duration-700 relative overflow-hidden"
+          style={{
+            width: `${(currentIndex / (PHASES.length - 1)) * 100}%`,
+            background: "linear-gradient(90deg, #3770bf 0%, #cef26d 100%)",
+          }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
         </div>
       </div>
     </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { getOperatorSymbol } from "@/lib/lessons/utils";
-import { CheckCircle2, Lock, Plus, Minus, X, Divide, Play, Clock } from "lucide-react";
+import { CheckCircle2, Lock, Plus, Minus, X, Divide, Play, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 
 export type LessonStatus = "completed" | "available" | "locked";
@@ -14,17 +13,59 @@ const OPERATOR_ICONS: Record<string, typeof Plus> = {
   "/": Divide,
 };
 
-const OPERATOR_GRADIENTS: Record<string, string> = {
-  "+": "from-emerald-500 to-teal-500",
-  "-": "from-orange-500 to-red-500",
-  "*": "from-blue-500 to-purple-500",
-  "/": "from-yellow-500 to-orange-500",
+/* Numetria operation color remapping */
+const OPERATOR_COLORS: Record<string, {
+  iconBg: string;
+  iconText: string;
+  glow: string;
+}> = {
+  "+": {
+    iconBg: "rgba(55,112,191,0.15)",
+    iconText: "#8dc2ff",
+    glow: "rgba(55,112,191,0.12)",
+  },
+  "-": {
+    iconBg: "rgba(141,194,255,0.1)",
+    iconText: "#8dc2ff",
+    glow: "rgba(141,194,255,0.08)",
+  },
+  "*": {
+    iconBg: "rgba(206,242,109,0.1)",
+    iconText: "#cef26d",
+    glow: "rgba(206,242,109,0.08)",
+  },
+  "/": {
+    iconBg: "rgba(168,204,71,0.1)",
+    iconText: "#a8cc47",
+    glow: "rgba(168,204,71,0.08)",
+  },
 };
 
-const DIFFICULTY_STYLES: Record<string, { label: string; className: string }> = {
-  easy: { label: "Facil", className: "text-emerald-400 bg-emerald-400/10" },
-  medium: { label: "Medio", className: "text-yellow-400 bg-yellow-400/10" },
-  hard: { label: "Dificil", className: "text-red-400 bg-red-400/10" },
+const DIFFICULTY_STYLES: Record<string, { label: string; style: React.CSSProperties }> = {
+  easy: {
+    label: "Fácil",
+    style: {
+      background: "rgba(55,112,191,0.12)",
+      border: "1px solid rgba(55,112,191,0.25)",
+      color: "#8dc2ff",
+    },
+  },
+  medium: {
+    label: "Médio",
+    style: {
+      background: "rgba(206,242,109,0.08)",
+      border: "1px solid rgba(206,242,109,0.2)",
+      color: "#cef26d",
+    },
+  },
+  hard: {
+    label: "Difícil",
+    style: {
+      background: "rgba(141,194,255,0.08)",
+      border: "1px solid rgba(141,194,255,0.2)",
+      color: "#8dc2ff",
+    },
+  },
 };
 
 interface LessonCardProps {
@@ -45,98 +86,165 @@ interface LessonCardProps {
 export function LessonCard({ lesson, status, index, total, onClick }: LessonCardProps) {
   const OperatorIcon = OPERATOR_ICONS[lesson.operator] ?? Plus;
   const isClickable = status !== "locked";
-  const gradient = OPERATOR_GRADIENTS[lesson.operator] ?? "from-teal-500 to-cyan-500";
+  const colors = OPERATOR_COLORS[lesson.operator] ?? OPERATOR_COLORS["+"];
   const diff = DIFFICULTY_STYLES[lesson.difficulty] ?? DIFFICULTY_STYLES.easy;
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: index * 0.08, duration: 0.4 }}
-      whileHover={{ scale: status === "locked" ? 1 : 1.02, y: status === "locked" ? 0 : -4 }}
-      className={cn("relative group", status === "locked" && "opacity-60")}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 1 }}
+      transition={{ delay: index * 0.07, duration: 0.4, ease: "easeOut" }}
+      whileHover={isClickable ? { y: -4 } : {}}
+      className={cn("relative group h-full", status === "locked" && "opacity-50")}
+      aria-disabled={status === "locked"}
+      tabIndex={status === "locked" ? -1 : undefined}
     >
-      {/* Glow Effect */}
-      {status !== "locked" && (
-        <div className={cn(
-          "absolute inset-0 bg-gradient-to-br rounded-3xl opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-500",
-          gradient
-        )} />
-      )}
-
-      <div className={cn(
-        "relative bg-white/5 backdrop-blur-md border rounded-3xl overflow-hidden transition-all duration-300",
-        status === "completed" ? "border-teal-500/30" : "border-white/10",
-        isClickable && "cursor-pointer"
-      )}
+      <div
+        className={cn(
+          "relative rounded-[2rem] overflow-hidden h-full flex flex-col border transition-all duration-300",
+          isClickable && "cursor-pointer"
+        )}
+        style={{
+          background: status === "completed"
+            ? "rgba(13,29,58,0.75)"
+            : "rgba(13,29,58,0.6)",
+          borderColor: status === "completed"
+            ? "rgba(206,242,109,0.25)"
+            : "rgba(141,194,255,0.1)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          boxShadow: status === "completed"
+            ? "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(206,242,109,0.1)"
+            : "0 8px 32px rgba(0,0,0,0.4)",
+        }}
         onClick={isClickable ? onClick : undefined}
       >
-        {/* Icon Header */}
-        <div className="relative h-32 flex items-center justify-center overflow-hidden">
-          <div className={cn("absolute inset-0 bg-gradient-to-br opacity-10", gradient)} />
-          <div className={cn("relative bg-gradient-to-br p-5 rounded-3xl shadow-2xl", gradient)}>
-            <OperatorIcon className="w-10 h-10 text-white" />
+        {/* Completed glow border overlay */}
+        {status === "completed" && (
+          <div
+            className="absolute inset-0 rounded-[2rem] pointer-events-none"
+            style={{
+              boxShadow: "inset 0 0 40px rgba(206,242,109,0.04)",
+            }}
+          />
+        )}
+
+        {/* Operator Icon Header */}
+        <div
+          className="relative h-36 flex items-center justify-center overflow-hidden"
+          style={{ background: colors.glow }}
+        >
+          {/* Radial backdrop */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at center, ${colors.iconBg} 0%, transparent 70%)`,
+            }}
+          />
+
+          {/* Icon container */}
+          <div
+            className="relative flex items-center justify-center w-16 h-16 rounded-[1.25rem] transition-transform duration-500 group-hover:scale-110"
+            style={{
+              background: colors.iconBg,
+              border: `1px solid ${colors.iconText}30`,
+            }}
+          >
+            <OperatorIcon className="w-8 h-8" style={{ color: colors.iconText }} />
           </div>
 
+          {/* Status badge (top right) */}
           {status === "completed" && (
-            <div className="absolute top-4 right-4 bg-teal-500 p-2 rounded-full">
-              <CheckCircle2 className="w-5 h-5 text-white" />
+            <div
+              className="absolute top-3.5 right-3.5 flex items-center justify-center w-8 h-8 rounded-full"
+              style={{
+                background: "rgba(206,242,109,0.15)",
+                border: "1px solid rgba(206,242,109,0.3)",
+              }}
+            >
+              <CheckCircle2 className="w-4 h-4 text-[#cef26d]" />
             </div>
           )}
 
           {status === "locked" && (
-            <div className="absolute top-4 right-4 bg-white/10 p-2 rounded-full backdrop-blur-sm">
-              <Lock className="w-5 h-5 text-white/60" />
+            <div
+              className="absolute top-3.5 right-3.5 flex items-center justify-center w-8 h-8 rounded-full"
+              style={{
+                background: "rgba(141,194,255,0.06)",
+                border: "1px solid rgba(141,194,255,0.12)",
+              }}
+            >
+              <Lock className="w-4 h-4 text-[#6b89b4]" />
             </div>
           )}
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-5 flex flex-col flex-1">
           <div className="flex items-center gap-2 mb-3">
-            <span className={cn("text-xs px-3 py-1 rounded-full font-medium", diff.className)}>
+            <span
+              className="text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wide"
+              style={diff.style}
+            >
               {diff.label}
             </span>
-            <span className="text-xs text-white/50 flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              Aula {index + 1}/{total}
+            <span className="text-xs text-[#6b89b4] font-medium ml-auto">
+              {index + 1}/{total}
             </span>
           </div>
 
           <h3
-            className="text-xl font-bold mb-2 leading-tight text-white"
+            className="text-lg font-bold mb-2 leading-tight text-[#f0f4ff]"
             style={{ fontFamily: "var(--font-family-display)" }}
           >
             {lesson.title}
           </h3>
-          <p className="text-sm text-white/60 mb-4 line-clamp-2">
+          <p className="text-sm text-[#6b89b4] mb-5 line-clamp-2 leading-relaxed">
             {lesson.description}
           </p>
 
+          {/* CTA Button */}
           <button
             disabled={status === "locked"}
             onClick={isClickable ? (e) => { e.stopPropagation(); onClick(); } : undefined}
-            className={cn(
-              "w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300",
-              status === "locked" && "bg-white/5 text-white/40 cursor-not-allowed",
-              status === "completed" && "bg-white/10 hover:bg-white/15 text-white",
-              status === "available" && `bg-gradient-to-r ${gradient} text-white hover:shadow-lg hover:shadow-teal-500/20`
-            )}
+            aria-disabled={status === "locked"}
+            className="w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 mt-auto text-sm"
+            style={
+              status === "locked"
+                ? {
+                    background: "rgba(141,194,255,0.04)",
+                    border: "1px solid rgba(141,194,255,0.08)",
+                    color: "#3a5070",
+                    cursor: "not-allowed",
+                  }
+                : status === "completed"
+                ? {
+                    background: "rgba(206,242,109,0.08)",
+                    border: "1px solid rgba(206,242,109,0.2)",
+                    color: "#cef26d",
+                  }
+                : {
+                    background: "linear-gradient(135deg, #3770bf 0%, #2558a0 100%)",
+                    border: "1px solid rgba(55,112,191,0.4)",
+                    color: "#f0f4ff",
+                    boxShadow: "0 4px 16px rgba(55,112,191,0.25)",
+                  }
+            }
           >
             {status === "locked" ? (
               <>
-                <Lock className="w-4 h-4" />
+                <Lock className="w-3.5 h-3.5" />
                 <span>Bloqueada</span>
               </>
             ) : status === "completed" ? (
               <>
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Revisar</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Praticar Novamente</span>
               </>
             ) : (
               <>
-                <Play className="w-4 h-4" />
-                <span>Comecar</span>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Começar Aula</span>
               </>
             )}
           </button>
